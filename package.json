@@ -3,7 +3,10 @@
   "description": "repzo quickbooks integration",
   "version": "0.1.0",
   "homepage": "",
-  "keywords": ["quickbooks" , "repzo"],
+  "keywords": [
+    "quickbooks",
+    "repzo"
+  ],
   "author": {
     "name": "ahmed khaled",
     "email": "ahmed.khaled@repzoapp.com"
