@@ -40,7 +40,6 @@
     "@types/jsonwebtoken": "^8.5.8",
     "axios": "^0.26.1",
     "node-quickbooks": "^2.0.39",
-    "intuit-oauth": "^3.0.1",
     "data-set-query": "0.0.10",
     "jsonwebtoken": "^8.5.1",
     "moment-timezone": "^0.5.34",
