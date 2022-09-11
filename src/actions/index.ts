@@ -1,14 +1,10 @@
 import { Config, Action } from "../types";
-import { EVENT } from "../types";
-
-// import { create_transfer } from "./create_transfer.js";
 import { create_client } from "./create_client.js";
 
 export const actions = async (event: any, options: Config) => {
   switch (event.queryStringParameters?.action) {
     case "create_client":
       return await create_client(event, options);
-
     default:
       throw `Route: ${event.queryStringParameters?.action} not found`;
   }
