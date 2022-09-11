@@ -1,7 +1,9 @@
 import { CommandEvent } from "../types";
 
-import { DEV_STRINGS } from "../strings";
-var QuickBooks = require("node-quickbooks");
+import { DEV_STRINGS } from "../strings.js";
+
+// @ts-ignore
+import * as QuickBooks from "node-quickbooks";
 
 export const customers = async (commandEvent: CommandEvent) => {
   var qbo = new QuickBooks(

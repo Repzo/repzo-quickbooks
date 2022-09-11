@@ -22,6 +22,8 @@
   "scripts": {
     "lint": "npx prettier --write .",
     "build": "tsc && npm run lint",
+    "test_command": "tsc && npm run lint && node ./lib/test_command.js",
+    "test_action": "tsc && npm run lint && node ./lib/test_action.js",
     "test": "mocha"
   },
   "repository": {

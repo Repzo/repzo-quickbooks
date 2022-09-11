@@ -1,9 +1,8 @@
 import { Command, CommandEvent } from "./../types";
 
-import { join } from "./join";
-import { basic } from "./basic";
-import { customers } from "./customers";
-import { EVENT } from "./../types";
+import { join } from "./join.js";
+import { basic } from "./basic.js";
+import { customers } from "./customers.js";
 
 export const commands = async (CommandEvent: CommandEvent) => {
   switch (CommandEvent.command) {
