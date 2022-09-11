@@ -6,6 +6,7 @@ export interface Config {
   serviceEndPoint: string;
   env: "staging" | "local" | "production";
 }
+
 type DecodedScope = "admin" | "client" | "rep";
 
 type StringId = string;

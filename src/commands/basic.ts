@@ -1,6 +1,5 @@
 import Repzo from "repzo";
-import { EVENT, Config, CommandEvent } from "../types";
-import { _fetch, _create, _update, _delete } from "../util.js";
+import { CommandEvent } from "../types";
 
 import { commands, commandsList } from "./index.js";
 export const basic = async (commandEvent: CommandEvent) => {

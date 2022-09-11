@@ -1,7 +1,6 @@
 import Repzo from "repzo";
 import { Service } from "repzo/lib/types";
 import { EVENT, Config, CommandEvent } from "../types";
-import { _fetch, _create, _update, _delete } from "../util.js";
 
 export const join = async (commandEvent: CommandEvent) => {
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
@@ -17,13 +16,13 @@ export const join = async (commandEvent: CommandEvent) => {
     console.log("join");
 
     await commandLog.load(commandEvent.sync_id);
-    await commandLog.addDetail("Repzo Qoyod: Join").commit();
+    await commandLog.addDetail("Repzo QuickBooks: Join").commit();
 
     const body: Service.JoinActionsWeHook.Data = {
       data: [
         // invoice
-        // {
-        //   app: "repzo-qoyod",
+        // {QuickBooks
+        //   app: "repzo-QuickBooks",
         //   action: "create_invoice",
         //   event: "invoice.create",
         //   join:
@@ -37,7 +36,7 @@ export const join = async (commandEvent: CommandEvent) => {
             commandEvent?.app?.formData?.invoices?.createInvoiceHook || false,
         },
         {
-          app: "repzo-qoyod",
+          app: "repzo-QuickBooks",
           action: "create_creditNote",
           event: "returnItems.create",
           join:
@@ -46,7 +45,7 @@ export const join = async (commandEvent: CommandEvent) => {
         },
         // payment
         {
-          app: "repzo-qoyod",
+          app: "repzo-QuickBooks",
           action: "create_payment",
           event: "payment.create",
           join:
@@ -54,26 +53,26 @@ export const join = async (commandEvent: CommandEvent) => {
         },
         // proforma
         // {
-        //   app: "repzo-qoyod",
+        //   app: "repzo-QuickBooks",
         //   action: "create_proforma",
         //   event: "salesorder.approve",
         //   join: false,
         // },
         // {
-        //   app: "repzo-qoyod",
+        //   app: "repzo-QuickBooks",
         //   action: "create_proforma",
         //   event: "salesorder.create",
         //   join: false,
         // },
         // transfer
         // {
-        //   app: "repzo-qoyod",
+        //   app: "repzo-QuickBooks",
         //   action: "create_transfer",
         //   event: "transfer.approve",
         //   join: false,
         // },
         {
-          app: "repzo-qoyod",
+          app: "repzo-QuickBooks",
           action: "create_transfer",
           event: "transfer.create",
           join:
@@ -81,14 +80,14 @@ export const join = async (commandEvent: CommandEvent) => {
         },
         // refund
         {
-          app: "repzo-qoyod",
+          app: "repzo-QuickBooks",
           action: "create_refund",
           event: "refund.create",
           join: commandEvent?.app?.formData?.refunds?.createRefundHook || false,
         },
         // client
         {
-          app: "repzo-qoyod",
+          app: "repzo-QuickBooks",
           action: "create_client",
           event: "client.create",
           join: commandEvent?.app?.formData?.client?.clientHook || false,
