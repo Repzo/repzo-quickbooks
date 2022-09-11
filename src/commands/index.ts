@@ -1,24 +1,17 @@
 import { Config, Command, CommandEvent, Result } from "./../types";
-import { addProducts } from "./product.js";
-import { sync_inventory } from "./inventory.js";
-import { sync_taxes } from "./tax.js";
-import { join } from "./join.js";
-import { basic } from "./basic.js";
+
+import { join } from "./join";
+import { basic } from "./basic";
 import { EVENT } from "./../types";
+
 export const commands = async (CommandEvent: CommandEvent) => {
   switch (CommandEvent.command) {
-    case "add_product":
-      return await addProducts(CommandEvent);
-
-    case "sync_tax":
-      return await sync_taxes(CommandEvent);
-
-    case "sync_inventory":
-      return await sync_inventory(CommandEvent);
     case "join":
       return await join(CommandEvent);
+
     case "basic":
       return await basic(CommandEvent);
+
     default:
       throw `Route: ${CommandEvent.command} not found`;
   }
