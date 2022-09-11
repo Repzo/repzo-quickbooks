@@ -29,7 +29,7 @@ export const join = async (commandEvent: CommandEvent) => {
         //     commandEvent?.app?.formData?.invoices?.createInvoiceHook || false,
         // },
         {
-          app: "repzo-qoyod",
+          app: "repzo-QuickBooks",
           action: "create_invoice",
           event: "invoiceItems.create",
           join:

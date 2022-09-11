@@ -2,14 +2,14 @@ import { CommandEvent, Result } from "./types";
 let commandEvent: CommandEvent = {
   app: {
     _id: "628397700cf4f813aa63b52c",
-    name: "Qoyod",
+    name: "QuickBooks",
     disabled: false,
     available_app: {
       _id: "6249fbdbe907f6a0d68a7058",
-      name: "repzo-qoyod",
+      name: "repzo-QuickBooks",
       disabled: false,
       JSONSchema: {
-        title: "Qoyod Integration Settings",
+        title: "QuickBooks Integration Settings",
         type: "object",
         required: [Array],
         properties: [Object],

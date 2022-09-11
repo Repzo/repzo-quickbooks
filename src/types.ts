@@ -72,7 +72,7 @@ export interface CommandEvent {
 }
 
 export interface Result {
-  qoyod_total: number;
+  QuickBooks_total: number;
   repzo_total: number;
   created: number;
   updated: number;
