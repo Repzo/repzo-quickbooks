@@ -5,7 +5,7 @@ let commandEvent: CommandEvent = {
     name: "repzo",
     disabled: false,
     available_app: {
-      _id: "6249fbdbe907f6a0d68a7058",
+      _id: "5549fbdre907f6a0d55a7033",
       name: "repzo-QuickBooks",
       disabled: false,
       JSONSchema: {
@@ -60,7 +60,16 @@ let commandEvent: CommandEvent = {
   timezone: "Asia/Amman",
   meta: '{\r\n "test":"hi", "invoice_id": "626a58f9eaf66e59747e0460" \r\n}',
   sync_id: undefined,
-  env: "local", // ""staging|production|local""
+  env: "local", // ""staging | production | local""
+
+  oAuth2: {
+    consumerKey: "ABGqYMlsHPPH5KbAzXYSRPiIk3SxxqhXUb5e90787DLRstrs5v",
+    consumerSecret: "zsQhoDRuNKX1YXTvoNmIiq4IrcY1VKFH4Wrcdew8",
+    oauthToken:
+      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..2RTysGSbeKCKZZjq9i1iwQ.fRUpxb6GNH_sjTZaA1n6RhitBtJpyjCZuMiLkfzQum7XHk0auwvBV2j0Sk0jXduVfXPeXRJRCHkULoshVFOxufHV18R8DZ_1lOw5u_Yua29puop5zbYN1VIEMbVHPBW_KAHGMSLaDNyBUxhNCWaietB1RuHD3JAHuyX3rfFm-9I5Lqh3ma8AGlnjWiDAQ0vKuFA9O48dRW18GRJY2NETu5SmU0gQGkrXz6idBRwHGvYGPMOWZAgbbYhx-Kq10XcZUW9sbIb4oroRHW2MrkDvj9xT_0jlk0315JkOPDkGE1NdF4tvheu1X-KFgqx58ViwSse643fnDuKcRI91tGyjbsKAdrLk967QZG4ta0h3_j__EiAoyXWso4wslYcRNGxrGRAMlXHvJa-Lvq3Z7gv9Gp6r9voKBb5yFFB_s6i866kCA7zcS9Ev9xOls3Dn7rpTPSE_n3JLdZoWOSdat4oGsWkK4cIiIdyiNHhBOOTQyHqo39IikoKCiUwMYStX--pUJCzGVWtzJ18WAWNUQf08OkRBhLv5vitOgcqH-93tlzegwsVKhx5-rxHsGK77XWfXgKUo_D-q8M_bE7gU9ZMl-v_c4Qcbvgx_A7RzSFpxupDsdzKcSosUqZrclQxwKmO92X2fm2l_83MzBh3OsHfDKbEtex25F7JPc_nVTw_hKdJk3Xn1ws2phF5ivlYiiLEOb7kLVVIAD2vpqQC0AZxouadcsZIpQMIQlXlqfC2YzPSR9uX1-zZMJqKyaVPbH_ew.J8pImTkKMVmfJVNm5XgFOw",
+    realmId: "4620816365241355500",
+    refreshToken: "AB116711943143zfbfktwoSqplz3oE6Oeml4nTz2U3Y2eFNJyP",
+  },
 };
 import { Commands } from "./index.js";
 Commands(commandEvent);

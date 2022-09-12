@@ -1,30 +1,35 @@
 import { CommandEvent } from "../types";
 
-import { DEV_STRINGS } from "../strings.js";
-
 // @ts-ignore
-import * as QuickBooks from "node-quickbooks";
+import QuickBooks from "node-quickbooks";
 
 export const customers = async (commandEvent: CommandEvent) => {
   var qbo = new QuickBooks(
     null,
     null,
-    DEV_STRINGS.oauthToken,
+    commandEvent.oAuth2.oauthToken,
     true, // no token secret for oAuth 2.0
-    DEV_STRINGS.realmId,
+    commandEvent.oAuth2.realmId,
     true, // use the sandbox?
     true, // enable debugging?
     null, // set minorversion, or null for the latest version
     "2.0", //oAuth version
     ""
   );
-  qbo.findCustomers(
-    {
-      fetchAll: true,
-    },
-    function (e: any, customers: any) {
-      if (e) console.log(e);
-      console.log(customers);
-    }
-  );
+
+  // qbo.findCustomers(
+  //   {
+  //     fetchAll: true,
+  //   },
+  //   function (e: any, customers: any) {
+  //     if (e) console.log(e);
+  //     console.log(customers);
+  //   }
+  // );
+
+  let ress = await qbo.findCustomers({
+    fetchAll: true,
+  });
+
+  console.log(ress);
 };

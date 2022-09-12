@@ -69,6 +69,7 @@ export interface CommandEvent {
   timezone: string;
   data?: any;
   env: "staging" | "production" | "local";
+  oAuth2: any;
 }
 
 export interface Result {

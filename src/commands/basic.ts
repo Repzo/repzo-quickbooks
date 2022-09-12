@@ -1,7 +1,7 @@
 import Repzo from "repzo";
 import { CommandEvent } from "../types";
-
 import { commands, commandsList } from "./index.js";
+
 export const basic = async (commandEvent: CommandEvent) => {
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
     env: commandEvent.env,
