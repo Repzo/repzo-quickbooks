@@ -1,7 +1,7 @@
 import Repzo from "repzo";
 import { EVENT, Config } from "../types";
-import { Service } from "repzo/src/types";
-import { v4 as uuid } from "uuid";
+// import { Service } from "repzo/src/types";
+// import { v4 as uuid } from "uuid";
 
 interface QBClient {
   contact: {

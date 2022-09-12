@@ -26,17 +26,11 @@ let commandEvent: CommandEvent = {
       client: {
         clientHook: true,
       },
-      invoices: {
-        createInvoiceHook: true,
-      },
-      payment: {
-        createPaymentHook: true,
-      },
       bench_time_client: "2022-05-18T09:16:00.000Z",
       serviceApiKey: "6a0226eb2f2fabdffbffd9b22",
-      repzoApiKey: "VwNcaz2830dLsQYbs0krf_cnHdJ8gMXM_p6OPoM2Ruk",
+      repzoApiKey: "ywvbiOaAeKOCqwca3qARcInAFu2KrVRF2OrkRVvJudg",
       paymentAccountId: 7,
-      errorEmail: "mohammad.khamis@repzoapp.com",
+      errorEmail: "ahmed.khaled@repzoapp.com",
     },
     options_formData: {},
     company_namespace: ["intgqoyod"],
