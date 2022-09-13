@@ -12,6 +12,7 @@ type DecodedScope = "admin" | "client" | "rep";
 type StringId = string;
 type Email = string;
 type NameSpaces = string[];
+
 export type Decoded = jwt.JwtPayload & {
   id?: StringId;
   email?: Email;

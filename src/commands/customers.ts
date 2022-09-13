@@ -15,7 +15,6 @@ export const customers = async (commandEvent: CommandEvent) => {
     commandEvent.command
   );
 
-  console.log(repzo);
   var qbo = new QuickBooks(
     null,
     null,
@@ -23,7 +22,7 @@ export const customers = async (commandEvent: CommandEvent) => {
     true, // no token secret for oAuth 2.0
     commandEvent.oAuth2.realmId,
     true, // use the sandbox?
-    false, // enable debugging?
+    true, // enable debugging?
     null, // set minorversion, or null for the latest version
     "2.0", //oAuth version
     ""
