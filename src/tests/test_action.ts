@@ -1,4 +1,4 @@
-import { Actions } from "./index.js";
+import { Actions } from "../index.js";
 // Payment
 // import { Actions } from "./index.js";
 // Actions(

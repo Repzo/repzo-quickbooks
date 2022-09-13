@@ -1,4 +1,4 @@
-import { CommandEvent, Result } from "./types";
+import { CommandEvent, Result } from "../types";
 let commandEvent: CommandEvent = {
   app: {
     _id: "628397700cf4f813aa63b52c",
@@ -65,7 +65,7 @@ let commandEvent: CommandEvent = {
     refreshToken: "AB116711943143zfbfktwoSqplz3oE6Oeml4nTz2U3Y2eFNJyP",
   },
 };
-import { Commands } from "./index.js";
+import { Commands } from "../index.js";
 Commands(commandEvent);
 
 /*
