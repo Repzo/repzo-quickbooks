@@ -3,28 +3,15 @@ import Repzo from "repzo";
 
 // @ts-ignore
 import QuickBooks from "node-quickbooks";
-
-interface QBCustomer {
-  V4IDPseudonym: string;
-  DisplayName: string;
-  CompanyName?: string;
-  PrimaryEmailAddr?: object;
-  PrimaryPhone?: object;
-  ResaleNum?: string;
-  Active: boolean;
-  Taxable?: boolean;
-}
-
-interface QBCustomers {
-  Customer: QBCustomer[];
-}
+import { QBCustomer } from "../quickbooks/types/customer";
 
 export const customers = async (commandEvent: CommandEvent) => {
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
     env: commandEvent.env,
   });
-  const test = await repzo.client.find({});
-  console.log(test.data[0]);
+  // const test = await repzo.client.find({});
+  const new_bench_time = new Date().toISOString();
+  const bench_time_key = "bench_time_client";
 
   const commandLog = new Repzo.CommandLog(
     repzo,
@@ -50,7 +37,7 @@ export const customers = async (commandEvent: CommandEvent) => {
     ""
   );
 
-  /*   qbo.findCustomers(
+  qbo.findCustomers(
     {
       fetchAll: true,
     },
@@ -58,8 +45,13 @@ export const customers = async (commandEvent: CommandEvent) => {
       if (e) throw e;
       const customers = JSON.stringify(result.QueryResponse, null, 4);
       // console.log(customers);
+
+      // is it okey to await inside callback
+
+      // await commandLog.load(commandEvent.sync_id);
+      // await commandLog.addDetail("Repzo QuickBooks: Started Syncing Clients").commit();
     }
-  ); */
+  );
 };
 
 const from_repzo_to_QuickBooks = (repzo_client: any): QBCustomer => {
