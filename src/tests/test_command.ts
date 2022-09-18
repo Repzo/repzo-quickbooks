@@ -7,7 +7,7 @@ let commandEvent: CommandEvent = {
     name: "repzo",
     disabled: false,
     available_app: {
-      _id: "5549fbdre907f6a0d55a7033",
+      _id: "6320f4a1685a61494813a41f",
       name: "repzo-QuickBooks",
       disabled: false,
       JSONSchema: {
@@ -18,7 +18,7 @@ let commandEvent: CommandEvent = {
       },
       app_settings: {
         repo: "",
-        serviceEndPoint: "https://www.qoyod.com/api/2.0",
+        serviceEndPoint: "https://quickbooks.api.intuit.com/",
         meta: {},
       },
       app_category: "6249fa8466312f76e595634a",
