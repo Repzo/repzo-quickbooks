@@ -94,7 +94,7 @@ export interface DefaultPaginationResult {
 
 // <reference path = "vehicle.ts" />
 export namespace Service {
-  export namespace Client {
+  export namespace Customer {
     interface Financials {
       credit_limit?: number;
     }
@@ -121,123 +121,38 @@ export namespace Service {
       target: number;
       classification: string;
     }
-    export interface ClientSchema {
-      _id: string;
-      local_name?: string;
+    export interface CustomerSchema {
+      Id: string;
+      SyncToken: string;
+      DisplayName: string;
+      Title: string;
+      GivenName: string;
+      FamilyName: string;
+      Suffix: string;
+      PrimaryEmailAddr?: object;
       tags?: string[];
-      cell_phone?: string;
-      city?: string;
-      client_code?: string;
-      contact_name?: string;
-      contact_title?: string;
-      country?: string;
-      disabled?: boolean;
-      formatted_address?: string;
-      lat?: number;
-      lng?: number;
-      location_verified?: boolean;
-      name: string;
-      phone?: string;
-      state?: string;
-      zip?: string;
-      assigned_to?: string[];
-      last_location_update?: number;
-      credit_limit?: number;
-      tax_number?: string;
-      sync_id?: string;
-      rep_targets?: RepTarget[];
-      shelf_share_targets?: ShelfShareTarget[];
-      profile_pic?: string;
-      logo?: string;
-      website?: string;
-      email?: string;
-      comment?: string;
-      parent_client_id?: string;
-      target_visit?: number;
-      geofencing_radius?: number;
-      price_tag?: string;
-      jobs?: JobObject[];
-      status?: string;
-      job_category?: string[];
-      availability_msl?: string[];
-      territory?: string;
-      sv_priceList?: string;
-      assigned_media?: string[];
-      assigned_products?: string[];
-      assigned_product_groups?: string;
-      verifiedUntil?: number;
-      financials?: Financials;
-      customFields?: { [key: string]: any };
-      paymentTerm?: string;
-      speciality?: string[];
-      company_namespace: string[];
-      channel?: string;
-      isChain?: boolean;
-      chain?: string;
-      teams?: string[];
-      payment_type: "cash" | "credit";
-      integration_meta?: { [key: string]: any };
-      integrated_client_balance?: number;
+      ResaleNum?: string;
+      SecondaryTaxIdentifier?: string;
+      PreferredDeliveryMethod?: string;
+      Fax?: string;
+      BusinessNumber?: string;
+      Notes?: string;
+      BillWithParent?: boolean;
+      Taxable?: boolean;
+      CompanyName: string;
       createdAt: string;
       updatedAt: string;
       __v: number;
     }
     interface ClientBody {
-      name?: string;
-      local_name?: string;
-      tags?: string[];
-      cell_phone?: string;
-      city?: string;
-      client_code?: string;
-      contact_name?: string;
-      contact_title?: string;
-      country?: string;
-      disabled?: boolean;
-      formatted_address?: string;
-      lat?: number;
-      lng?: number;
-      location_verified?: boolean;
-      phone?: string;
-      state?: string;
-      zip?: string;
-      assigned_to?: string[];
-      last_location_update?: number;
-      credit_limit?: number;
-      tax_number?: string;
-      sync_id?: string;
-      rep_targets?: RepTarget[];
-      shelf_share_targets?: ShelfShareTarget[];
-      profile_pic?: string;
-      logo?: string;
-      website?: string;
-      email?: string;
-      comment?: string;
-      parent_client_id?: string;
-      target_visit?: number;
-      geofencing_radius?: number;
-      price_tag?: string;
-      jobs?: JobObject[];
-      status?: string;
-      job_category?: string[];
-      availability_msl?: string[];
-      territory?: string;
-      sv_priceList?: string;
-      assigned_media?: string[];
-      assigned_products?: string[];
-      assigned_product_groups?: string;
-      verifiedUntil?: number;
-      financials?: Financials;
-      customFields?: { [key: string]: any };
-      paymentTerm?: string;
-      speciality?: string[];
-      company_namespace?: string[];
-      channel?: string;
-      isChain?: boolean;
-      chain?: string;
-      teams?: string[];
-      payment_type?: "cash" | "credit";
-      integration_meta?: { [key: string]: any };
-      integrated_client_balance?: number;
+      FullyQualifiedName: string;
+      DisplayName: string;
+      Title: string;
+      GivenName: string;
+      FamilyName: string;
+      Suffix: string;
+      PrimaryEmailAddr?: object;
+      BillAddr: object;
     }
     type PopulatedKeys =
       | "tags"
@@ -255,7 +170,7 @@ export namespace Service {
       | "speciality"
       | "teams";
 
-    type ClientSchemaWithPopulatedKeys = ClientSchema & {
+    type ClientSchemaWithPopulatedKeys = CustomerSchema & {
       assigned_products?:
         | string[]
         | Pick<Product.ProductSchema, "_id" | "name">[];
@@ -268,52 +183,19 @@ export namespace Service {
       price_tag?: string | Tag.TagSchema;
       job_category?: string[] | JobCategory.JobCategorySchema[];
       sv_priceList?: string | Pick<PriceList.PriceListSchema, "_id" | "name">[];
-      chain?:
-        | string
-        | Pick<Client.ClientSchema, "_id" | "name" | "client_code">;
+
       channel?: string | Channel.ChannelSchema;
     };
 
     export namespace Find {
       export type Params = DefaultPaginationQueryParams & {
-        from_updatedAt?: number;
-        to_updatedAt?: number;
-        from_createdAt?: number;
-        to_createdAt?: number;
-        createdAt?: number;
-        updatedAt?: number;
-        name?: string[] | string;
-        search?: string;
-        disabled?: boolean;
-        active?: boolean;
-        tags?: string[] | string;
-        _id?: string[] | string;
-        assigned_to?: string[] | string;
-        availability_msl?: string[] | string;
-        status?: string[] | string;
-        CLIENT_TAGS?: string[] | string;
-        AREA_TAGS?: string[] | string;
-        isChain?: boolean;
-        chain?: string[] | string;
-        channel?: string[] | string;
-        city?: string[] | string;
-        client_code?: string[] | string;
-        country?: string[] | string;
-        location_verified?: boolean;
-        state?: string[] | string;
-        sv_priceList?: string[] | string;
-        assigned_media?: string[] | string;
-        assigned_products?: string[] | string;
-        teams?: string[] | string;
-        integrated_client_balance?: number[] | number;
-        tax_number?: string[] | string;
-        speciality?: string[] | string;
-        assigned_product_groups?: string[] | string;
-        populatedKeys?: PopulatedKeys[];
+        query: string;
         [key: string]: any; // integration_meta. & customFields.
       };
       export interface Result extends DefaultPaginationResult {
-        data: ClientSchemaWithPopulatedKeys[];
+        QueryResponse: {
+          Customer: ClientSchemaWithPopulatedKeys[];
+        };
       }
     }
 
@@ -329,7 +211,7 @@ export namespace Service {
       export interface Body extends ClientBody {
         name: string;
       }
-      export type Result = ClientSchema;
+      export type Result = CustomerSchema;
     }
 
     export namespace Update {
@@ -340,12 +222,12 @@ export namespace Service {
         updatedAt?: string;
         __v?: number;
       }
-      export type Result = ClientSchema;
+      export type Result = CustomerSchema;
     }
 
     export namespace Remove {
       export type ID = string;
-      export type Result = ClientSchema;
+      export type Result = CustomerSchema;
     }
   }
 
@@ -2876,9 +2758,8 @@ export namespace Service {
       createdAt: string;
       updatedAt: string;
       __v: number;
-      client_id?: string | Client.ClientSchema;
+      client_id?: string | Customer.CustomerSchema;
       custom_status?: string | CustomStatus.CustomStatusSchema;
-      tax_number?: string | Pick<Client.ClientSchema, "_id" | "tax_number">;
     };
 
     type InvoiceStatus = "paid" | "unpaid" | "partially_paid";
@@ -3245,7 +3126,7 @@ export namespace Service {
           product_barcode?: string;
         };
       })[];
-      client_id?: string | Client.ClientSchema;
+      client_id?: string | Customer.CustomerSchema;
       custom_status?: string | CustomStatus.CustomStatusSchema;
       cycle?: Cycle.Schema;
     };
