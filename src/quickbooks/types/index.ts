@@ -10,7 +10,6 @@ export interface Options {
   headers?: { [key: string]: string };
 }
 export interface Headers {
- 
   "Content-Type": string;
   Accept: string;
   [key: string]: string;

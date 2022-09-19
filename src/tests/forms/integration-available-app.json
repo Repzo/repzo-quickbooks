@@ -51,7 +51,7 @@
         "title": "Bench Time: Disabled Clients",
         "type": "string",
         "format": "date-time"
-      } 
+      }
     }
   },
   "app_settings": {
