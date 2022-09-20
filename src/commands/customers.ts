@@ -14,15 +14,21 @@ export const customers = async (commandEvent: CommandEvent) => {
     const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
       env: commandEvent.env,
     });
-    const qbo = new QuickBooks(_test.access_token, _test.realmId, true);
 
-    const clients = await qbo.customer.query({
+    // get QuickBooks customer
+    const qbo = new QuickBooks(_test.access_token, _test.realmId, true);
+    const qboClients = await qbo.customer.query({
       query:
         "select * from Customer Where Metadata.LastUpdatedTime > '2015-03-01'",
     });
 
-    console.log(clients);
-    console.log(clients.QueryResponse.Customer[0]);
+    let QuickBooksCustomer = qboClients.QueryResponse.Customer[0];
+
+    // const repzoObj = await repzo.client.find();
+    await repzo.client.create({
+      name: QuickBooksCustomer.GivenName,
+    });
+
     // const test = await repzo.client.find({});
     const new_bench_time = new Date().toISOString();
     const bench_time_key = "bench_time_client";
