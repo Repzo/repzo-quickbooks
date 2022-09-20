@@ -1,8 +1,8 @@
 import { Command, CommandEvent } from "./../types";
 
-import { join } from "./join";
-import { basic } from "./basic";
-import { EVENT } from "./../types";
+import { join } from "./join.js";
+import { basic } from "./basic.js";
+import { customers } from "./customers.js";
 
 export const commands = async (CommandEvent: CommandEvent) => {
   switch (CommandEvent.command) {
@@ -12,6 +12,8 @@ export const commands = async (CommandEvent: CommandEvent) => {
     case "basic":
       return await basic(CommandEvent);
 
+    case "customers":
+      return await customers(CommandEvent);
     default:
       throw `Route: ${CommandEvent.command} not found`;
   }
@@ -29,48 +31,8 @@ export const commandsList: Command[] = [
     description: "",
   },
   {
-    command: "add_client",
+    command: "customers",
     name: "Sync Clients",
     description: "",
   },
-  // {
-  //   command: "update_disable_client",
-  //   name: "Sync Disabled Clients",
-  //   description: "",
-  // },
-  // {
-  //   command: "add_product",
-  //   name: "Sync Products",
-  //   description: "",
-  // },
-  // {
-  //   command: "sync_category",
-  //   name: "Sync Product Category",
-  //   description: "",
-  // },
-  // {
-  //   command: "sync_tax",
-  //   name: "Sync Taxes",
-  //   description: "",
-  // },
-  // {
-  //   command: "sync_measureunit",
-  //   name: "Sync Measure Units",
-  //   description: "",
-  // },
-  // {
-  //   command: "sync_measureunit_family",
-  //   name: "Sync Measure Unit Families",
-  //   description: "",
-  // },
-  // {
-  //   command: "sync_inventory",
-  //   name: "Sync Inventory",
-  //   description: "",
-  // },
-  // {
-  //   command: "adjust_inventory",
-  //   name: "Adjust Inventory",
-  //   description: "",
-  // },
 ];

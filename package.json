@@ -22,6 +22,8 @@
   "scripts": {
     "lint": "npx prettier --write .",
     "build": "tsc && npm run lint",
+    "test_command": "tsc && npm run lint && node ./lib/tests/test_command.js",
+    "test_action": "tsc && npm run lint && node ./lib/tests/test_action.js",
     "test": "mocha"
   },
   "repository": {
@@ -41,12 +43,11 @@
   "dependencies": {
     "@types/aws-lambda": "^8.10.93",
     "@types/jsonwebtoken": "^8.5.8",
-    "axios": "^0.26.1",
-    "node-quickbooks": "^2.0.39",
+    "axios": "^0.27.2",
     "data-set-query": "0.0.10",
     "jsonwebtoken": "^8.5.1",
     "moment-timezone": "^0.5.34",
-    "repzo": "^1.0.19",
+    "repzo": "^1.0.20",
     "uuid": "^8.3.2"
   }
 }

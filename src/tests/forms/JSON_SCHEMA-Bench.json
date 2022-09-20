@@ -1,0 +1,17 @@
+{
+  "title": "QuickBooks Integration Optional Settings",
+  "type": "object",
+  "required": [],
+  "properties": {
+    "bench_time_client": {
+      "title": "Bench Time: Clients",
+      "type": "string",
+      "format": "date-time"
+    },
+    "bench_time_disabled_client": {
+      "title": "Bench Time: Disabled Clients",
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

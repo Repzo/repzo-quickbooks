@@ -12,6 +12,7 @@ type DecodedScope = "admin" | "client" | "rep";
 type StringId = string;
 type Email = string;
 type NameSpaces = string[];
+
 export type Decoded = jwt.JwtPayload & {
   id?: StringId;
   email?: Email;
@@ -69,10 +70,11 @@ export interface CommandEvent {
   timezone: string;
   data?: any;
   env: "staging" | "production" | "local";
+  oAuth2: any;
 }
 
 export interface Result {
-  qoyod_total: number;
+  QuickBooks_total: number;
   repzo_total: number;
   created: number;
   updated: number;

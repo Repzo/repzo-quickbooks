@@ -1,0 +1,97 @@
+{
+  "_id": "629773480a0d4250622c2cf1",
+  "name": "repzo-quickbooks",
+  "disabled": false,
+  "JSONSchema": {
+    "title": "QuickBooks Integration Settings",
+    "type": "object",
+    "required": ["realmID"],
+    "properties": {
+      "realmID": {
+        "type": "string",
+        "title": "QuickBooks Company ID"
+      },
+      "errorEmail": {
+        "type": "string",
+        "format": "email",
+        "title": "Email in case of error"
+      },
+      "Customers": {
+        "type": "object",
+        "title": "Customers",
+        "required": ["createCustomersHook"],
+        "properties": {
+          "createCustomersHook": {
+            "type": "boolean",
+            "title": "Live Sync Customers from Repzo to QuickBooks",
+            "default": false,
+            "enum": [true, false]
+          },
+          "pullCustomers": {
+            "type": "boolean",
+            "title": "Live Sync Customers from QuickBooks to Repzo ",
+            "default": false,
+            "enum": [true, false]
+          }
+        }
+      }
+    }
+  },
+  "options_JSONSchema": {
+    "title": "QuickBooks Integration Optional Settings",
+    "type": "object",
+    "required": [],
+    "properties": {
+      "bench_time_client": {
+        "title": "Bench Time: Clients",
+        "type": "string",
+        "format": "date-time"
+      },
+      "bench_time_disabled_client": {
+        "title": "Bench Time: Disabled Clients",
+        "type": "string",
+        "format": "date-time"
+      }
+    }
+  },
+  "app_settings": {
+    "repo": "",
+    "minorversion": null,
+    "callback": "SET_YOUR_CALLBACK_URL_FOR_oauth2",
+    "consumerKey": "ABGqYMlsHPPH5KbAzXYSRPiIk3SxxqhXUb5e90787DLRstrs5v",
+    "consumerSecret": "zsQhoDRuNKX1YXTvoNmIiq4IrcY1VKFH4Wrcdew8",
+    "serviceEndPoint": "https://quickbooks.api.intuit.com/",
+    "_id": "99fgv2be907f6a0d68a9e970"
+  },
+  "commands": [
+    {
+      "command": "basic",
+      "name": "Full Sync",
+      "description": "Syncs clients,disabled clients command"
+    },
+    {
+      "command": "join",
+      "name": "Join",
+      "description": ""
+    },
+    {
+      "command": "sync_customers",
+      "name": "Sync Clients",
+      "description": ""
+    }
+  ],
+  "app_category": "629c62fcff7a8a2dc7a21ba1",
+  "createdAt": "2022-09-13T19:56:11.345Z",
+  "updatedAt": "2022-09-13T21:02:39.881Z",
+  "__v": 0,
+  "actions": [
+    {
+      "action": "create_client",
+      "name": "create client",
+      "description": "create client .."
+    }
+  ],
+  "description": "QuickBooks is an accounting software package developed and marketed by Intuit.",
+  "logo": "https://designsystem.quickbooks.com/wp-content/uploads/2022/09/qb-logo-horizontal-preferred.svg",
+  "title": "QuickBooks"
+}

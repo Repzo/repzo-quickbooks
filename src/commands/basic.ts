@@ -1,7 +1,7 @@
 import Repzo from "repzo";
 import { CommandEvent } from "../types";
-
 import { commands, commandsList } from "./index.js";
+
 export const basic = async (commandEvent: CommandEvent) => {
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
     env: commandEvent.env,
@@ -16,7 +16,7 @@ export const basic = async (commandEvent: CommandEvent) => {
     console.log("basic sync");
 
     await commandLog.load(commandEvent.sync_id);
-    await commandLog.addDetail("Repzo Qoyod: Basic Sync").commit();
+    await commandLog.addDetail("Repzo QuickBooks: Basic Sync").commit();
 
     const required_syncing_commands = [
       "join",
