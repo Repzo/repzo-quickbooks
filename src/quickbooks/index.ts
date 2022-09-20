@@ -1,6 +1,7 @@
 import axios from "axios";
 import { v4 as uuid } from "uuid";
-import { Params, Service, Data, Headers } from "./types/index";
+import { Params, Data, Headers } from "./types/index";
+import { Customer } from "./types/customer";
 
 export default class QuickBooks {
   private oauthToken: string;
@@ -66,15 +67,15 @@ export default class QuickBooks {
   customer = {
     _path: `/v3/company/`,
     query: async (
-      params: Service.Customer.Find.Params
-    ): Promise<Service.Customer.Find.Result> => {
-      let res: Service.Customer.Find.Result = await this._fetch(params);
+      params: Customer.Find.Params
+    ): Promise<Customer.Find.Result> => {
+      let res: Customer.Find.Result = await this._fetch(params);
       return res;
     },
 
     create: async (
-      body: Service.Customer.Create.Body
-    ): Promise<Service.Customer.Create.Result> => {
+      body: Customer.Create.Body
+    ): Promise<Customer.Create.Result> => {
       let res = await this._create(this.customer._path, body);
       return res;
     },

@@ -1,12 +1,11 @@
 import { CommandEvent } from "../types";
 import Repzo from "repzo";
 
-import { QBCustomer } from "../quickbooks/types/customer";
 import QuickBooks from "../quickbooks/index.js";
 
 const _test = {
   access_token:
-    "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..VxuauXl33PDtaTowUoADVA.ghRgL1_umPpINguASGWty10GYbg24xwXcK5IgLVTWYskX6pBUUZBLq7_5Bn6NmwkzPKAs7F-3QCEG3L3MVIUNc8YNb_Yko8x645zNGWVLJJN_IljXhwrHIqGNLLmZOa2hMRZ-zZ49iKSZkurb1rz8qPBfjYMAxNg5C2eovX3cI7c_vNhSrP1t-LBrVpHQqbFUh2hhvDdtYAsQwoeFVw1-Y1H2UdNKy_1IkGnYAE584tokFTY_NtZKzN-lbjePza8qbu0morWRtgVf6-cSF1lJfpFQA_OONVmmIchg5Pm-hJ5i2z7tOAP3dvZ8C8X_RzC1R7dAYA7Rtq9VK6zja5RUO7rbVoa8Y-PEYGNTItIbCGwaFA2akGjXJ1GcGp2WfqRk5Zlqlzdu8vcKXvfrDBRN2si37FQQj-kyrXbXa8Y3eWX0-FJPHY2UbmppkDNmHpLYAiIsEJpCnf1h0rf1P7KA6bBIpveX8WJHveFbMcBj65ccXJgA3fVS_MRWok_StGvT_I8yxaOSke0yq_hi0IJBranvhpcZTlmH4T04klaEeSb3BG-DZ1sILxFCTGt--BBVioq_lRG_YgoeXDFB5SObjCaWvmetDAJQGpqIzbh7lPWLgq8wQO_oJ5ITSg3dH0ETCwZokWAnOn4_3xNLCkj_W3HA4fmhxNd4jAEKHciJXOcCL8wa-RzChUXDnhJRfWMXhbIDbrBYL7BvX3JASa-gz8Wg3RO7p_mR-NCp-QKh_jhppNQuwnY7Jm1jtjGmUwe.JRIkLkLP796tut5c4vVvFw",
+    "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..kN7M808c5q3iOaiGWz-T2Q.gURdFjCEw6-_5Lh0X1dLOjKE1-rgqLf-1vJH4f4wM6kj9J71jua-pZEYXiTKiIUt_7nhliunGRwE2aqUEJ48YvvY7dRa3JCtzfZNVHBQ05rFLRu-yUo2Y2sCWQntMK453AQ5wZTO_QtQsbL9ivVLAYMTljS2AHaLMj3bakC_FaReIoIPedzIuwW1WbVRziCYCVjlhzpzD-KvC0PgIrh4VcJIkfR3dwr4CuQlXEZTwVP03y4RtaJ1MtWvUxofx50yxg2vJx5tSXpjB-wVVq5kOujPJDR1_82_JXB5tBEG34c_bIA8BnAEXS-4j_VOsYj6p5ScQPSRP35f-6yq6GdRYoOZi-Tc-ZIBO6w4rRSbMepeGzZnpY8Pe2KQCoZyWcdIt4XNRce1ySFz0MUqG3vhCgspccqAoTJYmb7gN3mEAe5ZHNO_tiVuFxBPn2Yo4buYmczfUv3_tCPxvd-McRG1lmPaLdQqdU5dDdNM2GNLCuyX1IeqqiKPTc_SPXAvwnGtmXFOpHLQzKJjVISb8HBZLypMjlhnsO3oNEzcjXQ45oZ38-kPYcfMx_B9kl0zor8AkkA_O5ZQN9hjF48ZbdU4nzAzRyOUjS_4zzh1AcSBDXV8BR924btAnySUqek0m-57V31ky0yCljQsAvbwcSfXyi14yAB3mhrCG_64ubS2w2fRnjEBA29OM50BQA7qtvXNwdODQNQ-UOxwwgLbNsJwax677YrILfeglLdeUi7QhRGHO5HKFciXIAdi4-0kWtfp.eb2fQ17D6q_ApIbyRPz5xw",
   realmId: "4620816365241355500",
 };
 
@@ -74,7 +73,7 @@ export const customers = async (commandEvent: CommandEvent) => {
   }
 };
 
-const from_repzo_to_QuickBooks = (repzo_client: any): QBCustomer => {
+const from_repzo_to_QuickBooks = (repzo_client: any): any => {
   try {
     return {
       V4IDPseudonym: repzo_client.integration_meta?.qoyod_id,
