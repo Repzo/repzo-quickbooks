@@ -48,6 +48,7 @@ export default class QuickBooks {
     return res.data;
   }
 
+  /*   
   private async _update(path: string, body: Data, params?: Params) {
     let res = await axios.put(this.baseUrl + path, body, {
       params: { minorversion: this.minorversion, ...params },
@@ -62,7 +63,8 @@ export default class QuickBooks {
       headers: this.headers,
     });
     return res.data;
-  }
+  } 
+  */
 
   customer = {
     _path: `/v3/company/`,

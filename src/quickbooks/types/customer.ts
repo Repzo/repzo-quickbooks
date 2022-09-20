@@ -39,14 +39,17 @@ export namespace Customer {
     __v: number;
   }
   interface ClientBody {
-    FullyQualifiedName: string;
+    FullyQualifiedName?: string;
     DisplayName: string;
     Title: string;
     GivenName: string;
+    MiddleName: string;
     FamilyName: string;
     Suffix: string;
+    Notes?: string;
+    CompanyName?: string;
     PrimaryEmailAddr?: object;
-    BillAddr: BillAddr;
+    BillAddr?: BillAddr;
   }
 
   export namespace Find {

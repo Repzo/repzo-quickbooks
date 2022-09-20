@@ -5,13 +5,12 @@ export interface Params {
 export interface Data {
   [key: string]: any;
 }
-export interface Options {
-  env?: "staging" | "local" | "production";
-  headers?: { [key: string]: string };
-}
+
 export interface Headers {
   "Content-Type": string;
+  "Request-Id": string;
   Accept: string;
+  Authorization: string;
   [key: string]: string;
 }
 
