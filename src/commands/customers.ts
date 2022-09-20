@@ -1,14 +1,12 @@
 import { CommandEvent } from "../types";
 import Repzo from "repzo";
 
-// @ts-ignore
-// import QuickBooks from "node-quickbooks";
 import { QBCustomer } from "../quickbooks/types/customer";
 import QuickBooks from "../quickbooks/index.js";
 
 const _test = {
   access_token:
-    "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..fvLSi8590AWiyx3ZAu_0xw.4PLspKWgEYqe4jVguj3-t6AIoPRx2HNfYU3UVp9p4bNuj01SK2nu81uvmmhegu0J-zwGmAMmgbgqHwu5j4Sxco-0rNXuKjuSBFJOdQ_RyBge7FzSewNTgOn7fwNxu-SPB2OsICtawwsc3aX2Aszn4uSxzjKbCZivi9tbVBOQ7kKelKOtRrv6lH7hPT5dVIfQi-lSJp_91eTZurcfrt8WpCtAdOlE6n1R_YXRFTqVwKsLHdKhioITjvxfmYFRKpi4eKhp98b5bZeD6kIXU3Xh0S8IaOI01MM1wpLrP8wgoMcerAF-Xp6UJwMM8MXHh0fhsNBnUoJXao_0XKNDLFTAlZZa4_yNuTT1oBUd1P5ViqsVORpYTNpmmxD2QATHPOws7VyauY9brI4yMEC-mSe0uQxc7YCXdbrAWYYmFEQcq_KAB7GUzEyZxmSKXzG_llBc45dgTUeRCnGtaIRlJ2ncQak0_NMUkDHzLIrPx2CdwTQCYFONyRQv6toQYXChdlzGkbEJ2GBnRjCfqwTZdVVKxHNb16xNupZAYly6xpkjQj5GE-58wy4zrf4XiihpcJCWzboRwdbvGNYHVjF2SQ7Q1yBBQluIuwbzs8uSgxAeoW-k0IRPbWonniWIo7ousP0gl4IB_DP4UktMXLW0QgI9Ijkh3u9FiATAfjSbw9J_ycqlv0RxrNSNK6Ww5ByILdvcSLTcUc10biQS66ZJJtztB5bbAcmqjVl9RZfEWQRfpmRdJF-FttmykmIkMBYX2VvM.ujrN_BAIb_uhPJDiLppJKQ",
+    "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..VxuauXl33PDtaTowUoADVA.ghRgL1_umPpINguASGWty10GYbg24xwXcK5IgLVTWYskX6pBUUZBLq7_5Bn6NmwkzPKAs7F-3QCEG3L3MVIUNc8YNb_Yko8x645zNGWVLJJN_IljXhwrHIqGNLLmZOa2hMRZ-zZ49iKSZkurb1rz8qPBfjYMAxNg5C2eovX3cI7c_vNhSrP1t-LBrVpHQqbFUh2hhvDdtYAsQwoeFVw1-Y1H2UdNKy_1IkGnYAE584tokFTY_NtZKzN-lbjePza8qbu0morWRtgVf6-cSF1lJfpFQA_OONVmmIchg5Pm-hJ5i2z7tOAP3dvZ8C8X_RzC1R7dAYA7Rtq9VK6zja5RUO7rbVoa8Y-PEYGNTItIbCGwaFA2akGjXJ1GcGp2WfqRk5Zlqlzdu8vcKXvfrDBRN2si37FQQj-kyrXbXa8Y3eWX0-FJPHY2UbmppkDNmHpLYAiIsEJpCnf1h0rf1P7KA6bBIpveX8WJHveFbMcBj65ccXJgA3fVS_MRWok_StGvT_I8yxaOSke0yq_hi0IJBranvhpcZTlmH4T04klaEeSb3BG-DZ1sILxFCTGt--BBVioq_lRG_YgoeXDFB5SObjCaWvmetDAJQGpqIzbh7lPWLgq8wQO_oJ5ITSg3dH0ETCwZokWAnOn4_3xNLCkj_W3HA4fmhxNd4jAEKHciJXOcCL8wa-RzChUXDnhJRfWMXhbIDbrBYL7BvX3JASa-gz8Wg3RO7p_mR-NCp-QKh_jhppNQuwnY7Jm1jtjGmUwe.JRIkLkLP796tut5c4vVvFw",
   realmId: "4620816365241355500",
 };
 
@@ -25,6 +23,7 @@ export const customers = async (commandEvent: CommandEvent) => {
     });
 
     console.log(clients);
+    console.log(clients.QueryResponse.Customer[0]);
     // const test = await repzo.client.find({});
     const new_bench_time = new Date().toISOString();
     const bench_time_key = "bench_time_client";
