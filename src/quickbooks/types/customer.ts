@@ -106,9 +106,7 @@ export namespace Customer {
   }
 
   export namespace Create {
-    export interface Body extends ClientBody {
-      name: string;
-    }
+    export interface Body extends ClientBody {}
     export type Result = CustomerSchema;
   }
 
@@ -117,14 +115,7 @@ export namespace Customer {
     export interface Body extends ClientBody {
       Id: string;
       SyncToken: string;
-      DisplayName: string;
-      __v?: number;
     }
-    export type Result = CustomerSchema;
-  }
-
-  export namespace Remove {
-    export type ID = string;
     export type Result = CustomerSchema;
   }
 }

@@ -10,6 +10,7 @@ export interface QuickBooksConfig {
   oauthToken: string;
   realmId: string;
   minorversion?: number;
+  sandbox: boolean;
 }
 
 export interface Headers {

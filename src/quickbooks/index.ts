@@ -8,7 +8,7 @@ export default class QuickBooks {
   private baseUrl: string;
   private headers: Headers;
 
-  constructor(config: QuickBooksConfig, sandbox: boolean = false) {
+  constructor(config: QuickBooksConfig) {
     this.config = config;
     config.minorversion === undefined ? 55 : config.minorversion;
     this.headers = {
@@ -20,7 +20,7 @@ export default class QuickBooks {
     };
 
     this.baseUrl = "https://quickbooks.api.intuit.com/v3/company/";
-    if (sandbox === true)
+    if (config.sandbox === true)
       this.baseUrl = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
   }
 

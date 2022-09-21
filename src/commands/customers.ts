@@ -15,6 +15,7 @@ export const customers = async (commandEvent: CommandEvent) => {
     const qbo = new QuickBooks({
       oauthToken: _test.access_token,
       realmId: _test.realmId,
+      sandbox: true,
     });
 
     // convert SQL to ORM
