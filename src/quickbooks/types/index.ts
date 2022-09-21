@@ -6,6 +6,12 @@ export interface Data {
   [key: string]: any;
 }
 
+export interface QuickBooksConfig {
+  oauthToken: string;
+  realmId: string;
+  minorversion?: number;
+}
+
 export interface Headers {
   "Content-Type": string;
   "Request-Id": string;

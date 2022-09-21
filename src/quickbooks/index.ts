@@ -1,25 +1,22 @@
 import axios from "axios";
 import { v4 as uuid } from "uuid";
-import { Params, Data, Headers } from "./types/index";
+import { Params, Data, Headers, QuickBooksConfig } from "./types/index";
 import { Customer } from "./types/customer";
 
 export default class QuickBooks {
-  private oauthToken: string;
+  private config: QuickBooksConfig;
   private baseUrl: string;
-  private realmId: string;
-
   private headers: Headers;
-  public minorversion = 55;
 
-  constructor(oauthToken: string, realmId: string, sandbox: boolean = false) {
-    this.oauthToken = oauthToken;
-    this.realmId = realmId;
+  constructor(config: QuickBooksConfig, sandbox: boolean = false) {
+    this.config = config;
+    config.minorversion === undefined ? 55 : config.minorversion;
     this.headers = {
       "User-Agent": "repzo-quickbooks: version 0.0.1",
       "Content-Type": "application/json",
       Accept: "application/json",
       "Request-Id": uuid(),
-      Authorization: `Bearer ${this.oauthToken}`,
+      Authorization: `Bearer ${this.config.oauthToken}`,
     };
 
     this.baseUrl = "https://quickbooks.api.intuit.com/v3/company/";
@@ -28,38 +25,32 @@ export default class QuickBooks {
   }
 
   private async _fetch(path: string, params?: Params) {
-    let res = await axios.get(this.baseUrl + this.realmId + path, {
-      params: { ...params, minorversion: this.minorversion },
+    let res = await axios.get(this.baseUrl + this.config.realmId + path, {
+      params: { ...params, minorversion: this.config.minorversion },
       headers: this.headers,
     });
     return res.data;
   }
 
   private async _create(path: string, body: Data, params?: Params) {
-    let res = await axios.post(this.baseUrl + this.realmId + path, body, {
-      params: { minorversion: this.minorversion, ...params },
-      headers: this.headers,
-    });
+    let res = await axios.post(
+      this.baseUrl + this.config.realmId + path,
+      body,
+      {
+        params: { minorversion: this.config.minorversion, ...params },
+        headers: this.headers,
+      }
+    );
     return res.data;
   }
 
-  /*   
   private async _update(path: string, body: Data, params?: Params) {
     let res = await axios.put(this.baseUrl + path, body, {
-      params: { minorversion: this.minorversion, ...params },
+      params: { minorversion: this.config.minorversion, ...params },
       headers: this.headers,
     });
     return res.data;
   }
-
-  private async _delete(path: string, params?: Params) {
-    let res = await axios.delete(this.baseUrl + path, {
-      params: { minorversion: this.minorversion, ...params },
-      headers: this.headers,
-    });
-    return res.data;
-  } 
-  */
 
   customer = {
     _path: `/query`,
