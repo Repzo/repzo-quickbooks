@@ -9,23 +9,27 @@ export const customers = async (commandEvent: CommandEvent) => {
       env: commandEvent.env,
     });
 
-    const repzoObj = await repzo.client.find();
-    console.log(repzoObj.data[0]);
+    const repzoObj = await repzo.client.find({
+      integration_meta: {
+        id: "unipaljo_C1",
+      },
+    });
+    console.log(repzoObj.data);
     // get QuickBooks customer
-    const qbo = new QuickBooks({
+    /*   const qbo = new QuickBooks({
       oauthToken: _test.access_token,
       realmId: _test.realmId,
       sandbox: true,
-    });
+    }); */
 
     // convert SQL to ORM
-    const qboClients = await qbo.customer.query({
+    /*   const qboClients = await qbo.customer.query({
       query:
         "select * from Customer Where Metadata.LastUpdatedTime > '2015-03-01'",
     });
 
     let QuickBooksCustomer = qboClients.QueryResponse.Customer[0];
-    console.log(QuickBooksCustomer);
+    console.log(QuickBooksCustomer); */
     // await repzo.client.create({
     //   name: QuickBooksCustomer.GivenName,
     // });
