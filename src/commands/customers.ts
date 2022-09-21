@@ -5,7 +5,7 @@ import QuickBooks from "../quickbooks/index.js";
 
 const _test = {
   access_token:
-    "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..kN7M808c5q3iOaiGWz-T2Q.gURdFjCEw6-_5Lh0X1dLOjKE1-rgqLf-1vJH4f4wM6kj9J71jua-pZEYXiTKiIUt_7nhliunGRwE2aqUEJ48YvvY7dRa3JCtzfZNVHBQ05rFLRu-yUo2Y2sCWQntMK453AQ5wZTO_QtQsbL9ivVLAYMTljS2AHaLMj3bakC_FaReIoIPedzIuwW1WbVRziCYCVjlhzpzD-KvC0PgIrh4VcJIkfR3dwr4CuQlXEZTwVP03y4RtaJ1MtWvUxofx50yxg2vJx5tSXpjB-wVVq5kOujPJDR1_82_JXB5tBEG34c_bIA8BnAEXS-4j_VOsYj6p5ScQPSRP35f-6yq6GdRYoOZi-Tc-ZIBO6w4rRSbMepeGzZnpY8Pe2KQCoZyWcdIt4XNRce1ySFz0MUqG3vhCgspccqAoTJYmb7gN3mEAe5ZHNO_tiVuFxBPn2Yo4buYmczfUv3_tCPxvd-McRG1lmPaLdQqdU5dDdNM2GNLCuyX1IeqqiKPTc_SPXAvwnGtmXFOpHLQzKJjVISb8HBZLypMjlhnsO3oNEzcjXQ45oZ38-kPYcfMx_B9kl0zor8AkkA_O5ZQN9hjF48ZbdU4nzAzRyOUjS_4zzh1AcSBDXV8BR924btAnySUqek0m-57V31ky0yCljQsAvbwcSfXyi14yAB3mhrCG_64ubS2w2fRnjEBA29OM50BQA7qtvXNwdODQNQ-UOxwwgLbNsJwax677YrILfeglLdeUi7QhRGHO5HKFciXIAdi4-0kWtfp.eb2fQ17D6q_ApIbyRPz5xw",
+    "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..11zwmt1s6J0rg993v_9yGA.LskJNYOZF4uQxeJc6DcZFZ58caLqiLaBYn_k-mHJkMmkNkxhV6BUO3UISqNhE-dqAB41Ydy3rXhDTJTeQ2vZYyXAVwt8UFSEr0Su1ulHjzqRqpR5FBGYaMJ5eQcAVFHOF75eXQxDoCLotW_LfVS9rcYB-CssDBozzYFv5cToMevqk_tWXj8s8hsUhTdJC0kBPTgYHNx_LNWsj6-WGdiA2tjzBBVWJFf-iSbLyqr-hKKdFLh7b5qkMYukcCHz6SKKeIdcMsoZLmXVyU_KFy5QmVCb41m221TaaH7gwU_FkEyEYfDbIacWGQoTZH9PEVzeIEfOIcgiWVaKVQdX4aGaK83cQTu9R4KED4GoUmUErXg6k1OeTADRiFUY3t5p8QCjuT887lu5asDj7zwqQ-tTUbaGqXfMMBpCODyGPSnrPesPBXHOvoat1hBn1G_dXCOgPq7uLtsm5EMZSm6bTj1q35nJsaRDVz3_3AjL0JBp5z-k2Oy-dTudMjvSoYZL5pFrEt6jqlJ0jc-6rb57ElFgGR1KaiNMQys6sHS2RZFxzqYIxFTyvSBMZyoGRMZK7Bv9TxyHYfqHrNGVgDqyrYp1BzyErZ7-1hvAAD27ZfdJ2rdbdZwIfEShKYYYySh-bkV6A6iEo-GunFnTN61wYuI414CVTa7NBNuiwNhCCrdo2Muz0vIj2NssTjbYZEBrgVEJZ7QctD4hRwKbTGEQV5za146MX-Tzw8EU6q9YFYhSpODaSsIukakSUbtC2fwO_yP-.J1E7NetnEvkM4_9QrlW4Ig",
   realmId: "4620816365241355500",
 };
 
@@ -15,6 +15,8 @@ export const customers = async (commandEvent: CommandEvent) => {
       env: commandEvent.env,
     });
 
+    const repzoObj = await repzo.client.find();
+    console.log(repzoObj.data[0]);
     // get QuickBooks customer
     const qbo = new QuickBooks(_test.access_token, _test.realmId, true);
     const qboClients = await qbo.customer.query({
@@ -24,7 +26,6 @@ export const customers = async (commandEvent: CommandEvent) => {
 
     let QuickBooksCustomer = qboClients.QueryResponse.Customer[0];
 
-    // const repzoObj = await repzo.client.find();
     await repzo.client.create({
       name: QuickBooksCustomer.GivenName,
     });
