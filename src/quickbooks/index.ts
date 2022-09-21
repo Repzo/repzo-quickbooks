@@ -71,5 +71,13 @@ export default class QuickBooks {
       let res = await this._create(this.customer._path, body);
       return res;
     },
+
+    update: async (
+      _path: `/customer`,
+      body: Customer.Update.Body
+    ): Promise<Customer.Update.Result> => {
+      let res = await this._update(this.customer._path, body);
+      return res;
+    },
   };
 }
