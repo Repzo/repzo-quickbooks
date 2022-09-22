@@ -73,14 +73,12 @@ const sync_customers_from_QuickBooks_to_repzo = async (
             contact_title: cutomer.DisplayName,
             country: cutomer.BillAddr?.CountrySubDivisionCode,
             city: cutomer.BillAddr?.City,
-            // lat:
-            //   cutomer.BillAddr?.Lat !== null
-            //     ? Number(cutomer.BillAddr?.Lat)
-            //     : 0,
-            // lng:
-            //   cutomer.BillAddr?.Long !== null
-            //     ? Number(cutomer.BillAddr?.Long)
-            //     : 0,
+            lat: !isNaN(Number(cutomer.BillAddr?.Lat))
+              ? Number(cutomer.BillAddr?.Lat)
+              : 0.0,
+            lng: !isNaN(Number(cutomer.BillAddr?.Long))
+              ? Number(cutomer.BillAddr?.Long)
+              : 0.0,
             integrated_client_balance: Number(cutomer.Balance) * 1000,
             cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
             email: cutomer.PrimaryEmailAddr?.Address,
@@ -104,14 +102,12 @@ const sync_customers_from_QuickBooks_to_repzo = async (
             client_code: `QB_${cutomer.Id}`,
             country: cutomer.BillAddr?.CountrySubDivisionCode,
             city: cutomer.BillAddr?.City,
-            // lat:
-            //   cutomer.BillAddr?.Lat !== null
-            //     ? Number(cutomer.BillAddr?.Lat)
-            //     : 0,
-            // lng:
-            //   cutomer.BillAddr?.Long !== null
-            //     ? Number(cutomer.BillAddr?.Long)
-            //     : 0,
+            lat: !isNaN(Number(cutomer.BillAddr?.Lat))
+              ? Number(cutomer.BillAddr?.Lat)
+              : 0.0,
+            lng: !isNaN(Number(cutomer.BillAddr?.Long))
+              ? Number(cutomer.BillAddr?.Long)
+              : 0.0,
             integrated_client_balance: Number(cutomer.Balance) * 1000,
             cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
             email: cutomer.PrimaryEmailAddr?.Address,
