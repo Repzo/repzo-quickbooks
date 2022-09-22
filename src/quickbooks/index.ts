@@ -1,81 +1,82 @@
 import axios from "axios";
 import { v4 as uuid } from "uuid";
-import { Params, Service, Data, Headers } from "./types/index";
+import { Params, Data, Headers, QuickBooksConfig } from "./types/index";
+import { Customer } from "./types/customer";
 
 export default class QuickBooks {
-  private oauthToken: string;
+  private config: QuickBooksConfig;
   private baseUrl: string;
-  private queryPath: string;
-  private realmId: string;
-
   private headers: Headers;
-  public minorversion = 55;
 
-  constructor(oauthToken: string, realmId: string, sandbox: boolean = false) {
-    this.oauthToken = oauthToken;
-    this.realmId = realmId;
-    this.queryPath = "/v3/company/";
+  constructor(config: QuickBooksConfig) {
+    this.config = config;
+    config.minorversion === undefined ? 55 : config.minorversion;
     this.headers = {
       "User-Agent": "repzo-quickbooks: version 0.0.1",
       "Content-Type": "application/json",
       Accept: "application/json",
       "Request-Id": uuid(),
-      Authorization: `Bearer ${this.oauthToken}`,
+      Authorization: `Bearer ${this.config.oauthToken}`,
     };
 
-    this.baseUrl = "https://quickbooks.api.intuit.com";
-    if (sandbox === true)
-      this.baseUrl = "https://sandbox-quickbooks.api.intuit.com";
+    this.baseUrl = "https://quickbooks.api.intuit.com/v3/company/";
+    if (config.sandbox === true)
+      this.baseUrl = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
   }
 
-  private async _fetch(params?: Params) {
-    let res = await axios.get(
-      this.baseUrl + this.queryPath + this.realmId + "/query",
+  private async _fetch(path: string, params?: Params) {
+    let res = await axios.get(this.baseUrl + this.config.realmId + path, {
+      params: { ...params, minorversion: this.config.minorversion },
+      headers: this.headers,
+    });
+    return res.data;
+  }
+
+  private async _create(path: string, body: Data, params?: Params) {
+    let res = await axios.post(
+      this.baseUrl + this.config.realmId + path,
+      body,
       {
-        params: { ...params, minorversion: this.minorversion },
+        params: { minorversion: this.config.minorversion, ...params },
         headers: this.headers,
       }
     );
     return res.data;
   }
 
-  private async _create(path: string, body: Data, params?: Params) {
-    let res = await axios.post(this.baseUrl + path, body, {
-      params: { minorversion: this.minorversion, ...params },
-      headers: this.headers,
-    });
-    return res.data;
-  }
-
   private async _update(path: string, body: Data, params?: Params) {
     let res = await axios.put(this.baseUrl + path, body, {
-      params: { minorversion: this.minorversion, ...params },
-      headers: this.headers,
-    });
-    return res.data;
-  }
-
-  private async _delete(path: string, params?: Params) {
-    let res = await axios.delete(this.baseUrl + path, {
-      params: { minorversion: this.minorversion, ...params },
+      params: { minorversion: this.config.minorversion, ...params },
       headers: this.headers,
     });
     return res.data;
   }
 
   customer = {
-    _path: `/v3/company/`,
+    _path: `/query`,
     query: async (
-      params: Service.Customer.Find.Params
-    ): Promise<Service.Customer.Find.Result> => {
-      let res: Service.Customer.Find.Result = await this._fetch(params);
+      params: Customer.Find.Params
+    ): Promise<Customer.Find.Result> => {
+      let res: Customer.Find.Result = await this._fetch(
+        this.customer._path,
+        params
+      );
       return res;
     },
 
     create: async (
-      body: Service.Customer.Create.Body
-    ): Promise<Service.Customer.Create.Result> => {
+      _path: `/customer`,
+      body: Customer.Create.Body
+    ): Promise<Customer.Create.Result> => {
       let res = await this._create(this.customer._path, body);
+      return res;
+    },
+
+    update: async (
+      _path: `/customer`,
+      body: Customer.Update.Body
+    ): Promise<Customer.Update.Result> => {
+      let res = await this._update(this.customer._path, body);
       return res;
     },
   };

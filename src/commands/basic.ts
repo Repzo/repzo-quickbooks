@@ -14,7 +14,6 @@ export const basic = async (commandEvent: CommandEvent) => {
   );
   try {
     console.log("basic sync");
-
     await commandLog.load(commandEvent.sync_id);
     await commandLog.addDetail("Repzo QuickBooks: Basic Sync").commit();
 
