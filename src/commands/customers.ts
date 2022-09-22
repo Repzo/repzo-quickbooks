@@ -1,5 +1,7 @@
 import { CommandEvent } from "../types";
 import Repzo from "repzo";
+import { Service } from "repzo/src/types";
+import { Customer } from "../quickbooks/types/customer";
 import QuickBooks from "../quickbooks/index.js";
 import _test from "../tests/forms/token_example.js";
 
@@ -8,28 +10,33 @@ export const customers = async (commandEvent: CommandEvent) => {
     const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
       env: commandEvent.env,
     });
+    let repzoClients = await get_all_repzo_clients(repzo);
 
-    const repzoObj = await repzo.client.find({
-      integration_meta: {
-        id: "unipaljo_C1",
-      },
-    });
-    console.log(repzoObj.data);
-    // get QuickBooks customer
-    /*   const qbo = new QuickBooks({
+    repzoClients = repzoClients.filter(
+      (i) => i.integration_meta["QuickBooks_id"] !== undefined
+    );
+
+    /* 
+    const qbo = new QuickBooks({
       oauthToken: _test.access_token,
       realmId: _test.realmId,
       sandbox: true,
-    }); */
-
-    // convert SQL to ORM
-    /*   const qboClients = await qbo.customer.query({
+    });
+    const qboClients = await qbo.customer.query({
       query:
         "select * from Customer Where Metadata.LastUpdatedTime > '2015-03-01'",
-    });
+    }); */
 
-    let QuickBooksCustomer = qboClients.QueryResponse.Customer[0];
-    console.log(QuickBooksCustomer); */
+    // let QuickBooksCustomer = qboClients.QueryResponse.Customer;
+
+    // await sync_customers_QuickBooks_repzo(QuickBooksCustomer, repzoClients);
+    console.log(repzoClients);
+    // console.log(QuickBooksCustomer);
+
+    // get QuickBooks customer
+
+    // convert SQL to ORM
+
     // await repzo.client.create({
     //   name: QuickBooksCustomer.GivenName,
     // });
@@ -84,18 +91,45 @@ export const customers = async (commandEvent: CommandEvent) => {
   }
 };
 
-const from_repzo_to_QuickBooks = (repzo_client: any): any => {
+const sync_customers_QuickBooks_repzo = async (
+  QuickBooks_customers: Customer.Find.Result[],
+  // repzo_client: Service.Client.Get.Result[]
+  repzo_client: any[]
+) => {
   try {
-    return {
-      V4IDPseudonym: repzo_client.integration_meta?.qoyod_id,
-      DisplayName: repzo_client.name,
-      CompanyName: "", // ????
-      PrimaryEmailAddr: { Address: repzo_client.email },
-      PrimaryPhone: { FreeFormNumber: repzo_client.phone },
-      ResaleNum: repzo_client.tax_number,
-      Active: !repzo_client.disabled,
-    };
-  } catch (e) {
-    throw e;
+    repzo_client = repzo_client.filter(
+      (i) => i.integration_meta["QuickBooks_id"] !== undefined
+    );
+    QuickBooks_customers.forEach((element) => {
+      // chack if element id included in repzo_client[] integration_meta
+      // else
+      // create a new client to repzo
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const get_all_repzo_clients = async (
+  repzo: Repzo
+): //: Promise<Service.Client.Get.Result[]>
+Promise<any[]> => {
+  try {
+    const per_page = 5000;
+    let next_page_url = undefined;
+    let repzo_clients: any[];
+    repzo_clients = [];
+    while (next_page_url !== null) {
+      let repzoObj = await repzo.client.find({
+        page: 1,
+        per_page,
+      });
+      next_page_url = repzoObj.next_page_url;
+      repzo_clients = [...repzo_clients, ...repzoObj.data];
+    }
+    return repzo_clients;
+  } catch (err) {
+    console.error(err);
+    return [];
   }
 };
