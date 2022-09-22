@@ -49,22 +49,80 @@ const sync_customers_from_QuickBooks_to_repzo = async (
       qb,
       bench_time_client
     );
-
+    // console.log(repzo_client[0]);
     repzo_client = repzo_client.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
 
-    qb_customers.QueryResponse.Customer.forEach(async (element) => {
+    // console.log(qb_customers.QueryResponse.Customer[3]);
+
+    qb_customers.QueryResponse.Customer.forEach(async (cutomer) => {
       let existClient = repzo_client.filter(
-        (i) => i.integration_meta?.QuickBooks_id === element.Id
+        (i) =>
+          i.integration_meta?.QuickBooks_id === cutomer.Id ||
+          i.client_code === `QB_${cutomer.Id}`
       );
-      if (existClient) {
-        // update it
+      if (
+        existClient[0]?.integration_meta?.QuickBooks_last_sync >
+        cutomer.MetaData.LastUpdatedTime
+      ) {
+        try {
+          console.log(`update repzo client id -- ${existClient[0]._id} ...`);
+          await repzo.client.update(existClient[0]._id, {
+            name: cutomer.GivenName,
+            contact_title: cutomer.DisplayName,
+            country: cutomer.BillAddr?.CountrySubDivisionCode,
+            city: cutomer.BillAddr?.City,
+            // lat:
+            //   cutomer.BillAddr?.Lat !== null
+            //     ? Number(cutomer.BillAddr?.Lat)
+            //     : 0,
+            // lng:
+            //   cutomer.BillAddr?.Long !== null
+            //     ? Number(cutomer.BillAddr?.Long)
+            //     : 0,
+            integrated_client_balance: Number(cutomer.Balance) * 1000,
+            cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
+            email: cutomer.PrimaryEmailAddr?.Address,
+            integration_meta: {
+              QuickBooks_id: cutomer.Id,
+              QuickBooks_last_sync: new Date().toISOString(),
+            },
+          });
+        } catch (err) {
+          console.error(err);
+        }
       } else {
         //create a new  repzo client
-        await repzo.client.create({
-          name: element.GivenName,
-        });
+        try {
+          console.log(
+            `create a new repzo client name -- ${cutomer.GivenName} ...`
+          );
+          await repzo.client.create({
+            name: cutomer.DisplayName,
+            contact_title: cutomer.GivenName,
+            client_code: `QB_${cutomer.Id}`,
+            country: cutomer.BillAddr?.CountrySubDivisionCode,
+            city: cutomer.BillAddr?.City,
+            // lat:
+            //   cutomer.BillAddr?.Lat !== null
+            //     ? Number(cutomer.BillAddr?.Lat)
+            //     : 0,
+            // lng:
+            //   cutomer.BillAddr?.Long !== null
+            //     ? Number(cutomer.BillAddr?.Long)
+            //     : 0,
+            integrated_client_balance: Number(cutomer.Balance) * 1000,
+            cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
+            email: cutomer.PrimaryEmailAddr?.Address,
+            integration_meta: {
+              QuickBooks_id: cutomer.Id,
+              QuickBooks_last_sync: new Date().toISOString(),
+            },
+          });
+        } catch (err) {
+          console.error(err);
+        }
       }
     });
   } catch (err) {

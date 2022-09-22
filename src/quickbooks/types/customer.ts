@@ -60,6 +60,7 @@ export namespace Customer {
     SecondaryTaxIdentifier?: string;
     PreferredDeliveryMethod?: string;
     Fax?: string;
+    Balance: number;
     Active?: boolean;
     Source?: string;
     PaymentMethodRef?: PaymentMethodRef;
