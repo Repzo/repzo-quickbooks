@@ -11,6 +11,12 @@ export const customers = async (commandEvent: CommandEvent) => {
     const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
       env: commandEvent.env,
     });
+    // init commandLog
+    const commandLog = new Repzo.CommandLog(
+      repzo,
+      commandEvent.app,
+      commandEvent.command
+    );
     // init QuickBooks object
     const qbo = new QuickBooks({
       oauthToken: _test.access_token,
@@ -18,21 +24,17 @@ export const customers = async (commandEvent: CommandEvent) => {
       sandbox: true,
     });
 
-    const new_bench_time = new Date().toISOString();
-
     // sync_customers_from_QuickBooks_to_repzo
-    await sync_customers_from_QuickBooks_to_repzo(repzo, qbo, "2015-03-01");
+    await sync_customers_from_QuickBooks_to_repzo(
+      repzo,
+      qbo,
+      commandEvent.app.formData?.bench_time_client
+    );
 
-    // const commandLog = new Repzo.CommandLog(
-    //   repzo,
-    //   commandEvent.app,
-    //   commandEvent.command
-    // );
-
-    // commandLog
-    //   .setStatus("success")
-    //   .setBody("Complete test QuickBooks custommers Sync")
-    //   .commit();
+    await commandLog
+      .setStatus("success")
+      .setBody("Complete Sync QuickBooks custommers to Repzo")
+      .commit();
   } catch (err) {
     console.error(err);
   }
@@ -49,14 +51,10 @@ const sync_customers_from_QuickBooks_to_repzo = async (
       qb,
       bench_time_client
     );
-    // console.log(repzo_client[0]);
     repzo_client = repzo_client.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
-
-    // console.log(qb_customers.QueryResponse.Customer[3]);
-
-    qb_customers.QueryResponse.Customer.forEach(async (cutomer) => {
+    qb_customers.QueryResponse.Customer?.forEach(async (cutomer) => {
       let existClient = repzo_client.filter(
         (i) =>
           i.integration_meta?.QuickBooks_id === cutomer.Id ||
@@ -68,27 +66,8 @@ const sync_customers_from_QuickBooks_to_repzo = async (
       ) {
         try {
           console.log(`update repzo client id -- ${existClient[0]._id} ...`);
-          await repzo.client.update(existClient[0]._id, {
-            name: cutomer.GivenName,
-            contact_title: cutomer.DisplayName,
-            country: cutomer.BillAddr?.CountrySubDivisionCode,
-            city: cutomer.BillAddr?.City,
-            // lat:
-            //   cutomer.BillAddr?.Lat !== null
-            //     ? Number(cutomer.BillAddr?.Lat)
-            //     : 0,
-            // lng:
-            //   cutomer.BillAddr?.Long !== null
-            //     ? Number(cutomer.BillAddr?.Long)
-            //     : 0,
-            integrated_client_balance: Number(cutomer.Balance) * 1000,
-            cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
-            email: cutomer.PrimaryEmailAddr?.Address,
-            integration_meta: {
-              QuickBooks_id: cutomer.Id,
-              QuickBooks_last_sync: new Date().toISOString(),
-            },
-          });
+          let repzo_client = map_customers(cutomer);
+          await repzo.client.update(existClient[0]._id, repzo_client);
         } catch (err) {
           console.error(err);
         }
@@ -98,27 +77,10 @@ const sync_customers_from_QuickBooks_to_repzo = async (
           console.log(
             `create a new repzo client name -- ${cutomer.GivenName} ...`
           );
+          let repzo_client = map_customers(cutomer);
           await repzo.client.create({
-            name: cutomer.DisplayName,
-            contact_title: cutomer.GivenName,
             client_code: `QB_${cutomer.Id}`,
-            country: cutomer.BillAddr?.CountrySubDivisionCode,
-            city: cutomer.BillAddr?.City,
-            // lat:
-            //   cutomer.BillAddr?.Lat !== null
-            //     ? Number(cutomer.BillAddr?.Lat)
-            //     : 0,
-            // lng:
-            //   cutomer.BillAddr?.Long !== null
-            //     ? Number(cutomer.BillAddr?.Long)
-            //     : 0,
-            integrated_client_balance: Number(cutomer.Balance) * 1000,
-            cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
-            email: cutomer.PrimaryEmailAddr?.Address,
-            integration_meta: {
-              QuickBooks_id: cutomer.Id,
-              QuickBooks_last_sync: new Date().toISOString(),
-            },
+            ...repzo_client,
           });
         } catch (err) {
           console.error(err);
@@ -170,4 +132,28 @@ const get_all_QuickBooks_customers = async (
   } catch (err) {
     throw err;
   }
+};
+
+const map_customers = (
+  cutomer: Customer.CustomerObject
+): Service.Client.Create.Body => {
+  return {
+    name: cutomer.DisplayName,
+    contact_title: cutomer.GivenName,
+    country: cutomer.BillAddr?.CountrySubDivisionCode,
+    city: cutomer.BillAddr?.City,
+    lat: !isNaN(Number(cutomer.BillAddr?.Lat))
+      ? Number(cutomer.BillAddr?.Lat)
+      : 0.0,
+    lng: !isNaN(Number(cutomer.BillAddr?.Long))
+      ? Number(cutomer.BillAddr?.Long)
+      : 0.0,
+    integrated_client_balance: Number(cutomer.Balance) * 1000,
+    cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
+    email: cutomer.PrimaryEmailAddr?.Address,
+    integration_meta: {
+      QuickBooks_id: cutomer.Id,
+      QuickBooks_last_sync: new Date().toISOString(),
+    },
+  };
 };

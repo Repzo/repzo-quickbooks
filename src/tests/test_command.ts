@@ -3,12 +3,12 @@ import { Commands } from "../index.js";
 
 let commandEvent: CommandEvent = {
   app: {
-    _id: "628397700cf4f813aa63b52c",
-    name: "repzo",
+    _id: "63300b0c0a560f651ce96d9e",
+    name: "repzo-integration-Quickbooks",
     disabled: false,
     available_app: {
-      _id: "6320f4a1685a61494813a41f",
-      name: "repzo-QuickBooks",
+      _id: "63300b0c0a560f651ce96d9e",
+      name: "repzo-integration-Quickbooks",
       disabled: false,
       JSONSchema: {
         title: "QuickBooks Integration Settings",
@@ -35,29 +35,22 @@ let commandEvent: CommandEvent = {
       },
       bench_time_client: "2022-05-18T09:16:00.000Z",
       serviceApiKey: "6a0226eb2f2fabdffbffd9b22",
-      repzoApiKey: "lGc9XGe2hVuNELHjaK2i5EhobdpEv_R2Fez_t-xwXAw",
+      repzoApiKey: "j9j3bHrGso7VR4hLsSH9n6FevaDf0eQ6EHljaHwkqEQ",
       paymentAccountId: 7,
       errorEmail: "ahmed.khaled@repzoapp.com",
     },
     options_formData: {},
-    company_namespace: ["demosv"],
+    company_namespace: ["quickbooksintg"],
     createdAt: "2022-05-17T12:39:12.338Z",
     updatedAt: "2022-05-18T10:26:15.172Z",
     __v: 0,
   },
 
-  command: "customers",
-  // command: "update_disable_client",
-  // command: "sync_inventory",
-  // command: "sync_tax",
-  // command: "sync_category",
-  // command: "sync_measureunit",
-  // command: "sync_measureunit_family",
-  // command: "add_product",
-  // command: "adjust_inventory",
+  // command: "sync_client",
+  command: "sync_products",
 
   end_of_day: "04:00",
-  nameSpace: ["demosv"], // demosv
+  nameSpace: ["quickbooksintg"], // quickbooksintg
   timezone: "Asia/Amman",
   meta: '{\r\n "test":"hi", "invoice_id": "626a58f9eaf66e59747e0460" \r\n}',
   sync_id: undefined,

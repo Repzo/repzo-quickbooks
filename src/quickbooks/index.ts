@@ -2,6 +2,7 @@ import axios from "axios";
 import { v4 as uuid } from "uuid";
 import { Params, Data, Headers, QuickBooksConfig } from "./types/index";
 import { Customer } from "./types/customer";
+import { Item } from "./types/item";
 
 export default class QuickBooks {
   private config: QuickBooksConfig;
@@ -76,6 +77,33 @@ export default class QuickBooks {
       _path: `/customer`,
       body: Customer.Update.Body
     ): Promise<Customer.Update.Result> => {
+      let res = await this._update(this.customer._path, body);
+      return res;
+    },
+  };
+
+  item = {
+    _path: `/query`,
+    query: async (params: Item.Find.Params): Promise<Item.Find.Result> => {
+      let res: Item.Find.Result = await this._fetch(
+        this.customer._path,
+        params
+      );
+      return res;
+    },
+
+    create: async (
+      _path: `/item`,
+      body: Item.Create.Body
+    ): Promise<Item.Create.Result> => {
+      let res = await this._create(this.customer._path, body);
+      return res;
+    },
+
+    update: async (
+      _path: `/item`,
+      body: Item.Update.Body
+    ): Promise<Item.Update.Result> => {
       let res = await this._update(this.customer._path, body);
       return res;
     },

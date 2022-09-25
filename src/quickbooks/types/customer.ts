@@ -42,7 +42,7 @@ export namespace Customer {
     CreateTime: Date;
     LastUpdatedTime: Date;
   }
-  export interface CustomerSchema {
+  export interface CustomerObject {
     Id: string;
     SyncToken: string;
     DisplayName: string;
@@ -96,7 +96,7 @@ export namespace Customer {
     };
     export interface Result {
       QueryResponse: {
-        Customer: CustomerSchema[];
+        Customer: CustomerObject[];
       };
       time: Date;
     }
@@ -108,7 +108,7 @@ export namespace Customer {
 
   export namespace Create {
     export interface Body extends ClientBody {}
-    export type Result = CustomerSchema;
+    export type Result = CustomerObject;
   }
 
   export namespace Update {
@@ -117,6 +117,6 @@ export namespace Customer {
       Id: string;
       SyncToken: string;
     }
-    export type Result = CustomerSchema;
+    export type Result = CustomerObject;
   }
 }

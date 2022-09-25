@@ -1,18 +1,19 @@
 import { Command, CommandEvent } from "./../types";
 
 import { join } from "./join.js";
-import { basic } from "./basic.js";
+// import { basic } from "./basic.js";
 import { customers } from "./customers.js";
+import { items } from "./items.js";
 
 export const commands = async (CommandEvent: CommandEvent) => {
   switch (CommandEvent.command) {
     case "join":
       return await join(CommandEvent);
 
-    case "basic":
-      return await basic(CommandEvent);
+    case "sync_products":
+      return await items(CommandEvent);
 
-    case "customers":
+    case "sync_client":
       return await customers(CommandEvent);
     default:
       throw `Route: ${CommandEvent.command} not found`;
@@ -31,8 +32,13 @@ export const commandsList: Command[] = [
     description: "",
   },
   {
-    command: "customers",
+    command: "sync_client",
     name: "Sync Clients",
+    description: "",
+  },
+  {
+    command: "sync_products",
+    name: "Sync products",
     description: "",
   },
 ];
