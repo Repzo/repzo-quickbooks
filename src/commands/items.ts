@@ -31,10 +31,10 @@ export const items = async (commandEvent: CommandEvent) => {
       commandEvent.app.formData?.bench_time_client
     );
 
-    await commandLog
-      .setStatus("success")
-      .setBody("Complete Sync QuickBooks custommers to Repzo")
-      .commit();
+    // await commandLog
+    //   .setStatus("success")
+    //   .setBody("Complete Sync QuickBooks custommers to Repzo")
+    //   .commit();
   } catch (err) {
     console.error(err);
   }
@@ -46,17 +46,15 @@ const sync_products_from_QuickBooks_to_repzo = async (
   bench_time_client: string
 ) => {
   try {
-    let repzo_categories = await get_all_repzo_categories(repzo);
-    const qb_categories = await get_all_QuickBooks_categories(qb);
+    // let repzo_categories = await get_all_repzo_categories(repzo);
 
-    const qb_items = await get_all_QuickBooks_items(qb, 2);
+    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 2);
+    const repzo_default_category = await get_repzo_default_category(repzo);
     let repzo_products = await get_all_repzo_products(repzo);
 
-    console.dir(repzo_categories, { depth: null });
-    console.dir(repzo_products, { depth: null });
-
-    console.dir(qb_categories, { depth: null });
-    console.dir(qb_items, { depth: null });
+    // console.dir(repzo_products, { depth: null });
+    console.dir(repzo_default_category, { depth: null });
+    // console.dir(qb_items, { depth: null });
     // repzo_client = repzo_client.filter(
     //   (i) => i.integration_meta?.QuickBooks_id !== undefined
     // );
@@ -131,36 +129,35 @@ const get_all_repzo_products = async (
   }
 };
 
-const get_all_repzo_categories = async (
+const get_repzo_default_category = async (
   repzo: Repzo
-): Promise<Service.Product.Get.Result[]> => {
+): Promise<Service.Category.Get.Result> => {
   try {
-    const per_page = 5000;
-    let next_page_url = undefined;
-    let repzo_categories: any[];
-    repzo_categories = [];
-    while (next_page_url !== null) {
-      let repzoObj = await repzo.category.find({
-        page: 1,
-        per_page,
+    let repzoObj = await repzo.category.find({
+      name: "default",
+      disabled: false,
+    });
+    if (repzoObj.data[0]) {
+      return repzoObj.data[0];
+    } else {
+      return await repzo.category.create({
+        name: "default",
+        local_name: "Created by Quickbooks",
       });
-      next_page_url = repzoObj.next_page_url;
-      repzo_categories = [...repzo_categories, ...repzoObj.data];
     }
-    return repzo_categories;
   } catch (err) {
-    console.error(err);
-    return [];
+    throw err;
   }
 };
 
 const get_all_QuickBooks_items = async (
   qb: QuickBooks,
+  type: string,
   maxresults: number = 1
 ): Promise<Item.Find.Result> => {
   try {
     const qb_items = await qb.item.query({
-      query: `select * from Item maxresults ${maxresults}`,
+      query: `select * from Item where Type='${type}' maxresults ${maxresults}`,
     });
     return qb_items;
   } catch (err) {
@@ -168,22 +165,12 @@ const get_all_QuickBooks_items = async (
   }
 };
 
-const get_all_QuickBooks_categories = async (
-  qb: QuickBooks
-): Promise<Item.Find.Result> => {
-  try {
-    const qb_items = await qb.item.query({
-      query: `select * from Item where Type='Category'`,
-    });
-    return qb_items;
-  } catch (err) {
-    throw err;
-  }
-};
-
-const map_products = (item: Item.itemObject): Service.Product.Create.Body => {
+const map_products = (
+  item: Item.itemObject,
+  categoryID: string
+): Service.Product.Create.Body => {
   return {
     name: item.Name,
-    category: "",
+    category: categoryID,
   };
 };

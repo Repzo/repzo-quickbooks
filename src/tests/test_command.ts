@@ -4,11 +4,11 @@ import { Commands } from "../index.js";
 let commandEvent: CommandEvent = {
   app: {
     _id: "63300b0c0a560f651ce96d9e",
-    name: "repzo",
+    name: "repzo-integration-Quickbooks",
     disabled: false,
     available_app: {
       _id: "63300b0c0a560f651ce96d9e",
-      name: "repzo-QuickBooks",
+      name: "repzo-integration-Quickbooks",
       disabled: false,
       JSONSchema: {
         title: "QuickBooks Integration Settings",
@@ -46,15 +46,8 @@ let commandEvent: CommandEvent = {
     __v: 0,
   },
 
-  command: "sync_client",
-  // command: "update_disable_client",
-  // command: "sync_inventory",
-  // command: "sync_tax",
-  // command: "sync_category",
-  // command: "sync_measureunit",
-  // command: "sync_measureunit_family",
-  // command: "add_product",
-  // command: "adjust_inventory",
+  // command: "sync_client",
+  command: "sync_products",
 
   end_of_day: "04:00",
   nameSpace: ["quickbooksintg"], // quickbooksintg
