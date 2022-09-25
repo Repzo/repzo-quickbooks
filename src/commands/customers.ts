@@ -11,6 +11,12 @@ export const customers = async (commandEvent: CommandEvent) => {
     const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
       env: commandEvent.env,
     });
+    // init commandLog
+    const commandLog = new Repzo.CommandLog(
+      repzo,
+      commandEvent.app,
+      commandEvent.command
+    );
     // init QuickBooks object
     const qbo = new QuickBooks({
       oauthToken: _test.access_token,
@@ -18,21 +24,17 @@ export const customers = async (commandEvent: CommandEvent) => {
       sandbox: true,
     });
 
-    const new_bench_time = new Date().toISOString();
-
     // sync_customers_from_QuickBooks_to_repzo
-    await sync_customers_from_QuickBooks_to_repzo(repzo, qbo, "2015-03-01");
+    await sync_customers_from_QuickBooks_to_repzo(
+      repzo,
+      qbo,
+      commandEvent.app.formData?.bench_time_client
+    );
 
-    // const commandLog = new Repzo.CommandLog(
-    //   repzo,
-    //   commandEvent.app,
-    //   commandEvent.command
-    // );
-
-    // commandLog
-    //   .setStatus("success")
-    //   .setBody("Complete test QuickBooks custommers Sync")
-    //   .commit();
+    await commandLog
+      .setStatus("success")
+      .setBody("Complete Sync QuickBooks custommers to Repzo")
+      .commit();
   } catch (err) {
     console.error(err);
   }
@@ -49,14 +51,10 @@ const sync_customers_from_QuickBooks_to_repzo = async (
       qb,
       bench_time_client
     );
-    // console.log(repzo_client[0]);
     repzo_client = repzo_client.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
-
-    // console.log(qb_customers.QueryResponse.Customer[3]);
-
-    qb_customers.QueryResponse.Customer.forEach(async (cutomer) => {
+    qb_customers.QueryResponse.Customer?.forEach(async (cutomer) => {
       let existClient = repzo_client.filter(
         (i) =>
           i.integration_meta?.QuickBooks_id === cutomer.Id ||
@@ -137,12 +135,11 @@ const get_all_QuickBooks_customers = async (
 };
 
 const map_customers = (
-  cutomer: Customer.CustomerSchema
+  cutomer: Customer.CustomerObject
 ): Service.Client.Create.Body => {
   return {
     name: cutomer.DisplayName,
     contact_title: cutomer.GivenName,
-
     country: cutomer.BillAddr?.CountrySubDivisionCode,
     city: cutomer.BillAddr?.City,
     lat: !isNaN(Number(cutomer.BillAddr?.Lat))

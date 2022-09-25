@@ -3,11 +3,11 @@ import { Commands } from "../index.js";
 
 let commandEvent: CommandEvent = {
   app: {
-    _id: "628397700cf4f813aa63b52c",
+    _id: "63300b0c0a560f651ce96d9e",
     name: "repzo",
     disabled: false,
     available_app: {
-      _id: "6320f4a1685a61494813a41f",
+      _id: "63300b0c0a560f651ce96d9e",
       name: "repzo-QuickBooks",
       disabled: false,
       JSONSchema: {
@@ -46,7 +46,7 @@ let commandEvent: CommandEvent = {
     __v: 0,
   },
 
-  command: "customers",
+  command: "sync_client",
   // command: "update_disable_client",
   // command: "sync_inventory",
   // command: "sync_tax",
@@ -57,7 +57,7 @@ let commandEvent: CommandEvent = {
   // command: "adjust_inventory",
 
   end_of_day: "04:00",
-  nameSpace: ["demosv"], // demosv
+  nameSpace: ["quickbooksintg"], // quickbooksintg
   timezone: "Asia/Amman",
   meta: '{\r\n "test":"hi", "invoice_id": "626a58f9eaf66e59747e0460" \r\n}',
   sync_id: undefined,
