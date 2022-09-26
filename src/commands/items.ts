@@ -46,7 +46,7 @@ const sync_products_from_QuickBooks_to_repzo = async (
   bench_time_client: string
 ) => {
   try {
-    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 2);
+    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 10);
     const repzo_default_category = await get_repzo_default_category(repzo);
     let repzo_products = await get_all_repzo_products(repzo);
 
@@ -157,6 +157,7 @@ const map_products = (
     name: item.Name,
     description: item.Description,
     active: item.Active,
+    sku: item.Sku,
     local_name: item.FullyQualifiedName,
     base_price: String(item.UnitPrice),
     category: categoryID,

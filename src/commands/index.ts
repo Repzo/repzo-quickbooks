@@ -34,11 +34,13 @@ export const commandsList: Command[] = [
   {
     command: "sync_client",
     name: "Sync Clients",
-    description: "",
+    description:
+      "this command to sync all quickbooks customers with your repzo clients",
   },
   {
     command: "sync_products",
     name: "Sync products",
-    description: "",
+    description:
+      "this command to syncing all quickbooks items with your repzo products",
   },
 ];

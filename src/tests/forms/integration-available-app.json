@@ -1,16 +1,11 @@
 {
-  "_id": "629773480a0d4250622c2cf1",
-  "name": "repzo-quickbooks",
+  "_id": "63300b0c0a560f651ce96d9e",
+  "name": "repzo-integration-Quickbooks",
   "disabled": false,
   "JSONSchema": {
     "title": "QuickBooks Integration Settings",
     "type": "object",
-    "required": ["realmID"],
     "properties": {
-      "realmID": {
-        "type": "string",
-        "title": "QuickBooks Company ID"
-      },
       "errorEmail": {
         "type": "string",
         "format": "email",
@@ -26,10 +21,24 @@
             "title": "Live Sync Customers from Repzo to QuickBooks",
             "default": false,
             "enum": [true, false]
-          },
-          "pullCustomers": {
+          }
+        }
+      },
+      "products": {
+        "type": "object",
+        "title": "Products",
+        "description": "Note : all sync products will create in default category",
+        "required": ["createCustomersHook"],
+        "properties": {
+          "pullInventoryItems": {
             "type": "boolean",
-            "title": "Live Sync Customers from QuickBooks to Repzo ",
+            "title": "Pull - Inventory type from QuickBooks to my products",
+            "default": true,
+            "enum": [true, false]
+          },
+          "pullServiceItems": {
+            "type": "boolean",
+            "title": "Pull - Service type from QuickBooks to my products",
             "default": false,
             "enum": [true, false]
           }
@@ -47,8 +56,8 @@
         "type": "string",
         "format": "date-time"
       },
-      "bench_time_disabled_client": {
-        "title": "Bench Time: Disabled Clients",
+      "bench_time_products": {
+        "title": "Bench Time: products",
         "type": "string",
         "format": "date-time"
       }
@@ -57,9 +66,6 @@
   "app_settings": {
     "repo": "",
     "minorversion": null,
-    "callback": "SET_YOUR_CALLBACK_URL_FOR_oauth2",
-    "consumerKey": "ABGqYMlsHPPH5KbAzXYSRPiIk3SxxqhXUb5e90787DLRstrs5v",
-    "consumerSecret": "zsQhoDRuNKX1YXTvoNmIiq4IrcY1VKFH4Wrcdew8",
     "serviceEndPoint": "https://quickbooks.api.intuit.com/",
     "_id": "99fgv2be907f6a0d68a9e970"
   },
@@ -67,7 +73,7 @@
     {
       "command": "basic",
       "name": "Full Sync",
-      "description": "Syncs clients,disabled clients command"
+      "description": ""
     },
     {
       "command": "join",
@@ -75,9 +81,14 @@
       "description": ""
     },
     {
-      "command": "sync_customers",
+      "command": "sync_client",
       "name": "Sync Clients",
-      "description": ""
+      "description": "this command to sync all quickbooks customers with your repzo clients"
+    },
+    {
+      "command": "sync_products",
+      "name": "Sync products",
+      "description": "this command to syncing all quickbooks items with your repzo products"
     }
   ],
   "app_category": "629c62fcff7a8a2dc7a21ba1",
