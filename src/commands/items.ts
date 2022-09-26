@@ -46,8 +46,7 @@ const sync_products_from_QuickBooks_to_repzo = async (
   bench_time_client: string
 ) => {
   try {
-    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 10);
-    const repzo_default_category = await get_repzo_default_category(repzo);
+    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 1000);
     let repzo_products = await get_all_repzo_products(repzo);
 
     repzo_products = repzo_products.filter(
@@ -55,6 +54,11 @@ const sync_products_from_QuickBooks_to_repzo = async (
     );
 
     qb_items.QueryResponse.Item.forEach(async (item) => {
+      const repzo_default_category = await get_repzo_default_category(
+        repzo,
+        item.ParentRef?.name
+      );
+
       let existProduct = repzo_products.filter(
         (i) => i.integration_meta?.QuickBooks_id === item.Id
       );
@@ -80,12 +84,14 @@ const sync_products_from_QuickBooks_to_repzo = async (
           let repzo_product = map_products(item, repzo_default_category._id);
           await repzo.product.create(repzo_product);
         } catch (err) {
-          console.error(err);
+          throw err;
         }
       }
     });
   } catch (err) {
     console.error(err);
+
+    throw err;
   }
 };
 
@@ -114,22 +120,39 @@ const get_all_repzo_products = async (
 };
 
 const get_repzo_default_category = async (
-  repzo: Repzo
+  repzo: Repzo,
+  name: string | undefined
 ): Promise<Service.Category.Get.Result> => {
   try {
-    let repzoObj = await repzo.category.find({
-      name: "default",
-      disabled: false,
-    });
-    if (repzoObj.data[0]) {
-      return repzoObj.data[0];
-    } else {
-      return await repzo.category.create({
-        name: "default",
-        local_name: "Created by Quickbooks",
+    if (name) {
+      let repzoObj = await repzo.category.find({
+        name,
+        disabled: false,
       });
+      if (repzoObj.data[0]) {
+        return repzoObj.data[0];
+      } else {
+        return await repzo.category.create({
+          name: "default",
+          local_name: "Created by Quickbooks",
+        });
+      }
+    } else {
+      let repzoObj = await repzo.category.find({
+        name: "default",
+        disabled: false,
+      });
+      if (repzoObj.data[0]) {
+        return repzoObj.data[0];
+      } else {
+        return await repzo.category.create({
+          name: "default",
+          local_name: "Created by Quickbooks",
+        });
+      }
     }
   } catch (err) {
+    console.error(err);
     throw err;
   }
 };
@@ -159,7 +182,7 @@ const map_products = (
     active: item.Active,
     sku: item.Sku,
     local_name: item.FullyQualifiedName,
-    base_price: String(item.UnitPrice),
+    base_price: item.UnitPrice ? String(Math.round(item.UnitPrice * 1000)) : "",
     category: categoryID,
     integration_meta: {
       QuickBooks_id: item.Id,
