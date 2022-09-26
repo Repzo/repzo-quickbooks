@@ -184,6 +184,14 @@ const map_products = (
     local_name: item.FullyQualifiedName,
     base_price: item.UnitPrice ? String(Math.round(item.UnitPrice * 1000)) : "",
     category: categoryID,
+    variants: [
+      {
+        default: true,
+        disabled: false,
+        name: item.Name,
+        price: item.UnitPrice ? Math.round(item.UnitPrice * 1000) : 0,
+      },
+    ],
     integration_meta: {
       QuickBooks_id: item.Id,
       QuickBooks_last_sync: new Date().toISOString(),
