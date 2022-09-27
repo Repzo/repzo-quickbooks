@@ -3,7 +3,7 @@ import { EVENT, Config } from "../types";
 import { Service } from "repzo/src/types";
 import { Customer } from "../quickbooks/types/customer";
 import { v4 as uuid } from "uuid";
-import QuickBooks from "../quickbooks";
+import QuickBooks from "../quickbooks/index.js";
 
 export const create_customer = async (event: EVENT, options: Config) => {
   const repzo = new Repzo(options.data?.repzoApiKey, { env: options.env });
