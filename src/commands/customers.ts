@@ -1,10 +1,20 @@
-import { CommandEvent } from "../types";
+import { CommandEvent, Result } from "../types";
 import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Customer } from "../quickbooks/types/customer";
 import QuickBooks from "../quickbooks/index.js";
 
-export const customers = async (commandEvent: CommandEvent) => {
+var result: Result = {
+  QuickBooks_total: 0,
+  repzo_total: 0,
+  created: 0,
+  updated: 0,
+  failed: 0,
+};
+
+export const customers = async (
+  commandEvent: CommandEvent
+): Promise<Result> => {
   try {
     // init Repzo object
     const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
@@ -24,18 +34,21 @@ export const customers = async (commandEvent: CommandEvent) => {
     });
 
     // sync_customers_from_QuickBooks_to_repzo
-    await sync_customers_from_QuickBooks_to_repzo(
+    let res = await sync_customers_from_QuickBooks_to_repzo(
       repzo,
       qbo,
       commandEvent.app.formData?.bench_time_client
     );
 
-    await commandLog
+    /*   await commandLog
       .setStatus("success")
       .setBody("Complete Sync QuickBooks custommers to Repzo")
-      .commit();
+      .commit(); */
+
+    return res;
   } catch (err) {
     console.error(err);
+    return result;
   }
 };
 
@@ -43,7 +56,7 @@ const sync_customers_from_QuickBooks_to_repzo = async (
   repzo: Repzo,
   qb: QuickBooks,
   bench_time_client: string
-) => {
+): Promise<Result> => {
   try {
     let repzo_client = await get_all_repzo_clients(repzo);
     const qb_customers = await get_all_QuickBooks_customers(
@@ -68,8 +81,10 @@ const sync_customers_from_QuickBooks_to_repzo = async (
             console.log(`update repzo client id -- ${existClient[0]._id} ...`);
             let repzo_client = map_customers(cutomer);
             await repzo.client.update(existClient[0]._id, repzo_client);
+            result["updated"] = result["updated"] + 1 || 1;
           } catch (err) {
             console.error(err);
+            result["failed"] = result["failed"] + 1 || 1;
           }
         }
       } else {
@@ -83,14 +98,17 @@ const sync_customers_from_QuickBooks_to_repzo = async (
             client_code: `QB_${cutomer.Id}`,
             ...repzo_client,
           });
+          result["created"] = result["created"] + 1 || 1;
         } catch (err) {
           console.error(err);
+          result["failed"] = result["failed"] + 1 || 1;
         }
       }
     });
   } catch (err) {
     console.error(err);
   }
+  return result;
 };
 
 const sync_customers_from_repzo_to_QuickBooks = async (

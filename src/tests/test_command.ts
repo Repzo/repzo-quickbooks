@@ -24,11 +24,7 @@ let commandEvent: CommandEvent = {
       app_category: "6249fa8466312f76e595634a",
       UISchema: {},
     },
-    // @ts-ignore
-    oauth2: {
-      realmId: String,
-      oauthToken: String,
-    },
+
     formData: {
       client: {
         clientHook: true,
@@ -58,7 +54,7 @@ let commandEvent: CommandEvent = {
 
   oauth2_data: {
     access_token:
-      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..TGZec3Tm5GS--Jn2_yzzgA.yQ-l1Mmtr81kqu9pHXgE9IBMj_skMCJ42NgUjy17GloB5OpmyNfD2Z88M8yt-d4LEbFPA8zW_hwz0JmZtwgN5kXJfdDgeBX7HvmaWI0P4_hwstYmqm74UMAHdsGEuOewBRUlk41qN_26F9lfmACfkRiDsgvXKRLlkkjWcexfapLSgx2Nyh_wVPY62KFx3QbpN1922nY1w-klkwdqAmKTacsQEZRzeAZL3KUIALcKWfhzp0W3i7D-igy1kX3-IZMy4BJaTpodmuxLI9GxHBZBl6KcpGgyVMaJWQJeYCBUX0wAnTMpP3SdvvQF-yszWpZJkYjnsYvzyryYqJiqJKCLwvx0n0TWRf_5Bstqs9LZeReYCHPiLpB7ZCoWLv8N_HQvl4plBzWwE45hRNNhGh21Z8Z4wFoH6Z_dn2xoRIO_H-5l1nx4ctK9Dn4aVaV6FMpmr2A7pGcOEzkWfGN2XLotqthW-uKZmRDUA9lsxlzQpL3lbbbOImuJsxBf0eI4Fr_16NSRI_kpreYLPHb4h4aH6HrjzTV5YjXvooIqY9veSigIA7JHzvBSYc-u0DlvzV_yeHHjtf09fQOq4Vn06NNCPiLg84DVcRY4x28j9ddls5Wg_Jss--L-f09f0DD9T6F8G-X7Ew3rNWltmIqs0rnNoYDa_Ich70Z8ucop19X9I61jap3cFuCAGsFayegCNX3PRhbQjb07GwcJDfnoGSts7LVw6AYFPLd8Qifzw1mchkbjz15C1eCaFfTq8kiqBzh_.0DsYDot11uPmdwhRCv8bfw",
+      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..wtnLO3r8wGnMsateP_i06w.zflCp2zRE58n9nTAv_0qASK0Z-nYc9aeXvg38g8qWEWoXNF3TTDas7eLcj0dPStAoQ_KFdTTry9iTnZ8LTOHkkmYHRCPgxpSRP_z67XZ5Hk_wmDopAJo1seREsrUnpB48MVRGklLAcoRAXC5ReKKbaGkb4MA-YqLUx9_X40Ye1EpfdmbJZ487Ngew2bWcRkmZAilA4m4kEOzHRTQCTU9OS7xr3bd9cP8qgiRWIeQ4r20YyMJWIPFvdpG2AAr2i96BRv5Y8H3U2nI9Ku5X7hFs4IozY68JEedNM4Fv9CyR-Yqq9yjuKyROFpEEkx56nz_9JKgGtliYy4JGHegiddFIloqui3_bHtOl9KdmbTm3f3KTMO5oGN-4AOU6T0abDyWGYXq60cs9kfRrY8bzaH_6_K_6CWhnl6L3C6EsMgQWtIiVKgw0XtOqvPg8YQEbYIRfr8mc96sBubgdNEgcEKgQRFS7LzdS7SbIUQ3YfBcOLq7k6DHwrqnqrjVP_GBEvKTd20Dsl1WvTVHEsGeGGi63DRzhDZv8iqio5bqR55IAKVZcwHdOK0AxXxyMsh3YgMGKnpn5hZqd9Rd0VEVsAH-GObrReTMVmO2_tr2C1k-ia5FIBFoE8xjn9F8bLHEg3LZHjkuuGKp5-Aj2VezcPD_dQhva7GJ1nSNsrl941wMIPNqg337LeE8r1HNg-IH7Z0uGg8i83k2rA1SHaaYd_7BYrg4quOtxIqBs_PUoo3Py1nu5w_zfy5ZOntslSv2gRiw.9prtdFfauLVduh1sfFhCLw",
     realmId: "4620816365241355500",
   },
 };

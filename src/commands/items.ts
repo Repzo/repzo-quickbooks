@@ -1,10 +1,17 @@
-import { CommandEvent } from "../types";
+import { CommandEvent, Result } from "../types";
 import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
 
-export const items = async (commandEvent: CommandEvent) => {
+var result: Result = {
+  QuickBooks_total: 0,
+  repzo_total: 0,
+  created: 0,
+  updated: 0,
+  failed: 0,
+};
+export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   try {
     // init Repzo object
     const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
@@ -24,18 +31,20 @@ export const items = async (commandEvent: CommandEvent) => {
     });
 
     // sync_products_from_QuickBooks_to_repzo
-    await sync_products_from_QuickBooks_to_repzo(
+    let res = await sync_products_from_QuickBooks_to_repzo(
       repzo,
       qbo,
       commandEvent.app.formData?.bench_time_client
     );
 
-    await commandLog
+    /*    await commandLog
       .setStatus("success")
       .setBody("Complete Sync QuickBooks custommers to Repzo")
-      .commit();
+      .commit(); */
+    return res;
   } catch (err) {
     console.error(err);
+    return result;
   }
 };
 
@@ -43,11 +52,12 @@ const sync_products_from_QuickBooks_to_repzo = async (
   repzo: Repzo,
   qb: QuickBooks,
   bench_time_client: string
-) => {
+): Promise<Result> => {
   try {
     const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 1000);
     let repzo_products = await get_all_repzo_products(repzo);
-
+    result.QuickBooks_total = qb_items.QueryResponse.Item.length;
+    result.repzo_total = repzo_products.length;
     repzo_products = repzo_products.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
@@ -72,8 +82,10 @@ const sync_products_from_QuickBooks_to_repzo = async (
             );
             let repzo_product = map_products(item, repzo_default_category._id);
             await repzo.product.update(existProduct[0]._id, repzo_product);
+            result["updated"] = result["updated"] + 1 || 1;
           } catch (err) {
             console.error(err);
+            result["failed"] = result["failed"] + 1 || 1;
           }
         }
       } else {
@@ -82,16 +94,17 @@ const sync_products_from_QuickBooks_to_repzo = async (
           console.log(`create a new repzo product name -- ${item.Name} ...`);
           let repzo_product = map_products(item, repzo_default_category._id);
           await repzo.product.create(repzo_product);
+          result["created"] = result["created"] + 1 || 1;
         } catch (err) {
-          throw err;
+          console.error(err);
+          result["failed"] = result["failed"] + 1 || 1;
         }
       }
     });
   } catch (err) {
     console.error(err);
-
-    throw err;
   }
+  return result;
 };
 
 const get_all_repzo_products = async (
