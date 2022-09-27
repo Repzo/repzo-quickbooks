@@ -5,12 +5,12 @@ export namespace Customer {
   }
   interface BillAddr {
     City: string;
-    Line1: string;
+    Line1?: string;
     PostalCode?: string;
     Lat?: string;
     Long?: boolean;
+    Country?: string;
     CountrySubDivisionCode?: string;
-    Id: string;
   }
   interface PaymentMethodRef extends ReferenceType {}
   interface CurrencyRef extends ReferenceType {}
@@ -85,7 +85,8 @@ export namespace Customer {
     Suffix: string;
     Notes?: string;
     CompanyName?: string;
-    PrimaryEmailAddr?: object;
+    PrimaryEmailAddr?: EmailAddress;
+    PrimaryPhone?: TelephoneNumber;
     BillAddr?: BillAddr;
   }
 

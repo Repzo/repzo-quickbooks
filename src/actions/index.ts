@@ -1,5 +1,5 @@
 import { Config, Action } from "../types";
-import { create_client } from "./create_client.js";
+import { create_client } from "./create_customer.js";
 
 export const actions = async (event: any, options: Config) => {
   switch (event.queryStringParameters?.action) {
