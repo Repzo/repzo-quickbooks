@@ -56,11 +56,10 @@ let commandEvent: CommandEvent = {
   sync_id: undefined,
   env: "staging", // ""staging | production | local""
 
-  oAuth2: {
-    oauthToken:
+  oauth2_data: {
+    access_token:
       "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..TGZec3Tm5GS--Jn2_yzzgA.yQ-l1Mmtr81kqu9pHXgE9IBMj_skMCJ42NgUjy17GloB5OpmyNfD2Z88M8yt-d4LEbFPA8zW_hwz0JmZtwgN5kXJfdDgeBX7HvmaWI0P4_hwstYmqm74UMAHdsGEuOewBRUlk41qN_26F9lfmACfkRiDsgvXKRLlkkjWcexfapLSgx2Nyh_wVPY62KFx3QbpN1922nY1w-klkwdqAmKTacsQEZRzeAZL3KUIALcKWfhzp0W3i7D-igy1kX3-IZMy4BJaTpodmuxLI9GxHBZBl6KcpGgyVMaJWQJeYCBUX0wAnTMpP3SdvvQF-yszWpZJkYjnsYvzyryYqJiqJKCLwvx0n0TWRf_5Bstqs9LZeReYCHPiLpB7ZCoWLv8N_HQvl4plBzWwE45hRNNhGh21Z8Z4wFoH6Z_dn2xoRIO_H-5l1nx4ctK9Dn4aVaV6FMpmr2A7pGcOEzkWfGN2XLotqthW-uKZmRDUA9lsxlzQpL3lbbbOImuJsxBf0eI4Fr_16NSRI_kpreYLPHb4h4aH6HrjzTV5YjXvooIqY9veSigIA7JHzvBSYc-u0DlvzV_yeHHjtf09fQOq4Vn06NNCPiLg84DVcRY4x28j9ddls5Wg_Jss--L-f09f0DD9T6F8G-X7Ew3rNWltmIqs0rnNoYDa_Ich70Z8ucop19X9I61jap3cFuCAGsFayegCNX3PRhbQjb07GwcJDfnoGSts7LVw6AYFPLd8Qifzw1mchkbjz15C1eCaFfTq8kiqBzh_.0DsYDot11uPmdwhRCv8bfw",
     realmId: "4620816365241355500",
-    refreshToken: "AB116711943143zfbfktwoSqplz3oE6Oeml4nTz2U3Y2eFNJyP",
   },
 };
 Commands(commandEvent);

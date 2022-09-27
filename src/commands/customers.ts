@@ -3,7 +3,6 @@ import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Customer } from "../quickbooks/types/customer";
 import QuickBooks from "../quickbooks/index.js";
-import _test from "../tests/forms/token_example.js";
 
 export const customers = async (commandEvent: CommandEvent) => {
   try {
@@ -19,8 +18,8 @@ export const customers = async (commandEvent: CommandEvent) => {
     );
     // init QuickBooks object
     const qbo = new QuickBooks({
-      oauthToken: _test.access_token,
-      realmId: _test.realmId,
+      oauthToken: commandEvent.oauth2_data?.access_token,
+      realmId: commandEvent.oauth2_data?.realmId,
       sandbox: true,
     });
 
