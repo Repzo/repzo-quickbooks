@@ -50,16 +50,10 @@ export interface AvailableApp {
   app_category: string;
 }
 
-// export interface App {
-//   _id: StringId;
-//   name: string;
-//   disabled: boolean;
-//   available_app: AvailableApp;
-//   formData: any;
-//   options_formData: any;
-//   company_namespace: string[];
-// }
-
+interface Oauth2_data {
+  realmId: string;
+  access_token: string;
+}
 export interface CommandEvent {
   app: Service.App.Schema_with_populated_AvailableApp;
   command: string;
@@ -70,7 +64,7 @@ export interface CommandEvent {
   timezone: string;
   data?: any;
   env: "staging" | "production" | "local";
-  oAuth2: any;
+  oauth2_data: Oauth2_data;
 }
 
 export interface Result {
@@ -80,10 +74,3 @@ export interface Result {
   updated: number;
   failed: number;
 }
-
-export type FailedDocsReport = {
-  method: "create" | "update" | "delete" | "fetchingData";
-  doc_id?: string;
-  doc?: any;
-  error_message: any;
-}[];

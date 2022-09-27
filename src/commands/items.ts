@@ -3,7 +3,6 @@ import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
-import _test from "../tests/forms/token_example.js";
 
 export const items = async (commandEvent: CommandEvent) => {
   try {
@@ -19,8 +18,8 @@ export const items = async (commandEvent: CommandEvent) => {
     );
     // init QuickBooks object
     const qbo = new QuickBooks({
-      oauthToken: _test.access_token,
-      realmId: _test.realmId,
+      oauthToken: commandEvent.oauth2_data?.access_token,
+      realmId: commandEvent.oauth2_data?.realmId,
       sandbox: true,
     });
 
@@ -31,10 +30,10 @@ export const items = async (commandEvent: CommandEvent) => {
       commandEvent.app.formData?.bench_time_client
     );
 
-    // await commandLog
-    //   .setStatus("success")
-    //   .setBody("Complete Sync QuickBooks custommers to Repzo")
-    //   .commit();
+    await commandLog
+      .setStatus("success")
+      .setBody("Complete Sync QuickBooks custommers to Repzo")
+      .commit();
   } catch (err) {
     console.error(err);
   }
