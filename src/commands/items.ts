@@ -46,65 +46,54 @@ const sync_products_from_QuickBooks_to_repzo = async (
   bench_time_client: string
 ) => {
   try {
-    // let repzo_categories = await get_all_repzo_categories(repzo);
-
-    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 2);
-    const repzo_default_category = await get_repzo_default_category(repzo);
+    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 1000);
     let repzo_products = await get_all_repzo_products(repzo);
 
-    // console.dir(repzo_products, { depth: null });
-    console.dir(repzo_default_category, { depth: null });
-    // console.dir(qb_items, { depth: null });
-    // repzo_client = repzo_client.filter(
-    //   (i) => i.integration_meta?.QuickBooks_id !== undefined
-    // );
+    repzo_products = repzo_products.filter(
+      (i) => i.integration_meta?.QuickBooks_id !== undefined
+    );
 
-    /*
-    qb_products.QueryResponse.Customer.forEach(async (cutomer) => {
-      let existClient = repzo_client.filter(
-        (i) =>
-          i.integration_meta?.QuickBooks_id === cutomer.Id ||
-          i.client_code === `QB_${cutomer.Id}`
+    qb_items.QueryResponse.Item.forEach(async (item) => {
+      const repzo_default_category = await get_repzo_default_category(
+        repzo,
+        item.ParentRef?.name
       );
-      if (
-        existClient[0]?.integration_meta?.QuickBooks_last_sync >
-        cutomer.MetaData.LastUpdatedTime
-      ) {
-        try {
-          console.log(`update repzo client id -- ${existClient[0]._id} ...`);
-          let repzo_client = map_products(cutomer);
-          await repzo.client.update(existClient[0]._id, repzo_client);
-        } catch (err) {
-          console.error(err);
+
+      let existProduct = repzo_products.filter(
+        (i) => i.integration_meta?.QuickBooks_id === item.Id
+      );
+      if (existProduct[0]) {
+        if (
+          new Date(existProduct[0]?.integration_meta?.QuickBooks_last_sync) <
+          new Date(item.MetaData?.LastUpdatedTime)
+        ) {
+          try {
+            console.log(
+              `update repzo product id -- ${existProduct[0]._id} ...`
+            );
+            let repzo_product = map_products(item, repzo_default_category._id);
+            await repzo.product.update(existProduct[0]._id, repzo_product);
+          } catch (err) {
+            console.error(err);
+          }
         }
       } else {
         //create a new  repzo client
         try {
-          console.log(
-            `create a new repzo client name -- ${cutomer.GivenName} ...`
-          );
-          let repzo_client = map_products(cutomer);
-          await repzo.client.create({
-            client_code: `QB_${cutomer.Id}`,
-            ...repzo_client,
-          });
+          console.log(`create a new repzo product name -- ${item.Name} ...`);
+          let repzo_product = map_products(item, repzo_default_category._id);
+          await repzo.product.create(repzo_product);
         } catch (err) {
-          console.error(err);
+          throw err;
         }
       }
-     
     });
-
-    */
   } catch (err) {
     console.error(err);
+
+    throw err;
   }
 };
-
-const sync_categories_from_QuickBooks_to_repzo = async (
-  QuickBooks_products: Item.Find.Result[],
-  repzo_client: Service.Client.Get.Result[]
-) => {};
 
 const get_all_repzo_products = async (
   repzo: Repzo
@@ -118,6 +107,7 @@ const get_all_repzo_products = async (
       let repzoObj = await repzo.product.find({
         page: 1,
         per_page,
+        disabled: false,
       });
       next_page_url = repzoObj.next_page_url;
       repzo_products = [...repzo_products, ...repzoObj.data];
@@ -130,22 +120,39 @@ const get_all_repzo_products = async (
 };
 
 const get_repzo_default_category = async (
-  repzo: Repzo
+  repzo: Repzo,
+  name: string | undefined
 ): Promise<Service.Category.Get.Result> => {
   try {
-    let repzoObj = await repzo.category.find({
-      name: "default",
-      disabled: false,
-    });
-    if (repzoObj.data[0]) {
-      return repzoObj.data[0];
-    } else {
-      return await repzo.category.create({
-        name: "default",
-        local_name: "Created by Quickbooks",
+    if (name) {
+      let repzoObj = await repzo.category.find({
+        name,
+        disabled: false,
       });
+      if (repzoObj.data[0]) {
+        return repzoObj.data[0];
+      } else {
+        return await repzo.category.create({
+          name: "default",
+          local_name: "Created by Quickbooks",
+        });
+      }
+    } else {
+      let repzoObj = await repzo.category.find({
+        name: "default",
+        disabled: false,
+      });
+      if (repzoObj.data[0]) {
+        return repzoObj.data[0];
+      } else {
+        return await repzo.category.create({
+          name: "default",
+          local_name: "Created by Quickbooks",
+        });
+      }
     }
   } catch (err) {
+    console.error(err);
     throw err;
   }
 };
@@ -171,6 +178,23 @@ const map_products = (
 ): Service.Product.Create.Body => {
   return {
     name: item.Name,
+    description: item.Description,
+    active: item.Active,
+    sku: item.Sku,
+    local_name: item.FullyQualifiedName,
+    base_price: item.UnitPrice ? String(Math.round(item.UnitPrice * 1000)) : "",
     category: categoryID,
+    variants: [
+      {
+        default: true,
+        disabled: false,
+        name: item.Name,
+        price: item.UnitPrice ? Math.round(item.UnitPrice * 1000) : 0,
+      },
+    ],
+    integration_meta: {
+      QuickBooks_id: item.Id,
+      QuickBooks_last_sync: new Date().toISOString(),
+    },
   };
 };

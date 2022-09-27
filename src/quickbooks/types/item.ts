@@ -44,7 +44,7 @@ export namespace Item {
     Description?: string;
     ServiceType?: ServiceType;
     PurchaseCost?: string;
-    MetaData?: ModificationMetaData;
+    MetaData: ModificationMetaData;
   }
 
   export type ServiceType =

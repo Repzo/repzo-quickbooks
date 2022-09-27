@@ -8,8 +8,8 @@
       "type": "string",
       "format": "date-time"
     },
-    "bench_time_disabled_client": {
-      "title": "Bench Time: Disabled Clients",
+    "bench_time_products": {
+      "title": "Bench Time: products",
       "type": "string",
       "format": "date-time"
     }

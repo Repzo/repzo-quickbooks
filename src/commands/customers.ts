@@ -60,16 +60,18 @@ const sync_customers_from_QuickBooks_to_repzo = async (
           i.integration_meta?.QuickBooks_id === cutomer.Id ||
           i.client_code === `QB_${cutomer.Id}`
       );
-      if (
-        existClient[0]?.integration_meta?.QuickBooks_last_sync >
-        cutomer.MetaData.LastUpdatedTime
-      ) {
-        try {
-          console.log(`update repzo client id -- ${existClient[0]._id} ...`);
-          let repzo_client = map_customers(cutomer);
-          await repzo.client.update(existClient[0]._id, repzo_client);
-        } catch (err) {
-          console.error(err);
+      if (existClient[0]) {
+        if (
+          new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
+          new Date(cutomer.MetaData?.LastUpdatedTime)
+        ) {
+          try {
+            console.log(`update repzo client id -- ${existClient[0]._id} ...`);
+            let repzo_client = map_customers(cutomer);
+            await repzo.client.update(existClient[0]._id, repzo_client);
+          } catch (err) {
+            console.error(err);
+          }
         }
       } else {
         //create a new  repzo client
@@ -109,6 +111,7 @@ const get_all_repzo_clients = async (
       let repzoObj = await repzo.client.find({
         page: 1,
         per_page,
+        disabled: false,
       });
       next_page_url = repzoObj.next_page_url;
       repzo_clients = [...repzo_clients, ...repzoObj.data];
