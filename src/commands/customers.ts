@@ -40,10 +40,10 @@ export const customers = async (
       commandEvent.app.formData?.bench_time_client
     );
 
-    /*   await commandLog
+    await commandLog
       .setStatus("success")
       .setBody("Complete Sync QuickBooks custommers to Repzo")
-      .commit(); */
+      .commit();
 
     return res;
   } catch (err) {

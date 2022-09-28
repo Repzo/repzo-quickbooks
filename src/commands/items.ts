@@ -11,6 +11,7 @@ var result: Result = {
   updated: 0,
   failed: 0,
 };
+
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   try {
     // init Repzo object
@@ -37,10 +38,10 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       commandEvent.app.formData?.bench_time_client
     );
 
-    /*    await commandLog
+    await commandLog
       .setStatus("success")
       .setBody("Complete Sync QuickBooks custommers to Repzo")
-      .commit(); */
+      .commit();
     return res;
   } catch (err) {
     console.error(err);

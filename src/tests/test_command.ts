@@ -7,8 +7,8 @@ let commandEvent: CommandEvent = {
     name: "repzo-integration-Quickbooks",
     disabled: false,
     available_app: {
-      _id: "63300b0c0a560f651ce96d9e",
-      name: "repzo-integration-Quickbooks",
+      _id: "6320f4a1685a61494813a41f",
+      name: "repzo-quickbooks",
       disabled: false,
       JSONSchema: {
         title: "QuickBooks Integration Settings",
@@ -54,7 +54,7 @@ let commandEvent: CommandEvent = {
 
   oauth2_data: {
     access_token:
-      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..wtnLO3r8wGnMsateP_i06w.zflCp2zRE58n9nTAv_0qASK0Z-nYc9aeXvg38g8qWEWoXNF3TTDas7eLcj0dPStAoQ_KFdTTry9iTnZ8LTOHkkmYHRCPgxpSRP_z67XZ5Hk_wmDopAJo1seREsrUnpB48MVRGklLAcoRAXC5ReKKbaGkb4MA-YqLUx9_X40Ye1EpfdmbJZ487Ngew2bWcRkmZAilA4m4kEOzHRTQCTU9OS7xr3bd9cP8qgiRWIeQ4r20YyMJWIPFvdpG2AAr2i96BRv5Y8H3U2nI9Ku5X7hFs4IozY68JEedNM4Fv9CyR-Yqq9yjuKyROFpEEkx56nz_9JKgGtliYy4JGHegiddFIloqui3_bHtOl9KdmbTm3f3KTMO5oGN-4AOU6T0abDyWGYXq60cs9kfRrY8bzaH_6_K_6CWhnl6L3C6EsMgQWtIiVKgw0XtOqvPg8YQEbYIRfr8mc96sBubgdNEgcEKgQRFS7LzdS7SbIUQ3YfBcOLq7k6DHwrqnqrjVP_GBEvKTd20Dsl1WvTVHEsGeGGi63DRzhDZv8iqio5bqR55IAKVZcwHdOK0AxXxyMsh3YgMGKnpn5hZqd9Rd0VEVsAH-GObrReTMVmO2_tr2C1k-ia5FIBFoE8xjn9F8bLHEg3LZHjkuuGKp5-Aj2VezcPD_dQhva7GJ1nSNsrl941wMIPNqg337LeE8r1HNg-IH7Z0uGg8i83k2rA1SHaaYd_7BYrg4quOtxIqBs_PUoo3Py1nu5w_zfy5ZOntslSv2gRiw.9prtdFfauLVduh1sfFhCLw",
+      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..jcy5h3UylMmg5mqtpbAObQ.s5Ab4LFysYDOMSfY4qMH-qln7iLSCzF0_scEkVDCnRyb83KSRxNbDG8r3BGhgCjRFQLc3pa8rkpkifbD8xCood2TGARTe0lBITuQa_7euI0akRK19o1g6nIRrqht78h017skQVm7owce3WsSMPyZV4DRGqUHEiZpUY7dWKp4RB4o7UaxLSUBpBPfdn3KtnI17VodWSxtKjtEQNZKawt0etCr8Dzjq8cqIeIqUgDP79bLdxnugkEGiM4iYAkABSZnNQn7MEfVi7684DCWnTl5OKzT0xp3xly1C9OIBko4ZP8BDBBuE8PbrbV_Lgvlo_HD-2QCCdHn-3OUqkYehjrWKGqRqpkoezI2HO3uePLBDdH_XREiFii-DhWobTJiIhyW8Z2YnPSPqtilfmz18RS_CMHH1BnnWR3OEzo0x8rAqQ4RQExJNkn06zjDxi8rAFmsAAfXv9mbIF_G8iAeU8C22W0bDKgK0FK3QkDuY_VaNELn84fUf_x839tGPqsOdaowVuL3c1gZCAcYaUzMy-JLnAT90-vCqcXkvD7t9Busw7vrmQEBXHCt9nXsXJoa2Nxjn3s46jJZFt3gQHH0RPfO7xEhQK6xHgonR3IDX6iOwnIOaeFCHIacnK2tLFUGjN_eYMKZP1dHp19V9Y-_yd4zFZBqjlDJ2y4x9Hvch-h2N3AVFjIDgKhl0YggbFPG4_qSeGe1-hjXf30m2-3DX-lcAeMKoP5ukhXsrjDchj-8mLlaTT9RiQiHlqa8SoPkt95i.5f-oSeUiznAc7nBZi6PHtA",
     realmId: "4620816365241355500",
   },
 };
