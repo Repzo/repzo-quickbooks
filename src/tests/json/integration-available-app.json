@@ -71,16 +71,6 @@
   },
   "commands": [
     {
-      "command": "basic",
-      "name": "Full Sync",
-      "description": ""
-    },
-    {
-      "command": "join",
-      "name": "Join",
-      "description": ""
-    },
-    {
       "command": "sync_client",
       "name": "Sync Clients",
       "description": "this command to sync all quickbooks customers with your repzo clients"

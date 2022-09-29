@@ -73,7 +73,6 @@ export const create_customer = async (event: EVENT, options: Config) => {
       .commit();
     return result;
   } catch (e: any) {
-    //@ts-ignore
     console.error(e?.response || e);
     await actionLog.setStatus("fail", e).setBody(body).commit();
     throw e;
