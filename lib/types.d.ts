@@ -6,14 +6,11 @@ export interface Config {
   serviceEndPoint: string;
   env: "staging" | "local" | "production";
 }
-
-type DecodedScope = "admin" | "client" | "rep";
-
-type StringId = string;
-type Email = string;
-type NameSpaces = string[];
-
-export type Decoded = jwt.JwtPayload & {
+declare type DecodedScope = "admin" | "client" | "rep";
+declare type StringId = string;
+declare type Email = string;
+declare type NameSpaces = string[];
+export declare type Decoded = jwt.JwtPayload & {
   id?: StringId;
   email?: Email;
   name?: string;
@@ -27,29 +24,32 @@ interface Params {
   nameSpace: NameSpaces;
   decoded: Decoded;
 }
-export type EVENT = AWSLambda.APIGatewayEvent & { params: Params };
+export declare type EVENT = AWSLambda.APIGatewayEvent & {
+  params: Params;
+};
 export interface Action {
   name: string;
   action: string;
   description: string;
 }
-
 export interface Command {
   command: string;
   description: string;
   name: string;
 }
-
 export interface AvailableApp {
   _id: StringId;
   name: string;
   disabled: boolean;
   JSONSchema: any;
   UISchema: any;
-  app_settings: { repo: string; serviceEndPoint: string; meta: {} };
+  app_settings: {
+    repo: string;
+    serviceEndPoint: string;
+    meta: {};
+  };
   app_category: string;
 }
-
 interface Oauth2_data {
   realmId: string;
   access_token: string;
@@ -66,7 +66,6 @@ export interface CommandEvent {
   env: "staging" | "production" | "local";
   oauth2_data?: Oauth2_data;
 }
-
 export interface Result {
   QuickBooks_total: number;
   repzo_total: number;
@@ -74,3 +73,4 @@ export interface Result {
   updated: number;
   failed: number;
 }
+export {};
