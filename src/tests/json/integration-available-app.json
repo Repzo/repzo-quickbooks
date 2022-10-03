@@ -14,7 +14,7 @@
       "Customers": {
         "type": "object",
         "title": "Customers",
-        "required": ["createCustomersHook"],
+        "required": [],
         "properties": {
           "createCustomersHook": {
             "type": "boolean",
@@ -28,7 +28,7 @@
         "type": "object",
         "title": "Products",
         "description": "Note : all sync products will create in default category",
-        "required": ["createCustomersHook"],
+        "required": [],
         "properties": {
           "pullInventoryItems": {
             "type": "boolean",
