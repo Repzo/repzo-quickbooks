@@ -1,6 +1,6 @@
 import { Config, Action } from "../types";
 import { create_customer } from "./create_customer.js";
-import { create_invoice } from "./create_invoice.js";
+import { create_invoice } from "./invoice.js";
 
 export const actions = async (event: any, options: Config) => {
   switch (event.queryStringParameters?.action) {

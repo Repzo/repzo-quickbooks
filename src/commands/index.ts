@@ -15,6 +15,7 @@ export const commands = async (CommandEvent: CommandEvent) => {
 
     case "join":
       return await join(CommandEvent);
+
     default:
       throw `Route: ${CommandEvent.command} not found`;
   }
