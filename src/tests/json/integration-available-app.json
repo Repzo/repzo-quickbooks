@@ -14,7 +14,7 @@
       "Customers": {
         "type": "object",
         "title": "Customers",
-        "required": ["createCustomersHook"],
+        "required": [],
         "properties": {
           "createCustomersHook": {
             "type": "boolean",
@@ -28,7 +28,7 @@
         "type": "object",
         "title": "Products",
         "description": "Note : all sync products will create in default category",
-        "required": ["createCustomersHook"],
+        "required": [],
         "properties": {
           "pullInventoryItems": {
             "type": "boolean",
@@ -70,16 +70,6 @@
     "_id": "99fgv2be907f6a0d68a9e970"
   },
   "commands": [
-    {
-      "command": "basic",
-      "name": "Full Sync",
-      "description": ""
-    },
-    {
-      "command": "join",
-      "name": "Join",
-      "description": ""
-    },
     {
       "command": "sync_client",
       "name": "Sync Clients",
