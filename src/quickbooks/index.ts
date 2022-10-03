@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import { Params, Data, Headers, QuickBooksConfig } from "./types/index";
 import { Customer } from "./types/customer";
 import { Item } from "./types/item";
+import { Invoice } from "./types/invoice";
 
 export default class QuickBooks {
   private config: QuickBooksConfig;
@@ -105,6 +106,19 @@ export default class QuickBooks {
       body: Item.Update.Body
     ): Promise<Item.Update.Result> => {
       let res = await this._update(this.customer._path, body);
+      return res;
+    },
+  };
+
+  invoice = {
+    _path: `/query`,
+    query: async (
+      params: Invoice.Find.Params
+    ): Promise<Invoice.Find.Result> => {
+      let res: Invoice.Find.Result = await this._fetch(
+        this.invoice._path,
+        params
+      );
       return res;
     },
   };

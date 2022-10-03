@@ -168,7 +168,7 @@ export namespace Invoice {
     | "TaxInclusive"
     | "NotApplicable";
 
-  interface InvoiceBody {}
+  interface InvoiceBody extends InvoiceObject {}
 
   export namespace Find {
     export type Params = {
