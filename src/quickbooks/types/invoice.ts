@@ -10,15 +10,44 @@ export namespace Invoice {
   interface EmailAddress {
     Address: string;
   }
-  interface CustomField {}
-
-  interface Line {
-    SalesItemLine: String;
-    GroupLine: String;
-    DescriptionOnlyLine: String;
-    DiscountLine: String;
-    SubTotalLine: String;
+  interface MarkupInfo {
+    PriceLevelRef?: ReferenceType;
+    MarkUpIncomeAccountRef?: ReferenceType;
+    Percent?: number;
   }
+  interface SalesItemLineDetail {
+    TaxInclusiveAmt: number;
+    DiscountAmt: number;
+    ItemRef?: ReferenceType;
+    ClassRef?: ReferenceType;
+    ItemAccountRef?: ReferenceType;
+    TaxCodeRef?: ReferenceType;
+    TaxClassificationRef?: ReferenceType;
+    MarkupInfo?: MarkupInfo;
+    ServiceDate?: Date;
+    DiscountRate?: number;
+    Qty?: number;
+    UnitPrice?: number;
+  }
+  interface SalesItemLine {
+    Id: String;
+    DetailType: "SalesItemLineDetail";
+    SalesItemLineDetail: SalesItemLineDetail;
+    Amount: number;
+    LineNum: number;
+    Description?: string;
+  }
+  interface GroupLine {}
+  interface DescriptionOnlyLine {}
+  interface DiscountLine {}
+  interface SubTotalLine {}
+
+  type Line =
+    | SalesItemLine
+    | GroupLine
+    | DescriptionOnlyLine
+    | DiscountLine
+    | SubTotalLine;
 
   export interface InvoiceObject {
     Id: string;
