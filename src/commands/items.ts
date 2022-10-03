@@ -28,7 +28,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     const qbo = new QuickBooks({
       oauthToken: commandEvent.oauth2_data?.access_token,
       realmId: commandEvent.oauth2_data?.realmId,
-      sandbox: true,
+      sandbox: commandEvent.env === "production" ? false : true,
     });
 
     // sync_products_from_QuickBooks_to_repzo

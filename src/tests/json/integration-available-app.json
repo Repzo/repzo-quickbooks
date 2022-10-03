@@ -5,7 +5,13 @@
   "JSONSchema": {
     "title": "QuickBooks Integration Settings",
     "type": "object",
+    "required": ["repzoApiKey"],
     "properties": {
+      "repzoApiKey": {
+        "type": "string",
+        "format": "email",
+        "title": "repzoApiKey"
+      },
       "errorEmail": {
         "type": "string",
         "format": "email",
@@ -18,7 +24,7 @@
         "properties": {
           "createCustomersHook": {
             "type": "boolean",
-            "title": "Live Sync Customers from Repzo to QuickBooks",
+            "title": "Pull Customers from QuickBooks to Repzo",
             "default": false,
             "enum": [true, false]
           }
@@ -32,14 +38,28 @@
         "properties": {
           "pullInventoryItems": {
             "type": "boolean",
-            "title": "Pull - Inventory type from QuickBooks to my products",
+            "title": "Pull - Items with Inventory type from QuickBooks to my products",
             "default": true,
             "enum": [true, false]
           },
           "pullServiceItems": {
             "type": "boolean",
-            "title": "Pull - Service type from QuickBooks to my products",
+            "title": "Pull - Items with Service type from QuickBooks to my products",
             "default": false,
+            "enum": [true, false]
+          }
+        }
+      },
+      "invoices": {
+        "type": "object",
+        "title": "Invoices",
+        "description": "",
+        "required": [],
+        "properties": {
+          "pushInvoice": {
+            "type": "boolean",
+            "title": "push repzo invoice to quickbooks once it be ready",
+            "default": true,
             "enum": [true, false]
           }
         }

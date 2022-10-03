@@ -15,7 +15,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
     const qbo = new QuickBooks({
       oauthToken: "",
       realmId: "",
-      sandbox: true,
+      sandbox: options.env === "production" ? false : true,
     });
 
     // console.log("create_customer");

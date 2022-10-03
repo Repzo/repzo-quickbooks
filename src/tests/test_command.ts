@@ -26,13 +26,7 @@ let commandEvent: CommandEvent = {
     },
 
     formData: {
-      client: {
-        clientHook: true,
-      },
-      bench_time_client: "2022-05-18T09:16:00.000Z",
-      serviceApiKey: "6a0226eb2f2fabdffbffd9b22",
       repzoApiKey: "j9j3bHrGso7VR4hLsSH9n6FevaDf0eQ6EHljaHwkqEQ",
-      paymentAccountId: 7,
       errorEmail: "ahmed.khaled@repzoapp.com",
     },
     options_formData: {},
@@ -43,7 +37,8 @@ let commandEvent: CommandEvent = {
   },
 
   // command: "sync_client",
-  command: "sync_products",
+  // command: "sync_products",
+  command: "sync_invoices",
 
   end_of_day: "04:00",
   nameSpace: ["quickbooksintg"], // quickbooksintg

@@ -30,7 +30,7 @@ export const customers = async (
     const qbo = new QuickBooks({
       oauthToken: commandEvent.oauth2_data?.access_token,
       realmId: commandEvent.oauth2_data?.realmId,
-      sandbox: true,
+      sandbox: commandEvent.env === "production" ? false : true,
     });
 
     // sync_customers_from_QuickBooks_to_repzo

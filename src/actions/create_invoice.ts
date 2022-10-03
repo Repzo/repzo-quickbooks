@@ -12,7 +12,9 @@ var result: Result = {
   failed: 0,
 };
 
-export const invoices = async (commandEvent: CommandEvent): Promise<Result> => {
+export const create_invoice = async (
+  commandEvent: CommandEvent
+): Promise<Result> => {
   try {
     // init Repzo object
     const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
@@ -55,15 +57,23 @@ const sync_invoices_from_QuickBooks_to_repzo = async (
   bench_time_client: string
 ): Promise<Result> => {
   try {
-    const qb_items = await get_all_QuickBooks_invoices(qb, "Inventory", 1000);
-    let repzo_invoices = await get_all_repzo_invoices(repzo);
-    result.QuickBooks_total = qb_items.QueryResponse.Item.length;
-    result.repzo_total = repzo_invoices.length;
-    repzo_invoices = repzo_invoices.filter(
-      (i) => i.integration_meta?.QuickBooks_id !== undefined
-    );
+    // const qb_invoices = await get_all_QuickBooks_invoices(
+    //   qb,
+    //   "Inventory",
+    //   1000
+    // );
 
-    qb_items.QueryResponse.Item.forEach(async (item) => {
+    let repzo_invoices = await get_all_repzo_invoices(repzo);
+
+    console.log(repzo_invoices);
+
+    // result.QuickBooks_total = qb_invoices.QueryResponse.Item.length;
+    // result.repzo_total = repzo_invoices.length;
+    // repzo_invoices = repzo_invoices.filter(
+    //   (i) => i.integration_meta?.QuickBooks_id !== undefined
+    // );
+    /*
+    qb_invoices.QueryResponse.Item.forEach(async (item) => {
       let existProduct = repzo_invoices.filter(
         (i) => i.integration_meta?.QuickBooks_id === item.Id
       );
@@ -98,6 +108,7 @@ const sync_invoices_from_QuickBooks_to_repzo = async (
         }
       }
     });
+    */
   } catch (err) {
     console.error(err);
   }
@@ -113,10 +124,11 @@ const get_all_repzo_invoices = async (
     let repzo_invoices: any[];
     repzo_invoices = [];
     while (next_page_url !== null) {
-      let repzoObj = await repzo.product.find({
+      let repzoObj = await repzo.invoice.find({
         page: 1,
         per_page,
         disabled: false,
+        is_void: false,
       });
       next_page_url = repzoObj.next_page_url;
       repzo_invoices = [...repzo_invoices, ...repzoObj.data];
@@ -134,10 +146,10 @@ const get_all_QuickBooks_invoices = async (
   maxresults: number = 1
 ): Promise<Invoice.Find.Result> => {
   try {
-    const qb_items = await qb.invoice.query({
+    const qb_invoices = await qb.invoice.query({
       query: `select * from Invoice where Type='${type}' maxresults ${maxresults}`,
     });
-    return qb_items;
+    return qb_invoices;
   } catch (err) {
     throw err;
   }

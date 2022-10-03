@@ -13,7 +13,7 @@ import { Actions } from "../index.js";
 //       "accept-encoding": "gzip, deflate",
 //       "content-length": "3658",
 //       "content-type": "application/json",
-//       host: "staging.marketplace.api.repzo.me",
+//       "host": "staging.marketplace.api.repzo.me",
 //       "svix-id": "msg_29I1By29ETyPiZ4SNrc99KIg7D6",
 //       "svix-signature": "v1,OkktM+dibxzeb0M6383POFjBr7DX14HECpBIh17FQnU=",
 //       "svix-timestamp": "1652785653",
