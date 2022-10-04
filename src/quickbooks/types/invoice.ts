@@ -184,16 +184,27 @@ export namespace Invoice {
   }
 
   export namespace Create {
-    export interface Body extends InvoiceBody {}
-    export type Result = InvoiceObject;
+    export interface Body {
+      Line: Line[];
+      CustomerRef: ReferenceType;
+      CurrencyRef: ReferenceType;
+    }
+    export type Result = {
+      Invoice: InvoiceObject;
+      time: Date;
+    };
   }
 
   export namespace Update {
     export type ID = string;
-    export interface Body extends InvoiceBody {
-      Id: string;
-      SyncToken: string;
+    export interface Body {
+      Line: Line[];
+      CustomerRef: ReferenceType;
+      CurrencyRef: ReferenceType;
     }
-    export type Result = InvoiceObject;
+    export type Result = {
+      Invoice: InvoiceObject;
+      time: Date;
+    };
   }
 }

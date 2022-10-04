@@ -121,5 +121,16 @@ export default class QuickBooks {
       );
       return res;
     },
+
+    create: async (
+      _path: `/invoice`,
+      params: Invoice.Create.Body
+    ): Promise<Invoice.Create.Result> => {
+      let res: Invoice.Create.Result = await this._create(
+        this.invoice._path,
+        params
+      );
+      return res;
+    },
   };
 }

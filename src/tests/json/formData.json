@@ -1,14 +1,15 @@
 {
   "Customers": {
-    "createCustomersHook": false
+    "createClientHook": true
   },
-  "products": {
+  "Products": {
     "pullInventoryItems": true,
-    "pullServiceItems": true
+    "pullServiceItems": false,
+    "createProductHook": false
   },
-  "invoices": {
-    "pushInvoice": false
+  "Invoices": {
+    "createInvoiceHook": false
   },
-  "repzoApiKey": "swd14h5df1h5151sdhg58sd1g58te",
-  "errorEmail": "dfgdsf"
+  "repzoApiKey": "dsdsfg",
+  "errorEmail": "sdgsdg"
 }

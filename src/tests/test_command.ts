@@ -26,6 +26,17 @@ let commandEvent: CommandEvent = {
     },
 
     formData: {
+      Customers: {
+        createClientHook: true,
+      },
+      Products: {
+        pullInventoryItems: true,
+        pullServiceItems: false,
+        createProductHook: false,
+      },
+      Invoices: {
+        createInvoiceHook: false,
+      },
       repzoApiKey: "j9j3bHrGso7VR4hLsSH9n6FevaDf0eQ6EHljaHwkqEQ",
       errorEmail: "ahmed.khaled@repzoapp.com",
     },

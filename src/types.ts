@@ -1,10 +1,11 @@
 import jwt from "jsonwebtoken";
 import { Service } from "repzo/src/types";
+
+type ENV = "staging" | "production" | "local";
 export interface Config {
   data?: any;
-  repzoEndPoint: string;
-  serviceEndPoint: string;
-  env: "staging" | "local" | "production";
+  env: ENV;
+  oauth2_data: Oauth2_data;
 }
 
 type DecodedScope = "admin" | "client" | "rep";
@@ -63,7 +64,7 @@ export interface CommandEvent {
   end_of_day: string;
   timezone: string;
   data?: any;
-  env: "staging" | "production" | "local";
+  env: ENV;
   oauth2_data: Oauth2_data;
 }
 
