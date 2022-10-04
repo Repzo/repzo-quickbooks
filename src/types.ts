@@ -2,17 +2,16 @@ import jwt from "jsonwebtoken";
 import { Service } from "repzo/src/types";
 
 type ENV = "staging" | "production" | "local";
+type DecodedScope = "admin" | "client" | "rep";
+type StringId = string;
+type Email = string;
+type NameSpaces = string[];
+
 export interface Config {
   data?: any;
   env: ENV;
   oauth2_data: Oauth2_data;
 }
-
-type DecodedScope = "admin" | "client" | "rep";
-
-type StringId = string;
-type Email = string;
-type NameSpaces = string[];
 
 export type Decoded = jwt.JwtPayload & {
   id?: StringId;

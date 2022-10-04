@@ -21,7 +21,7 @@ export const actionsList: Action[] = [
   },
   {
     action: "create_invoice",
-    name: "create customer",
+    name: "create invoice",
     description: "create invoice ..",
   },
 ];

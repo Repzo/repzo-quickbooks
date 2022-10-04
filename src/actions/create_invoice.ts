@@ -3,12 +3,14 @@ import { EVENT, Config } from "../types";
 import { Service } from "repzo/src/types";
 import { v4 as uuid } from "uuid";
 import QuickBooks from "../quickbooks/index.js";
+import { Invoice } from "../quickbooks/types/invoice.js";
 
 export const create_invoice = async (event: EVENT, options: Config) => {
   const repzo = new Repzo(options.data?.repzoApiKey, { env: options.env });
   const action_sync_id: string = event?.headers?.action_sync_id || uuid();
   const actionLog = new Repzo.ActionLogs(repzo, action_sync_id);
   let body: Service.FullInvoice.InvoiceSchema | any;
+  let invoice: Invoice.Create.Body;
   try {
     // console.log("create_invoice");
     // await actionLog.load(action_sync_id);
@@ -25,11 +27,11 @@ export const create_invoice = async (event: EVENT, options: Config) => {
       if (body) body = JSON.parse(body);
     } catch (e) {}
 
-    await actionLog
-      .addDetail(
-        `Repzo Qoyod: Started Create Invoice - ${body?.serial_number?.formatted}`
-      )
-      .commit();
+    // await actionLog
+    //   .addDetail(
+    //     `Repzo Qoyod: Started Create Invoice - ${body?.serial_number?.formatted}`
+    //   )
+    //   .commit();
 
     const repzo_invoice = body;
     console.log(repzo_invoice);
