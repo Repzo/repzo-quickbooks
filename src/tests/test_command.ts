@@ -35,7 +35,7 @@ let commandEvent: CommandEvent = {
         createProductHook: false,
       },
       Invoices: {
-        createInvoiceHook: false,
+        createInvoiceHook: true,
       },
       repzoApiKey: "j9j3bHrGso7VR4hLsSH9n6FevaDf0eQ6EHljaHwkqEQ",
       errorEmail: "ahmed.khaled@repzoapp.com",

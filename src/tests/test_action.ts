@@ -170,7 +170,7 @@ Actions(
     },
     queryStringParameters: {
       action: "create_invoice",
-      app: "repzo-qoyod",
+      app: "repzo-quickbooks",
     },
     requestContext: {
       accountId: "478266140170",

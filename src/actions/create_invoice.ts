@@ -11,7 +11,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
   let body: Service.FullInvoice.InvoiceSchema | any;
   try {
     // console.log("create_invoice");
-    await actionLog.load(action_sync_id);
+    // await actionLog.load(action_sync_id);
 
     body = event.body;
 

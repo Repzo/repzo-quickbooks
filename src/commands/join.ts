@@ -1,6 +1,6 @@
 import Repzo from "repzo";
 import { Service } from "repzo/lib/types";
-import { EVENT, Config, CommandEvent } from "../types";
+import { CommandEvent } from "../types";
 
 export const join = async (commandEvent: CommandEvent) => {
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
@@ -13,34 +13,22 @@ export const join = async (commandEvent: CommandEvent) => {
     commandEvent.command
   );
   try {
-    console.log("join");
-
     await commandLog.load(commandEvent.sync_id);
-    await commandLog.addDetail("Repzo Qoyod: Join").commit();
+    await commandLog.addDetail("Repzo QuickBooks: Join").commit();
 
     const body: Service.JoinActionsWeHook.Data = {
       data: [
         // invoice
-        // {
-        //   app: "repzo-qoyod",
-        //   action: "create_invoice",
-        //   event: "invoice.create",
-        //   join:
-        //     commandEvent?.app?.formData?.invoices?.createInvoiceHook || false,
-        // },
         {
-          app: "repzo-qoyod",
+          app: "repzo-quickbooks",
           action: "create_invoice",
           event: "invoiceItems.create",
           join:
-            commandEvent?.app?.formData?.invoices?.createInvoiceHook || false,
+            commandEvent?.app?.formData?.Invoices?.createInvoiceHook || false,
         },
       ],
     };
-
     const result = await repzo.joinActionsWebHook.update(null, body);
-    // console.log(result);
-
     await commandLog.setStatus("success").setBody(result).commit();
   } catch (e: any) {
     //@ts-ignore
