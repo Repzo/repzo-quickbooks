@@ -13,25 +13,30 @@ var result: Result = {
 };
 
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
+  // init Repzo object
+  const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
+    env: commandEvent.env,
+  });
+  // init commandLog
+  const commandLog = new Repzo.CommandLog(
+    repzo,
+    commandEvent.app,
+    commandEvent.command
+  );
+  // init QuickBooks object
+  const qbo = new QuickBooks({
+    oauthToken: commandEvent.oauth2_data?.access_token,
+    realmId: commandEvent.oauth2_data?.realmId,
+    sandbox: commandEvent.env === "production" ? false : true,
+  });
   try {
-    // init Repzo object
-    const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
-      env: commandEvent.env,
-    });
-    // init commandLog
-    const commandLog = new Repzo.CommandLog(
-      repzo,
-      commandEvent.app,
-      commandEvent.command
-    );
-    // init QuickBooks object
-    const qbo = new QuickBooks({
-      oauthToken: commandEvent.oauth2_data?.access_token,
-      realmId: commandEvent.oauth2_data?.realmId,
-      sandbox: commandEvent.env === "production" ? false : true,
-    });
-
     // sync_products_from_QuickBooks_to_repzo
+    if (!commandEvent.app.formData?.bench_time_client) {
+      await commandLog
+        .setStatus("skipped")
+        .setBody("bench_time_client undefined")
+        .commit();
+    }
     let res = await sync_products_from_QuickBooks_to_repzo(
       repzo,
       qbo,
@@ -45,6 +50,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     return res;
   } catch (err) {
     console.error(err);
+    await commandLog.setStatus("fail", err).setBody(err).commit();
     return result;
   }
 };
