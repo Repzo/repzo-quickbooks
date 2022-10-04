@@ -62,7 +62,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
       )
       .commit();
 
-    const result = await qbo.customer.create(`/customer`, QB_customer_body);
+    const result = await qbo.customer.create(QB_customer_body);
 
     console.log(result);
 

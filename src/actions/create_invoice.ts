@@ -10,13 +10,15 @@ export const create_invoice = async (event: EVENT, options: Config) => {
   const action_sync_id: string = event?.headers?.action_sync_id || uuid();
   const actionLog = new Repzo.ActionLogs(repzo, action_sync_id);
   let body: Service.FullInvoice.InvoiceSchema | any;
-  let invoice: Invoice.Create.Body;
+  let invoice: Invoice.Create.Body = {
+    CurrencyRef: { name: "", value: "" },
+    CustomerRef: { name: "", value: "" },
+    Line: [],
+  };
   try {
     // console.log("create_invoice");
     // await actionLog.load(action_sync_id);
-
     body = event.body;
-
     const qbo = new QuickBooks({
       oauthToken: options.oauth2_data.access_token,
       realmId: options.oauth2_data.realmId,
@@ -29,14 +31,45 @@ export const create_invoice = async (event: EVENT, options: Config) => {
 
     // await actionLog
     //   .addDetail(
-    //     `Repzo Qoyod: Started Create Invoice - ${body?.serial_number?.formatted}`
+    //     `Repzo QuickBooks: Started Create Invoice - ${body?.serial_number?.formatted}`
     //   )
     //   .commit();
 
     const repzo_invoice = body;
-    console.log(repzo_invoice);
+    // console.log(repzo_invoice);
+
+    const repzo_client = await repzo.client.get(repzo_invoice.client_id);
+    invoice.CustomerRef.value = repzo_client.integration_meta?.QuickBooks_id;
+    invoice.Line.push({
+      Id: "1",
+      DetailType: "SalesItemLineDetail",
+      SalesItemLineDetail: {
+        TaxInclusiveAmt: 1,
+        DiscountAmt: 1,
+        // ItemRef: ReferenceType;
+        // ClassRef: ReferenceType;
+        // ItemAccountRef?: ReferenceType;
+        // TaxCodeRef: ReferenceType;
+        // TaxClassificationRef?: ReferenceType;
+        // MarkupInfo: MarkupInfo;
+        // ServiceDate: Date;
+        DiscountRate: 1,
+        Qty: 1,
+        UnitPrice: 100,
+      },
+      Amount: 100,
+      LineNum: 1,
+      Description: "simple invoice from repzo",
+    });
+    await qbo.invoice.create(invoice);
+    //@ts-ignore
+    // repzo_invoice.items.foreach((i) => {
+    //   console.dir(i, { depth: 0 });
+    //   // invoice.Line.push({});
+    // });
+
+    console.log(repzo_client);
     /*
-    const qoyod_client = await repzo.client.get(repzo_invoice.client_id);
     if (!qoyod_client.integration_meta?.qoyod_id)
       throw new Error(
         `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} was missed the integration.qoyod_id`
@@ -97,8 +130,8 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     // return result;
   } catch (e: any) {
     //@ts-ignore
-    console.error(e?.response || e);
-    await actionLog.setStatus("fail", e).setBody(body).commit();
+    console.dir(e, { depth: null });
+    // await actionLog.setStatus("fail", e).setBody(body).commit();
     throw e;
   }
 };
