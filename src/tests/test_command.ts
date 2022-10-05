@@ -40,7 +40,10 @@ let commandEvent: CommandEvent = {
       repzoApiKey: "j9j3bHrGso7VR4hLsSH9n6FevaDf0eQ6EHljaHwkqEQ",
       errorEmail: "ahmed.khaled@repzoapp.com",
     },
-    options_formData: {},
+    options_formData: {
+      bench_time_client: "2022-10-06T09:57:00.000Z",
+      bench_time_products: "2022-10-04T09:57:00.000Z",
+    },
     company_namespace: ["quickbooksintg"],
     createdAt: "2022-05-17T12:39:12.338Z",
     updatedAt: "2022-05-18T10:26:15.172Z",
@@ -55,7 +58,7 @@ let commandEvent: CommandEvent = {
   nameSpace: ["quickbooksintg"], // quickbooksintg
   timezone: "Asia/Amman",
   meta: '{\r\n "test":"hi", "invoice_id": "626a58f9eaf66e59747e0460" \r\n}',
-  sync_id: undefined,
+  sync_id: "28388d4f-a3de-4f02-895e-69079ac075aa",
   env: "staging", // ""staging | production | local""
 
   oauth2_data: {

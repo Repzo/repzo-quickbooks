@@ -32,6 +32,13 @@ export const customers = async (
     sandbox: commandEvent.env === "production" ? false : true,
   });
   try {
+    await commandLog.load(commandEvent.sync_id);
+    await commandLog
+      .addDetail("Repzo QuickBooks: Started Syncing Clients")
+      .commit();
+    if (!commandEvent.app.formData?.bench_time_client) {
+      await commandLog.setBody("bench_time_client not found").commit();
+    }
     // sync_customers_from_QuickBooks_to_repzo
     let res = await sync_customers_from_QuickBooks_to_repzo(
       repzo,
@@ -41,7 +48,9 @@ export const customers = async (
 
     await commandLog
       .setStatus("success")
-      .setBody("Complete Sync QuickBooks custommers to Repzo")
+      .setBody(
+        "Complete Sync QuickBooks custommers to Repzo ," + JSON.stringify(res)
+      )
       .commit();
 
     return res;
@@ -91,9 +100,6 @@ const sync_customers_from_QuickBooks_to_repzo = async (
       } else {
         //create a new  repzo client
         try {
-          console.log(
-            `create a new repzo client name -- ${cutomer.GivenName} ...`
-          );
           let repzo_client = map_customers(cutomer);
           await repzo.client.create({
             client_code: `QB_${cutomer.Id}`,
@@ -146,8 +152,11 @@ const get_all_QuickBooks_customers = async (
   bench_time_client: string
 ): Promise<Customer.Find.Result> => {
   try {
+    let query = "select * from Customer";
+    if (bench_time_client)
+      query = `select * from Customer Where Metadata.LastUpdatedTime > '${bench_time_client}'`;
     const qb_Clients = await qb.customer.query({
-      query: `select * from Customer Where Metadata.LastUpdatedTime > '${bench_time_client}'`,
+      query,
     });
     return qb_Clients;
   } catch (err) {

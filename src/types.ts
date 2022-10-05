@@ -23,10 +23,12 @@ export type Decoded = jwt.JwtPayload & {
   permaString?: string;
   timezone?: string;
 };
+
 interface Params {
   nameSpace: NameSpaces;
   decoded: Decoded;
 }
+
 export type EVENT = AWSLambda.APIGatewayEvent & { params: Params };
 export interface Action {
   name: string;
@@ -54,6 +56,15 @@ interface Oauth2_data {
   realmId: string;
   access_token: string;
 }
+
+export interface Result {
+  QuickBooks_total: number;
+  repzo_total: number;
+  created: number;
+  updated: number;
+  failed: number;
+}
+
 export interface CommandEvent {
   app: Service.App.Schema_with_populated_AvailableApp;
   command: string;
@@ -65,12 +76,4 @@ export interface CommandEvent {
   data?: any;
   env: ENV;
   oauth2_data: Oauth2_data;
-}
-
-export interface Result {
-  QuickBooks_total: number;
-  repzo_total: number;
-  created: number;
-  updated: number;
-  failed: number;
 }

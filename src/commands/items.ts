@@ -30,6 +30,10 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     sandbox: commandEvent.env === "production" ? false : true,
   });
   try {
+    await commandLog.load(commandEvent.sync_id);
+    await commandLog
+      .addDetail("Repzo QuickBooks: Started Syncing Products")
+      .commit();
     // sync_products_from_QuickBooks_to_repzo
     if (!commandEvent.app.formData?.bench_time_client) {
       await commandLog
@@ -61,7 +65,12 @@ const sync_products_from_QuickBooks_to_repzo = async (
   bench_time_client: string
 ): Promise<Result> => {
   try {
-    const qb_items = await get_all_QuickBooks_items(qb, "Inventory", 1000);
+    const qb_items = await get_all_QuickBooks_items(
+      qb,
+      "Inventory",
+      1000,
+      bench_time_client
+    );
     let repzo_products = await get_all_repzo_products(repzo);
     result.QuickBooks_total = qb_items.QueryResponse.Item.length;
     result.repzo_total = repzo_products.length;
@@ -179,7 +188,8 @@ const get_repzo_default_category = async (
 const get_all_QuickBooks_items = async (
   qb: QuickBooks,
   type: string,
-  maxresults: number = 1
+  maxresults: number = 1,
+  bench_time_client: string
 ): Promise<Item.Find.Result> => {
   try {
     const qb_items = await qb.item.query({
