@@ -15,24 +15,23 @@ var result: Result = {
 export const customers = async (
   commandEvent: CommandEvent
 ): Promise<Result> => {
+  // init Repzo object
+  const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
+    env: commandEvent.env,
+  });
+  // init commandLog
+  const commandLog = new Repzo.CommandLog(
+    repzo,
+    commandEvent.app,
+    commandEvent.command
+  );
+  // init QuickBooks object
+  const qbo = new QuickBooks({
+    oauthToken: commandEvent.oauth2_data?.access_token,
+    realmId: commandEvent.oauth2_data?.realmId,
+    sandbox: commandEvent.env === "production" ? false : true,
+  });
   try {
-    // init Repzo object
-    const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
-      env: commandEvent.env,
-    });
-    // init commandLog
-    const commandLog = new Repzo.CommandLog(
-      repzo,
-      commandEvent.app,
-      commandEvent.command
-    );
-    // init QuickBooks object
-    const qbo = new QuickBooks({
-      oauthToken: commandEvent.oauth2_data?.access_token || "",
-      realmId: commandEvent.oauth2_data?.realmId || "",
-      sandbox: true,
-    });
-
     // sync_customers_from_QuickBooks_to_repzo
     let res = await sync_customers_from_QuickBooks_to_repzo(
       repzo,
@@ -42,12 +41,16 @@ export const customers = async (
 
     await commandLog
       .setStatus("success")
-      .setBody("Complete Sync QuickBooks custommers to Repzo")
+      .setBody(
+        "Complete Sync QuickBooks custommers to Repzo ," + JSON.stringify(res)
+      )
       .commit();
 
     return res;
   } catch (err) {
     console.error(err);
+    await commandLog.setStatus("fail", err).setBody(err).commit();
+
     return result;
   }
 };
@@ -90,9 +93,6 @@ const sync_customers_from_QuickBooks_to_repzo = async (
       } else {
         //create a new  repzo client
         try {
-          console.log(
-            `create a new repzo client name -- ${cutomer.GivenName} ...`
-          );
           let repzo_client = map_customers(cutomer);
           await repzo.client.create({
             client_code: `QB_${cutomer.Id}`,
@@ -145,8 +145,11 @@ const get_all_QuickBooks_customers = async (
   bench_time_client: string
 ): Promise<Customer.Find.Result> => {
   try {
+    let query = "select * from Customer";
+    if (bench_time_client)
+      query = `select * from Customer Where Metadata.LastUpdatedTime > '${bench_time_client}'`;
     const qb_Clients = await qb.customer.query({
-      query: `select * from Customer Where Metadata.LastUpdatedTime > '${bench_time_client}'`,
+      query,
     });
     return qb_Clients;
   } catch (err) {

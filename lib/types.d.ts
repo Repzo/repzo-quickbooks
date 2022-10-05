@@ -1,15 +1,15 @@
 import jwt from "jsonwebtoken";
 import { Service } from "repzo/src/types";
-export interface Config {
-  data?: any;
-  repzoEndPoint: string;
-  serviceEndPoint: string;
-  env: "staging" | "local" | "production";
-}
+declare type ENV = "staging" | "production" | "local";
 declare type DecodedScope = "admin" | "client" | "rep";
 declare type StringId = string;
 declare type Email = string;
 declare type NameSpaces = string[];
+export interface Config {
+  data?: any;
+  env: ENV;
+  oauth2_data: Oauth2_data;
+}
 export declare type Decoded = jwt.JwtPayload & {
   id?: StringId;
   email?: Email;
@@ -54,6 +54,13 @@ interface Oauth2_data {
   realmId: string;
   access_token: string;
 }
+export interface Result {
+  QuickBooks_total: number;
+  repzo_total: number;
+  created: number;
+  updated: number;
+  failed: number;
+}
 export interface CommandEvent {
   app: Service.App.Schema_with_populated_AvailableApp;
   command: string;
@@ -63,14 +70,7 @@ export interface CommandEvent {
   end_of_day: string;
   timezone: string;
   data?: any;
-  env: "staging" | "production" | "local";
-  oauth2_data?: Oauth2_data;
-}
-export interface Result {
-  QuickBooks_total: number;
-  repzo_total: number;
-  created: number;
-  updated: number;
-  failed: number;
+  env: ENV;
+  oauth2_data: Oauth2_data;
 }
 export {};

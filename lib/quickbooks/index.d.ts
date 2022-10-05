@@ -1,6 +1,7 @@
 import { Params, QuickBooksConfig } from "./types/index";
 import { Customer } from "./types/customer";
 import { Item } from "./types/item";
+import { Invoice } from "./types/invoice";
 export default class QuickBooks {
   private config;
   private baseUrl;
@@ -12,25 +13,18 @@ export default class QuickBooks {
   customer: {
     _path: string;
     query: (params: Customer.Find.Params) => Promise<Customer.Find.Result>;
-    create: (
-      _path: `/customer`,
-      body: Customer.Create.Body
-    ) => Promise<Customer.Create.Result>;
-    update: (
-      _path: `/customer`,
-      body: Customer.Update.Body
-    ) => Promise<Customer.Update.Result>;
+    create: (body: Customer.Create.Body) => Promise<Customer.Create.Result>;
+    update: (body: Customer.Update.Body) => Promise<Customer.Update.Result>;
   };
   item: {
     _path: string;
     query: (params: Item.Find.Params) => Promise<Item.Find.Result>;
-    create: (
-      _path: `/item`,
-      body: Item.Create.Body
-    ) => Promise<Item.Create.Result>;
-    update: (
-      _path: `/item`,
-      body: Item.Update.Body
-    ) => Promise<Item.Update.Result>;
+    create: (body: Item.Create.Body) => Promise<Item.Create.Result>;
+    update: (body: Item.Update.Body) => Promise<Item.Update.Result>;
+  };
+  invoice: {
+    _path: string;
+    query: (params: Invoice.Find.Params) => Promise<Invoice.Find.Result>;
+    create: (params: Invoice.Create.Body) => Promise<Invoice.Create.Result>;
   };
 }

@@ -1,11 +1,17 @@
 {
   "_id": "63300b0c0a560f651ce96d9e",
-  "name": "repzo-integration-Quickbooks",
+  "name": "repzo-Quickbooks",
   "disabled": false,
   "JSONSchema": {
     "title": "QuickBooks Integration Settings",
     "type": "object",
+    "required": ["repzoApiKey"],
     "properties": {
+      "repzoApiKey": {
+        "type": "string",
+        "format": "email",
+        "title": "repzoApiKey"
+      },
       "errorEmail": {
         "type": "string",
         "format": "email",
@@ -16,15 +22,15 @@
         "title": "Customers",
         "required": [],
         "properties": {
-          "createCustomersHook": {
+          "createClientHook": {
             "type": "boolean",
-            "title": "Live Sync Customers from Repzo to QuickBooks",
+            "title": "Push repzo new clients to QuickBooks",
             "default": false,
             "enum": [true, false]
           }
         }
       },
-      "products": {
+      "Products": {
         "type": "object",
         "title": "Products",
         "description": "Note : all sync products will create in default category",
@@ -32,14 +38,34 @@
         "properties": {
           "pullInventoryItems": {
             "type": "boolean",
-            "title": "Pull - Inventory type from QuickBooks to my products",
+            "title": "Pull - Items with Inventory type from QuickBooks to my products",
             "default": true,
             "enum": [true, false]
           },
           "pullServiceItems": {
             "type": "boolean",
-            "title": "Pull - Service type from QuickBooks to my products",
+            "title": "Pull - Items with Service type from QuickBooks to my products",
             "default": false,
+            "enum": [true, false]
+          },
+          "createProductHook": {
+            "type": "boolean",
+            "title": "Push repzo a new products to quickbooks",
+            "default": false,
+            "enum": [true, false]
+          }
+        }
+      },
+      "Invoices": {
+        "type": "object",
+        "title": "Invoices",
+        "description": "",
+        "required": [],
+        "properties": {
+          "createInvoiceHook": {
+            "type": "boolean",
+            "title": "push repzo invoice to quickbooks once it be ready",
+            "default": true,
             "enum": [true, false]
           }
         }
@@ -87,9 +113,14 @@
   "__v": 0,
   "actions": [
     {
-      "action": "create_client",
-      "name": "create client",
-      "description": "create client .."
+      "action": "create_customer",
+      "name": "create customer",
+      "description": "create customer .."
+    },
+    {
+      "action": "create_invoice",
+      "name": "create invoice",
+      "description": "create invoice .."
     }
   ],
   "description": "QuickBooks is an accounting software package developed and marketed by Intuit.",

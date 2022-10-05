@@ -26,8 +26,8 @@ export default class QuickBooks {
       this.baseUrl = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
   }
 
-  private async _fetch(path: string, params?: Params) {
-    let res = await axios.get(this.baseUrl + this.config.realmId + path, {
+  private async _fetch(params?: Params) {
+    let res = await axios.get(this.baseUrl + this.config.realmId + `/query`, {
       params: { ...params, minorversion: this.config.minorversion },
       headers: this.headers,
     });
@@ -55,19 +55,15 @@ export default class QuickBooks {
   }
 
   customer = {
-    _path: `/query`,
+    _path: `/customer`,
     query: async (
       params: Customer.Find.Params
     ): Promise<Customer.Find.Result> => {
-      let res: Customer.Find.Result = await this._fetch(
-        this.customer._path,
-        params
-      );
+      let res: Customer.Find.Result = await this._fetch(params);
       return res;
     },
 
     create: async (
-      _path: `/customer`,
       body: Customer.Create.Body
     ): Promise<Customer.Create.Result> => {
       let res = await this._create(this.customer._path, body);
@@ -75,7 +71,6 @@ export default class QuickBooks {
     },
 
     update: async (
-      _path: `/customer`,
       body: Customer.Update.Body
     ): Promise<Customer.Update.Result> => {
       let res = await this._update(this.customer._path, body);
@@ -84,38 +79,36 @@ export default class QuickBooks {
   };
 
   item = {
-    _path: `/query`,
+    _path: `/item`,
     query: async (params: Item.Find.Params): Promise<Item.Find.Result> => {
-      let res: Item.Find.Result = await this._fetch(
-        this.customer._path,
-        params
-      );
+      let res: Item.Find.Result = await this._fetch(params);
       return res;
     },
 
-    create: async (
-      _path: `/item`,
-      body: Item.Create.Body
-    ): Promise<Item.Create.Result> => {
+    create: async (body: Item.Create.Body): Promise<Item.Create.Result> => {
       let res = await this._create(this.customer._path, body);
       return res;
     },
 
-    update: async (
-      _path: `/item`,
-      body: Item.Update.Body
-    ): Promise<Item.Update.Result> => {
+    update: async (body: Item.Update.Body): Promise<Item.Update.Result> => {
       let res = await this._update(this.customer._path, body);
       return res;
     },
   };
 
   invoice = {
-    _path: `/query`,
+    _path: `/invoice`,
     query: async (
       params: Invoice.Find.Params
     ): Promise<Invoice.Find.Result> => {
-      let res: Invoice.Find.Result = await this._fetch(
+      let res: Invoice.Find.Result = await this._fetch(params);
+      return res;
+    },
+
+    create: async (
+      params: Invoice.Create.Body
+    ): Promise<Invoice.Create.Result> => {
+      let res: Invoice.Create.Result = await this._create(
         this.invoice._path,
         params
       );

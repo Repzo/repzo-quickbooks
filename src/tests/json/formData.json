@@ -1,0 +1,15 @@
+{
+  "Customers": {
+    "createClientHook": true
+  },
+  "Products": {
+    "pullInventoryItems": true,
+    "pullServiceItems": false,
+    "createProductHook": false
+  },
+  "Invoices": {
+    "createInvoiceHook": false
+  },
+  "repzoApiKey": "dsdsfg",
+  "errorEmail": "sdgsdg"
+}

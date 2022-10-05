@@ -13,9 +13,9 @@ export const create_customer = async (event: EVENT, options: Config) => {
   try {
     // init QuickBooks object
     const qbo = new QuickBooks({
-      oauthToken: "",
-      realmId: "",
-      sandbox: true,
+      oauthToken: options.oauth2_data.access_token,
+      realmId: options.oauth2_data.realmId,
+      sandbox: options.env === "production" ? false : true,
     });
 
     // console.log("create_customer");
@@ -62,7 +62,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
       )
       .commit();
 
-    const result = await qbo.customer.create(`/customer`, QB_customer_body);
+    const result = await qbo.customer.create(QB_customer_body);
 
     console.log(result);
 

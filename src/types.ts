@@ -1,17 +1,17 @@
 import jwt from "jsonwebtoken";
 import { Service } from "repzo/src/types";
-export interface Config {
-  data?: any;
-  repzoEndPoint: string;
-  serviceEndPoint: string;
-  env: "staging" | "local" | "production";
-}
 
+type ENV = "staging" | "production" | "local";
 type DecodedScope = "admin" | "client" | "rep";
-
 type StringId = string;
 type Email = string;
 type NameSpaces = string[];
+
+export interface Config {
+  data?: any;
+  env: ENV;
+  oauth2_data: Oauth2_data;
+}
 
 export type Decoded = jwt.JwtPayload & {
   id?: StringId;
@@ -23,10 +23,12 @@ export type Decoded = jwt.JwtPayload & {
   permaString?: string;
   timezone?: string;
 };
+
 interface Params {
   nameSpace: NameSpaces;
   decoded: Decoded;
 }
+
 export type EVENT = AWSLambda.APIGatewayEvent & { params: Params };
 export interface Action {
   name: string;
@@ -54,6 +56,15 @@ interface Oauth2_data {
   realmId: string;
   access_token: string;
 }
+
+export interface Result {
+  QuickBooks_total: number;
+  repzo_total: number;
+  created: number;
+  updated: number;
+  failed: number;
+}
+
 export interface CommandEvent {
   app: Service.App.Schema_with_populated_AvailableApp;
   command: string;
@@ -63,14 +74,6 @@ export interface CommandEvent {
   end_of_day: string;
   timezone: string;
   data?: any;
-  env: "staging" | "production" | "local";
-  oauth2_data?: Oauth2_data;
-}
-
-export interface Result {
-  QuickBooks_total: number;
-  repzo_total: number;
-  created: number;
-  updated: number;
-  failed: number;
+  env: ENV;
+  oauth2_data: Oauth2_data;
 }

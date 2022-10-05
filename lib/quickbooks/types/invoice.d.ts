@@ -1,4 +1,4 @@
-export namespace Invoice {
+export declare namespace Invoice {
   interface ReferenceType {
     value: string;
     name: string;
@@ -68,7 +68,6 @@ export namespace Invoice {
   interface LineDetail {
     ItemRef: ReferenceType;
   }
-
   interface GroupLine {
     Id: string;
     GroupLineDetail: GroupLineDetail;
@@ -76,7 +75,6 @@ export namespace Invoice {
     LineNum?: number;
     Description?: string;
   }
-
   interface SalesItemLine {
     Id: String;
     DetailType: "SalesItemLineDetail";
@@ -85,7 +83,6 @@ export namespace Invoice {
     LineNum?: number;
     Description?: string;
   }
-
   interface DescriptionOnlyLine {
     Id: String;
     DetailType: "DescriptionOnly";
@@ -110,14 +107,12 @@ export namespace Invoice {
     LineNum?: number;
     Description?: string;
   }
-
   type Line =
     | SalesItemLine
     | GroupLine
     | DescriptionOnlyLine
     | DiscountLine
     | SubTotalLine;
-
   export interface InvoiceObject {
     Id: string;
     Line: Line[];
@@ -162,49 +157,45 @@ export namespace Invoice {
     RecurDataRef?: ReferenceType;
     TaxExemptionRef?: ReferenceType;
   }
-
   export type GlobalTaxCalculationEnum =
     | "TaxExcluded"
     | "TaxInclusive"
     | "NotApplicable";
-
   interface InvoiceBody extends InvoiceObject {}
-
   export namespace Find {
-    export type Params = {
+    type Params = {
       query: string;
-      [key: string]: any; // integration_meta. & customFields.
+      [key: string]: any;
     };
-    export interface Result {
+    interface Result {
       QueryResponse: {
         Item: InvoiceBody[];
       };
       time: Date;
     }
   }
-
   export namespace Create {
-    export interface Body {
+    interface Body {
       Line: Line[];
       CustomerRef: ReferenceType;
       CurrencyRef: ReferenceType;
     }
-    export type Result = {
+    type Result = {
       Invoice: InvoiceObject;
       time: Date;
     };
   }
-
   export namespace Update {
-    export type ID = string;
-    export interface Body {
+    type ID = string;
+    interface Body {
       Line: Line[];
       CustomerRef: ReferenceType;
       CurrencyRef: ReferenceType;
     }
-    export type Result = {
+    type Result = {
       Invoice: InvoiceObject;
       time: Date;
     };
   }
+  export {};
 }
