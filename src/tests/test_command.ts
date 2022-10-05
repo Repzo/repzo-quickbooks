@@ -51,8 +51,8 @@ let commandEvent: CommandEvent = {
   },
 
   // command: "sync_client",
-  // command: "sync_products",
-  command: "sync_invoices",
+  command: "sync_products",
+  //command: "sync_invoices",
 
   end_of_day: "04:00",
   nameSpace: ["quickbooksintg"], // quickbooksintg
@@ -63,7 +63,7 @@ let commandEvent: CommandEvent = {
 
   oauth2_data: {
     access_token:
-      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..jcy5h3UylMmg5mqtpbAObQ.s5Ab4LFysYDOMSfY4qMH-qln7iLSCzF0_scEkVDCnRyb83KSRxNbDG8r3BGhgCjRFQLc3pa8rkpkifbD8xCood2TGARTe0lBITuQa_7euI0akRK19o1g6nIRrqht78h017skQVm7owce3WsSMPyZV4DRGqUHEiZpUY7dWKp4RB4o7UaxLSUBpBPfdn3KtnI17VodWSxtKjtEQNZKawt0etCr8Dzjq8cqIeIqUgDP79bLdxnugkEGiM4iYAkABSZnNQn7MEfVi7684DCWnTl5OKzT0xp3xly1C9OIBko4ZP8BDBBuE8PbrbV_Lgvlo_HD-2QCCdHn-3OUqkYehjrWKGqRqpkoezI2HO3uePLBDdH_XREiFii-DhWobTJiIhyW8Z2YnPSPqtilfmz18RS_CMHH1BnnWR3OEzo0x8rAqQ4RQExJNkn06zjDxi8rAFmsAAfXv9mbIF_G8iAeU8C22W0bDKgK0FK3QkDuY_VaNELn84fUf_x839tGPqsOdaowVuL3c1gZCAcYaUzMy-JLnAT90-vCqcXkvD7t9Busw7vrmQEBXHCt9nXsXJoa2Nxjn3s46jJZFt3gQHH0RPfO7xEhQK6xHgonR3IDX6iOwnIOaeFCHIacnK2tLFUGjN_eYMKZP1dHp19V9Y-_yd4zFZBqjlDJ2y4x9Hvch-h2N3AVFjIDgKhl0YggbFPG4_qSeGe1-hjXf30m2-3DX-lcAeMKoP5ukhXsrjDchj-8mLlaTT9RiQiHlqa8SoPkt95i.5f-oSeUiznAc7nBZi6PHtA",
+      "deyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..HA-kJOjoIliMxbU3XzqEOw.cjsy_gnCo8R_nrq6cQjOcxm5cY145dbsHTRZUu6ZkdnoQxWwxMmFYSMKAPw2-6Hy9Gp7LvpaK1MvbSg28caPisbsF2frUyree0Xmz3rJbw7yKQzeTnWgtlR0NuOl2XQznblmftFyBqpk_pfnrPpkBvmuTY0iB7NUqg5Z-Npvj82nuzDqUTU_IDYyhgypLx766PkfRhSpPs731AW0vw6R4Arx6IrfWSX0e0e-bPJyTC-iD9WLJvG_3oj2MC8VxJW2ZlHz8YAge6LAYJnLuZJh_COlGGLoWy2aTwWluGH3LgJgxLOom3ZwCSZVTPF03MNDqfTvtSxncQke0RPi40JOJBIzJbfG24IIsIkPiVhirsFWTKPhPNkpX6VbNT6XWnp1ntS5ak1kDUQ0LRvrN-aFkw1OaccDMIKezNP_eVB6aeKWusgFs-cnQKVy6fQOSnmDsQZNg2KqWkVpvJOF4xTsDaSBECl48vznrPCyEIxxvryFVkcXK3hK8C1dmHnwsDW0v2s2IORNu5gVDhAJBoFhFvw37KkHiq2dfHl9YhtBvexTcZ2BnThabkRbT6ZDku-ymFZr1awdp1l7e4NQV2vIxnlNMYRb5jfe1QTaXhYa8_0BOMlelQeNNNkGGjlSPioMo4jiDaFLCLPZeoTPVoBZOsOcfohYQkFqxjVP6oNImFAdfW9z2wCGSlgpYFTIHakKP4Pgk-cUs61fF46F__mq3jMLo63Q-IdDluNUAlFtePbRdFRp7KJwBeRNCUMANVIu.u3cCIHgn3cYdbBRTvBZfOQ",
     realmId: "4620816365241355500",
   },
 };

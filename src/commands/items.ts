@@ -23,6 +23,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     commandEvent.app,
     commandEvent.command
   );
+
   // init QuickBooks object
   const qbo = new QuickBooks({
     oauthToken: commandEvent.oauth2_data?.access_token,
@@ -30,6 +31,10 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     sandbox: commandEvent.env === "production" ? false : true,
   });
   try {
+    await commandLog.load(commandEvent.sync_id);
+    await commandLog
+      .addDetail("Repzo QuickBooks: Started Syncing Products")
+      .commit();
     // sync_products_from_QuickBooks_to_repzo
     if (!commandEvent.app.formData?.bench_time_client) {
       await commandLog
@@ -42,11 +47,14 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       qbo,
       commandEvent.app.formData?.bench_time_client
     );
-
-    await commandLog
-      .setStatus("success")
-      .setBody("Complete Sync QuickBooks custommers to Repzo")
-      .commit();
+    if (res) {
+      await commandLog
+        .setStatus("success")
+        .setBody(
+          "Complete Sync QuickBooks items to Repzo" + JSON.stringify(res)
+        )
+        .commit();
+    }
     return res;
   } catch (err) {
     console.error(err);
@@ -188,8 +196,10 @@ const get_all_QuickBooks_items = async (
   bench_time_client: string
 ): Promise<Item.Find.Result> => {
   try {
+    let query = `select * from Item where Type='${type}'`;
+    query += ` maxresults ${maxresults}`;
     const qb_items = await qb.item.query({
-      query: `select * from Item where Type='${type}' maxresults ${maxresults}`,
+      query,
     });
     return qb_items;
   } catch (err) {

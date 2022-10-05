@@ -25,6 +25,7 @@ export const customers = async (
     commandEvent.app,
     commandEvent.command
   );
+
   // init QuickBooks object
   const qbo = new QuickBooks({
     oauthToken: commandEvent.oauth2_data?.access_token,
@@ -32,6 +33,10 @@ export const customers = async (
     sandbox: commandEvent.env === "production" ? false : true,
   });
   try {
+    await commandLog.load(commandEvent.sync_id);
+    await commandLog
+      .addDetail("Repzo QuickBooks: Started Syncing Clients")
+      .commit();
     // sync_customers_from_QuickBooks_to_repzo
     let res = await sync_customers_from_QuickBooks_to_repzo(
       repzo,
