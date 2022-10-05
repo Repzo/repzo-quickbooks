@@ -3,6 +3,7 @@ import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
+import { v4 as uuid } from "uuid";
 
 var result: Result = {
   QuickBooks_total: 0,
@@ -13,8 +14,12 @@ var result: Result = {
 };
 
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
+  const command_sync_id: string = commandEvent.sync_id || uuid();
+  const formData: any = commandEvent.app.formData || {};
+  const options_formData: any = commandEvent.app.options_formData || {};
+
   // init Repzo object
-  const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
+  const repzo = new Repzo(formData?.repzoApiKey, {
     env: commandEvent.env,
   });
   // init commandLog
@@ -31,12 +36,12 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     sandbox: commandEvent.env === "production" ? false : true,
   });
   try {
-    await commandLog.load(commandEvent.sync_id);
+    await commandLog.load(command_sync_id);
     await commandLog
       .addDetail("Repzo QuickBooks: Started Syncing Products")
       .commit();
     // sync_products_from_QuickBooks_to_repzo
-    if (!commandEvent.app.formData?.bench_time_client) {
+    if (!options_formData?.bench_time_client) {
       await commandLog
         .setStatus("skipped")
         .setBody("bench_time_client undefined")
@@ -45,13 +50,13 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     let res = await sync_products_from_QuickBooks_to_repzo(
       repzo,
       qbo,
-      commandEvent.app.formData?.bench_time_client
+      commandEvent.app
     );
     if (res) {
       await commandLog
         .setStatus("success")
         .setBody(
-          "Complete Sync QuickBooks items to Repzo" + JSON.stringify(res)
+          "Complete Sync QuickBooks items to Repzo ." + JSON.stringify(res)
         )
         .commit();
     }
@@ -66,18 +71,13 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
 const sync_products_from_QuickBooks_to_repzo = async (
   repzo: Repzo,
   qb: QuickBooks,
-  bench_time_client: string
+  app: any
 ): Promise<Result> => {
   try {
-    const qb_items = await get_all_QuickBooks_items(
-      qb,
-      "Inventory",
-      1000,
-      bench_time_client
-    );
+    const qb_items = await get_all_QuickBooks_items(qb, app);
     let repzo_products = await get_all_repzo_products(repzo);
     result.QuickBooks_total = qb_items.QueryResponse.Item.length;
-    result.repzo_total = repzo_products.length;
+    result.repzo_total = repzo_products?.length;
     repzo_products = repzo_products.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
@@ -191,16 +191,33 @@ const get_repzo_default_category = async (
 
 const get_all_QuickBooks_items = async (
   qb: QuickBooks,
-  type: string,
-  maxresults: number = 1,
-  bench_time_client: string
+  app: any
 ): Promise<Item.Find.Result> => {
+  const { Products } = app.formData;
+  let { bench_time_client } = app.options_formData;
+
   try {
-    let query = `select * from Item where Type='${type}'`;
-    query += ` maxresults ${maxresults}`;
+    let query = `select * from Item where Type In`;
+    if (Products.pullInventoryItems || Products.pullServiceItems) {
+      query += `(`;
+      if (Products.pullInventoryItems) {
+        query += `'Inventory'`;
+      }
+      if (Products.pullServiceItems) {
+        query += `,'Service'`;
+      }
+      query += `)`;
+    }
+    if (bench_time_client) {
+      bench_time_client = bench_time_client.slice(0, 10);
+      query += ` AND MetaData.LastUpdatedTime >= '${bench_time_client}'`;
+    }
+    query += ` maxresults 1000`;
+
     const qb_items = await qb.item.query({
       query,
     });
+    console.log(qb_items.QueryResponse);
     return qb_items;
   } catch (err) {
     throw err;

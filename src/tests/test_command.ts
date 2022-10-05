@@ -31,7 +31,7 @@ let commandEvent: CommandEvent = {
       },
       Products: {
         pullInventoryItems: true,
-        pullServiceItems: false,
+        pullServiceItems: true,
         createProductHook: false,
       },
       Invoices: {
@@ -42,7 +42,7 @@ let commandEvent: CommandEvent = {
     },
     options_formData: {
       bench_time_client: "2022-10-06T09:57:00.000Z",
-      bench_time_products: "2022-10-04T09:57:00.000Z",
+      bench_time_products: "2021-01-04T09:57:00.000Z",
     },
     company_namespace: ["quickbooksintg"],
     createdAt: "2022-05-17T12:39:12.338Z",
@@ -63,7 +63,7 @@ let commandEvent: CommandEvent = {
 
   oauth2_data: {
     access_token:
-      "deyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..HA-kJOjoIliMxbU3XzqEOw.cjsy_gnCo8R_nrq6cQjOcxm5cY145dbsHTRZUu6ZkdnoQxWwxMmFYSMKAPw2-6Hy9Gp7LvpaK1MvbSg28caPisbsF2frUyree0Xmz3rJbw7yKQzeTnWgtlR0NuOl2XQznblmftFyBqpk_pfnrPpkBvmuTY0iB7NUqg5Z-Npvj82nuzDqUTU_IDYyhgypLx766PkfRhSpPs731AW0vw6R4Arx6IrfWSX0e0e-bPJyTC-iD9WLJvG_3oj2MC8VxJW2ZlHz8YAge6LAYJnLuZJh_COlGGLoWy2aTwWluGH3LgJgxLOom3ZwCSZVTPF03MNDqfTvtSxncQke0RPi40JOJBIzJbfG24IIsIkPiVhirsFWTKPhPNkpX6VbNT6XWnp1ntS5ak1kDUQ0LRvrN-aFkw1OaccDMIKezNP_eVB6aeKWusgFs-cnQKVy6fQOSnmDsQZNg2KqWkVpvJOF4xTsDaSBECl48vznrPCyEIxxvryFVkcXK3hK8C1dmHnwsDW0v2s2IORNu5gVDhAJBoFhFvw37KkHiq2dfHl9YhtBvexTcZ2BnThabkRbT6ZDku-ymFZr1awdp1l7e4NQV2vIxnlNMYRb5jfe1QTaXhYa8_0BOMlelQeNNNkGGjlSPioMo4jiDaFLCLPZeoTPVoBZOsOcfohYQkFqxjVP6oNImFAdfW9z2wCGSlgpYFTIHakKP4Pgk-cUs61fF46F__mq3jMLo63Q-IdDluNUAlFtePbRdFRp7KJwBeRNCUMANVIu.u3cCIHgn3cYdbBRTvBZfOQ",
+      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..jmWmg67FmJaSXdwyhZi8Nw.nSfznrkMY6SP7VQhz0AOiLw8uoEzG4qD04L2gT0h9UvB1qyNCl2c31cD3WYK-ZmgvUWWipF12G1gkEL-THJnvJDUwNAPbX2HO9tNVKUKiOo37nw1N6LsUSJUMEDVmRjhx2mOewOP8Jj2d450PkFSLsqw9KhoWta1Ds2aaeuJw2-Ly3XkBl7iiSStwxw8niEh8tsuuAmo0MC8iDZ-MqxfVhffVz4AfR7OcedmyVB2GwO4nj3UKfE93uisiaK27Kh-N8XuG2e9RzH8A5XKQD7jfzfXE9qdvpImtqY2beI1Sba9vD4QzEt1SUL_3Thh61hrtwqfTD6yi95IbflAONvwjt07bm1Lt0lKkjc6RnGVzbzJOmE2GfUi_CITfX0h7p7Pt5iE2nKBmMDQ84lPvUjcpPdCJnA9kqSaaNzcEGuAcWakMsEUEtAOBu2I-HRAAzVX-_2YlIzDmJTglG8OyffOwCRoVOoc9-maIy3OnjiVfum8W5RCGl1_jmQMmao7nk35BTr0i1iwB__FwaT-H28BXiTm4zrPMngdvIiVJ7jNc98_pwk-UEWdVg72L-SiVYn37WG179smfR6HoxdAJ_jb6chs8Y62p_eoGprFgywvEE798bJnBy5JI3SNYwYOVeAD7L401hXlYaxjHyQ0ddH3cOEAcci7cVGsyNToVzUubN-bzsAexuAx9khUc6H98-l-qwhDATM9FQdmBHWdAjIwViCe19shFLmUyYAYe9xIJqz5CEtUtyjRFzAj4173W_eJ.ay7T_MuchYREc2jWszGLGQ",
     realmId: "4620816365241355500",
   },
 };
