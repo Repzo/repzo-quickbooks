@@ -36,32 +36,28 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   });
 
   try {
-  } catch (err) {
     await commandLog.load(command_sync_id);
     await commandLog
       .addDetail("Repzo QuickBooks: Started Syncing Products")
       .commit();
 
-    if (!app.options_formData?.bench_time_client) {
+    if (!app.options_formData?.bench_time_products) {
       await commandLog
         .setStatus("skipped")
-        .setBody("bench_time_client undefined")
+        .setBody("bench_time_products undefined")
         .commit();
     }
-  }
-
-  try {
     // return all repzo items
     let qb_items = await get_all_QuickBooks_items(qbo, app);
     // return all quickbooks products
     let repzo_products = await get_all_repzo_products(repzo);
-    console.log(qb_items);
     result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
     result.repzo_total = repzo_products?.length;
     repzo_products = repzo_products.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
 
+    // foreach quickbooks items exist or not
     qb_items.QueryResponse.Item.forEach(async (item) => {
       const repzo_default_category = await get_repzo_default_category(
         repzo,
@@ -105,7 +101,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
         }
       }
     });
-
+    // commandLog Complete Sync QuickBooks items to Repzo
     await commandLog
       .setStatus("success")
       .setBody(

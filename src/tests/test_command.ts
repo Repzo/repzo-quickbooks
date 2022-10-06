@@ -50,8 +50,8 @@ let commandEvent: CommandEvent = {
     __v: 0,
   },
 
-  // command: "sync_client",
-  command: "sync_products",
+  command: "sync_client",
+  // command: "sync_products",
   //command: "sync_invoices",
 
   end_of_day: "04:00",
