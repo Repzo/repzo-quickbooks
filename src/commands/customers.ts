@@ -25,6 +25,7 @@ export const customers = async (
     commandEvent.app,
     commandEvent.command
   );
+
   // init QuickBooks object
   const qbo = new QuickBooks({
     oauthToken: commandEvent.oauth2_data?.access_token,
@@ -32,21 +33,89 @@ export const customers = async (
     sandbox: commandEvent.env === "production" ? false : true,
   });
   try {
-    // sync_customers_from_QuickBooks_to_repzo
-    let res = await sync_customers_from_QuickBooks_to_repzo(
-      repzo,
-      qbo,
-      commandEvent.app.formData?.bench_time_client
-    );
-
+    await commandLog.load(commandEvent.sync_id);
     await commandLog
-      .setStatus("success")
-      .setBody(
-        "Complete Sync QuickBooks custommers to Repzo ," + JSON.stringify(res)
-      )
+      .addDetail("Repzo QuickBooks: Started Syncing Clients ..")
       .commit();
+    if (!commandEvent.app?.options_formData?.bench_time_client) {
+      await commandLog
+        .setStatus("skipped")
+        .setBody("bench_time_client undefined")
+        .commit();
+    }
+    try {
+      // sync_customers_from_QuickBooks_to_repzo
 
-    return res;
+      // return all repzo clients
+      let repzo_client = await get_all_repzo_clients(repzo);
+      // return all quickbooks clients
+      const qb_customers = await get_all_QuickBooks_customers(
+        qbo,
+        commandEvent.app.formData?.bench_time_client
+      );
+
+      repzo_client = repzo_client.filter(
+        (i) => i.integration_meta?.QuickBooks_id !== undefined
+      );
+      qb_customers.QueryResponse.Customer?.forEach(async (cutomer) => {
+        let existClient = repzo_client.filter(
+          (i) =>
+            i.integration_meta?.QuickBooks_id === cutomer.Id ||
+            i.client_code === `QB_${cutomer.Id}`
+        );
+        if (existClient[0]) {
+          if (
+            new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
+            new Date(cutomer.MetaData?.LastUpdatedTime)
+          ) {
+            try {
+              await commandLog
+                .addDetail(
+                  `update repzo client id -- ${existClient[0]._id} ...`
+                )
+                .commit();
+
+              let repzo_client = map_customers(cutomer);
+              await repzo.client.update(existClient[0]._id, repzo_client);
+              result["updated"] = result["updated"] + 1 || 1;
+            } catch (err) {
+              console.error(err);
+              result["failed"] = result["failed"] + 1 || 1;
+            }
+          }
+        } else {
+          //create a new  repzo client
+          try {
+            let repzo_client = map_customers(cutomer);
+            await repzo.client.create({
+              client_code: `QB_${cutomer.Id}`,
+              ...repzo_client,
+            });
+            await commandLog
+              .addDetail(
+                `Create a new repzo client -- ${JSON.stringify(cutomer)} ...`
+              )
+              .commit();
+            result["created"] = result["created"] + 1 || 1;
+          } catch (err) {
+            console.error(err);
+            result["failed"] = result["failed"] + 1 || 1;
+          }
+        }
+      });
+
+      await commandLog
+        .setStatus("success")
+        .setBody(
+          "Complete Sync QuickBooks custommers to Repzo ," +
+            JSON.stringify(result)
+        )
+        .commit();
+    } catch (err) {
+      console.error(err);
+    }
+
+    return result;
   } catch (err) {
     console.error(err);
     await commandLog.setStatus("fail", err).setBody(err).commit();
@@ -54,67 +123,6 @@ export const customers = async (
     return result;
   }
 };
-
-const sync_customers_from_QuickBooks_to_repzo = async (
-  repzo: Repzo,
-  qb: QuickBooks,
-  bench_time_client: string
-): Promise<Result> => {
-  try {
-    let repzo_client = await get_all_repzo_clients(repzo);
-    const qb_customers = await get_all_QuickBooks_customers(
-      qb,
-      bench_time_client
-    );
-    repzo_client = repzo_client.filter(
-      (i) => i.integration_meta?.QuickBooks_id !== undefined
-    );
-    qb_customers.QueryResponse.Customer?.forEach(async (cutomer) => {
-      let existClient = repzo_client.filter(
-        (i) =>
-          i.integration_meta?.QuickBooks_id === cutomer.Id ||
-          i.client_code === `QB_${cutomer.Id}`
-      );
-      if (existClient[0]) {
-        if (
-          new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
-          new Date(cutomer.MetaData?.LastUpdatedTime)
-        ) {
-          try {
-            console.log(`update repzo client id -- ${existClient[0]._id} ...`);
-            let repzo_client = map_customers(cutomer);
-            await repzo.client.update(existClient[0]._id, repzo_client);
-            result["updated"] = result["updated"] + 1 || 1;
-          } catch (err) {
-            console.error(err);
-            result["failed"] = result["failed"] + 1 || 1;
-          }
-        }
-      } else {
-        //create a new  repzo client
-        try {
-          let repzo_client = map_customers(cutomer);
-          await repzo.client.create({
-            client_code: `QB_${cutomer.Id}`,
-            ...repzo_client,
-          });
-          result["created"] = result["created"] + 1 || 1;
-        } catch (err) {
-          console.error(err);
-          result["failed"] = result["failed"] + 1 || 1;
-        }
-      }
-    });
-  } catch (err) {
-    console.error(err);
-  }
-  return result;
-};
-
-const sync_customers_from_repzo_to_QuickBooks = async (
-  QuickBooks_customers: Customer.Find.Result[],
-  repzo_client: Service.Client.Get.Result[]
-) => {};
 
 const get_all_repzo_clients = async (
   repzo: Repzo

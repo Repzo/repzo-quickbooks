@@ -3,8 +3,9 @@ import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
+import { v4 as uuid } from "uuid";
 
-var result: Result = {
+let result: Result = {
   QuickBooks_total: 0,
   repzo_total: 0,
   created: 0,
@@ -13,8 +14,11 @@ var result: Result = {
 };
 
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
+  const command_sync_id: string = commandEvent.sync_id || uuid();
+  const { app }: any = commandEvent || {};
+
   // init Repzo object
-  const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
+  const repzo = new Repzo(app.formData?.repzoApiKey, {
     env: commandEvent.env,
   });
   // init commandLog
@@ -23,57 +27,37 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     commandEvent.app,
     commandEvent.command
   );
+
   // init QuickBooks object
   const qbo = new QuickBooks({
     oauthToken: commandEvent.oauth2_data?.access_token,
     realmId: commandEvent.oauth2_data?.realmId,
     sandbox: commandEvent.env === "production" ? false : true,
   });
+
   try {
-    // sync_products_from_QuickBooks_to_repzo
-    if (!commandEvent.app.formData?.bench_time_client) {
+    await commandLog.load(command_sync_id);
+    await commandLog
+      .addDetail("Repzo QuickBooks: Started Syncing Products")
+      .commit();
+
+    if (!app.options_formData?.bench_time_products) {
       await commandLog
         .setStatus("skipped")
-        .setBody("bench_time_client undefined")
+        .setBody("bench_time_products undefined")
         .commit();
     }
-    let res = await sync_products_from_QuickBooks_to_repzo(
-      repzo,
-      qbo,
-      commandEvent.app.formData?.bench_time_client
-    );
-
-    await commandLog
-      .setStatus("success")
-      .setBody("Complete Sync QuickBooks custommers to Repzo")
-      .commit();
-    return res;
-  } catch (err) {
-    console.error(err);
-    await commandLog.setStatus("fail", err).setBody(err).commit();
-    return result;
-  }
-};
-
-const sync_products_from_QuickBooks_to_repzo = async (
-  repzo: Repzo,
-  qb: QuickBooks,
-  bench_time_client: string
-): Promise<Result> => {
-  try {
-    const qb_items = await get_all_QuickBooks_items(
-      qb,
-      "Inventory",
-      1000,
-      bench_time_client
-    );
+    // return all repzo items
+    let qb_items = await get_all_QuickBooks_items(qbo, app);
+    // return all quickbooks products
     let repzo_products = await get_all_repzo_products(repzo);
-    result.QuickBooks_total = qb_items.QueryResponse.Item.length;
-    result.repzo_total = repzo_products.length;
+    result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
+    result.repzo_total = repzo_products?.length;
     repzo_products = repzo_products.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
 
+    // foreach quickbooks items exist or not
     qb_items.QueryResponse.Item.forEach(async (item) => {
       const repzo_default_category = await get_repzo_default_category(
         repzo,
@@ -89,9 +73,11 @@ const sync_products_from_QuickBooks_to_repzo = async (
           new Date(item.MetaData?.LastUpdatedTime)
         ) {
           try {
-            console.log(
-              `update repzo product id -- ${existProduct[0]._id} ...`
-            );
+            await commandLog
+              .addDetail(
+                `update repzo product id -- ${existProduct[0]._id} ...`
+              )
+              .commit();
             let repzo_product = map_products(item, repzo_default_category._id);
             await repzo.product.update(existProduct[0]._id, repzo_product);
             result["updated"] = result["updated"] + 1 || 1;
@@ -103,7 +89,9 @@ const sync_products_from_QuickBooks_to_repzo = async (
       } else {
         //create a new  repzo client
         try {
-          console.log(`create a new repzo product name -- ${item.Name} ...`);
+          await commandLog
+            .addDetail(`create a new repzo product name -- ${item.Name} ...`)
+            .commit();
           let repzo_product = map_products(item, repzo_default_category._id);
           await repzo.product.create(repzo_product);
           result["created"] = result["created"] + 1 || 1;
@@ -113,8 +101,16 @@ const sync_products_from_QuickBooks_to_repzo = async (
         }
       }
     });
+    // commandLog Complete Sync QuickBooks items to Repzo
+    await commandLog
+      .setStatus("success")
+      .setBody(
+        "Complete Sync QuickBooks items to Repzo ." + JSON.stringify(result)
+      )
+      .commit();
   } catch (err) {
     console.error(err);
+    await commandLog.setStatus("fail", err).setBody(err).commit();
   }
   return result;
 };
@@ -183,13 +179,31 @@ const get_repzo_default_category = async (
 
 const get_all_QuickBooks_items = async (
   qb: QuickBooks,
-  type: string,
-  maxresults: number = 1,
-  bench_time_client: string
+  app: any
 ): Promise<Item.Find.Result> => {
+  const { Products } = app.formData;
+  let { bench_time_products } = app.options_formData;
+
   try {
+    let query = `select * from Item where Type In`;
+    if (Products.pullInventoryItems || Products.pullServiceItems) {
+      query += `(`;
+      if (Products.pullInventoryItems) {
+        query += `'Inventory'`;
+      }
+      if (Products.pullServiceItems) {
+        query += `,'Service'`;
+      }
+      query += `)`;
+    }
+    if (bench_time_products) {
+      bench_time_products = bench_time_products.slice(0, 10);
+      query += ` AND MetaData.LastUpdatedTime >= '${bench_time_products}'`;
+    }
+    query += ` maxresults 1000`;
+
     const qb_items = await qb.item.query({
-      query: `select * from Item where Type='${type}' maxresults ${maxresults}`,
+      query,
     });
     return qb_items;
   } catch (err) {
