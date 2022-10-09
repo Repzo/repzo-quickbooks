@@ -5,18 +5,16 @@ import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
 import { v4 as uuid } from "uuid";
 
-let result: Result = {
-  QuickBooks_total: 0,
-  repzo_total: 0,
-  created: 0,
-  updated: 0,
-  failed: 0,
-};
-
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   const command_sync_id: string = commandEvent.sync_id || uuid();
   const { app }: any = commandEvent || {};
-
+  let result: Result = {
+    QuickBooks_total: 0,
+    repzo_total: 0,
+    created: 0,
+    updated: 0,
+    failed: 0,
+  };
   // init Repzo object
   const repzo = new Repzo(app.formData?.repzoApiKey, {
     env: commandEvent.env,
@@ -73,9 +71,11 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
           new Date(item.MetaData?.LastUpdatedTime)
         ) {
           try {
-            console.log(
-              `update repzo product id -- ${existProduct[0]._id} ...`
-            );
+            await commandLog
+              .addDetail(
+                `update repzo product id -- ${existProduct[0]._id} ...`
+              )
+              .commit();
             let repzo_product = map_products(item, repzo_default_category._id);
             await repzo.product.update(existProduct[0]._id, repzo_product);
             result["updated"] = result["updated"] + 1 || 1;
@@ -87,7 +87,9 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       } else {
         //create a new  repzo client
         try {
-          console.log(`create a new repzo product name -- ${item.Name} ...`);
+          await commandLog
+            .addDetail(`create a new repzo product name -- ${item.Name} ...`)
+            .commit();
           let repzo_product = map_products(item, repzo_default_category._id);
           await repzo.product.create(repzo_product);
           result["created"] = result["created"] + 1 || 1;
