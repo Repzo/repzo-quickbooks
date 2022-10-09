@@ -61,12 +61,13 @@ export const customers = async (
         .then((values) => {
           commandLog
             .addDetail(
-              `Done : Sync ${values.length} Client , bench_time  ${commandEvent.app.formData?.bench_time_client}`
+              `Complete : Sync ${values.length} Clients with Quickbooks ,and bench_time  ${commandEvent.app.options_formData?.bench_time_client}`
             )
             .commit();
         })
         .catch((err) => {
-          console.error(err);
+          console.error(`failed to complete sync due to an exception : ${err}`);
+
           commandLog.setStatus("fail", err).setBody(err).commit();
         });
     } catch (err) {
@@ -74,7 +75,7 @@ export const customers = async (
     }
     return result;
   } catch (err) {
-    console.error(err);
+    console.error(`failed to complete sync due to an exception : ${err}`);
     await commandLog.setStatus("fail", err).setBody(err).commit();
     return result;
   }

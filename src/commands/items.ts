@@ -8,6 +8,7 @@ import { v4 as uuid } from "uuid";
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   const command_sync_id: string = commandEvent.sync_id || uuid();
   const { app }: any = commandEvent || {};
+
   let result: Result = {
     QuickBooks_total: 0,
     repzo_total: 0,
@@ -99,20 +100,67 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
         }
       }
     });
+
+    promisify(qb_items.QueryResponse.Item, repzo_products, repzo).then((res) =>
+      Promise.all(res).then((values) => {
+        commandLog
+          .addDetail(
+            `Complete : Sync ${values.length} Item / Product with Quickbooks ,and bench_time  ${commandEvent.app.options_formData?.bench_time_products}`
+          )
+          .commit();
+      })
+    );
     // commandLog Complete Sync QuickBooks items to Repzo
-    await commandLog
-      .setStatus("success")
-      .setBody(
-        "Complete Sync QuickBooks items to Repzo ." + JSON.stringify(result)
-      )
-      .commit();
   } catch (err) {
-    console.error(err);
-    await commandLog.setStatus("fail", err).setBody(err).commit();
+    console.error(`failed to complete sync due to an exception : ${err}`);
+    await commandLog
+      .setStatus("fail", "failed to complete sync due to an exception")
+      .setBody(err)
+      .commit();
   }
   return result;
 };
 
+const promisify = (
+  qb_items: Item.itemObject[],
+  repzo_products: Service.Product.Get.Result[],
+  repzo: Repzo
+) => {
+  let pro = [{}];
+  pro.pop();
+
+  return new Promise<any[]>((resolve, reject) => {
+    qb_items.forEach((item, index, array) => {
+      get_repzo_default_category(repzo, item.ParentRef?.name).then(
+        (repzo_default_category) => {
+          let existProduct = repzo_products.filter(
+            (i) => i.integration_meta?.QuickBooks_id === item.Id
+          );
+          if (existProduct[0]) {
+            if (
+              new Date(
+                existProduct[0]?.integration_meta?.QuickBooks_last_sync
+              ) < new Date(item.MetaData?.LastUpdatedTime)
+            ) {
+              let repzo_product = map_products(
+                item,
+                repzo_default_category._id
+              );
+              pro.push(
+                repzo.product.update(existProduct[0]._id, repzo_product)
+              );
+            }
+          } else {
+            //create a new  repzo client
+            let repzo_product = map_products(item, repzo_default_category._id);
+            pro.push(repzo.product.create(repzo_product));
+          }
+          if (index === array.length - 1) resolve(pro);
+        }
+      );
+    });
+  });
+};
 const get_all_repzo_products = async (
   repzo: Repzo
 ): Promise<Service.Product.Get.Result[]> => {
