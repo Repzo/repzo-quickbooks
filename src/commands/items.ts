@@ -73,11 +73,9 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
           new Date(item.MetaData?.LastUpdatedTime)
         ) {
           try {
-            await commandLog
-              .addDetail(
-                `update repzo product id -- ${existProduct[0]._id} ...`
-              )
-              .commit();
+            console.log(
+              `update repzo product id -- ${existProduct[0]._id} ...`
+            );
             let repzo_product = map_products(item, repzo_default_category._id);
             await repzo.product.update(existProduct[0]._id, repzo_product);
             result["updated"] = result["updated"] + 1 || 1;
@@ -89,9 +87,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       } else {
         //create a new  repzo client
         try {
-          await commandLog
-            .addDetail(`create a new repzo product name -- ${item.Name} ...`)
-            .commit();
+          console.log(`create a new repzo product name -- ${item.Name} ...`);
           let repzo_product = map_products(item, repzo_default_category._id);
           await repzo.product.create(repzo_product);
           result["created"] = result["created"] + 1 || 1;

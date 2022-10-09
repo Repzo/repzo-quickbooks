@@ -69,11 +69,9 @@ export const customers = async (
             new Date(cutomer.MetaData?.LastUpdatedTime)
           ) {
             try {
-              await commandLog
-                .addDetail(
-                  `update repzo client id -- ${existClient[0]._id} ...`
-                )
-                .commit();
+              console.log(
+                `update repzo client id -- ${existClient[0]._id} ...`
+              );
 
               let repzo_client = map_customers(cutomer);
               await repzo.client.update(existClient[0]._id, repzo_client);
@@ -91,11 +89,9 @@ export const customers = async (
               client_code: `QB_${cutomer.Id}`,
               ...repzo_client,
             });
-            await commandLog
-              .addDetail(
-                `Create a new repzo client -- ${JSON.stringify(cutomer)} ...`
-              )
-              .commit();
+            console.log(
+              `Create a new repzo client -- ${cutomer.GivenName} ...`
+            );
             result["created"] = result["created"] + 1 || 1;
           } catch (err) {
             console.error(err);
