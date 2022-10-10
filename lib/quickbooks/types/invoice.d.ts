@@ -175,6 +175,7 @@ export declare namespace Invoice {
     }
   }
   export namespace Create {
+    type XLine = Line[];
     interface Body {
       Line: Line[];
       CustomerRef: ReferenceType;

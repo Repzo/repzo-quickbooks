@@ -5,13 +5,8 @@ import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
 import { v4 as uuid } from "uuid";
 
-let result: Result = {
-  QuickBooks_total: 0,
-  repzo_total: 0,
-  created: 0,
-  updated: 0,
-  failed: 0,
-};
+// const new_bench_time = new Date().toISOString();
+const bench_time_key = "bench_time_products";
 
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   const command_sync_id: string = commandEvent.sync_id || uuid();
@@ -35,13 +30,20 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     sandbox: commandEvent.env === "production" ? false : true,
   });
 
+  let result: Result = {
+    QuickBooks_total: 0,
+    repzo_total: 0,
+    sync: 0,
+    failed: 0,
+  };
+
   try {
     await commandLog.load(command_sync_id);
     await commandLog
       .addDetail("Repzo QuickBooks: Started Syncing Products")
       .commit();
 
-    if (!app.options_formData?.bench_time_products) {
+    if (!app.options_formData[bench_time_key]) {
       await commandLog
         .setStatus("skipped")
         .setBody("bench_time_products undefined")
@@ -57,62 +59,65 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
 
-    // foreach quickbooks items exist or not
-    qb_items.QueryResponse.Item.forEach(async (item) => {
-      const repzo_default_category = await get_repzo_default_category(
-        repzo,
-        item.ParentRef?.name
-      );
-
-      let existProduct = repzo_products.filter(
-        (i) => i.integration_meta?.QuickBooks_id === item.Id
-      );
-      if (existProduct[0]) {
-        if (
-          new Date(existProduct[0]?.integration_meta?.QuickBooks_last_sync) <
-          new Date(item.MetaData?.LastUpdatedTime)
-        ) {
-          try {
-            await commandLog
-              .addDetail(
-                `update repzo product id -- ${existProduct[0]._id} ...`
-              )
-              .commit();
-            let repzo_product = map_products(item, repzo_default_category._id);
-            await repzo.product.update(existProduct[0]._id, repzo_product);
-            result["updated"] = result["updated"] + 1 || 1;
-          } catch (err) {
-            console.error(err);
-            result["failed"] = result["failed"] + 1 || 1;
-          }
-        }
-      } else {
-        //create a new  repzo client
-        try {
-          await commandLog
-            .addDetail(`create a new repzo product name -- ${item.Name} ...`)
-            .commit();
-          let repzo_product = map_products(item, repzo_default_category._id);
-          await repzo.product.create(repzo_product);
-          result["created"] = result["created"] + 1 || 1;
-        } catch (err) {
-          console.error(err);
-          result["failed"] = result["failed"] + 1 || 1;
-        }
-      }
-    });
+    promisify(qb_items.QueryResponse.Item, repzo_products, repzo).then((res) =>
+      Promise.all(res).then((values) => {
+        result.sync = values.length;
+        commandLog
+          .addDetail(
+            `Complete : Sync ${values.length} Item / Product with Quickbooks ,and bench_time  ${commandEvent.app.options_formData[bench_time_key]}`
+          )
+          .commit();
+      })
+    );
     // commandLog Complete Sync QuickBooks items to Repzo
-    await commandLog
-      .setStatus("success")
-      .setBody(
-        "Complete Sync QuickBooks items to Repzo ." + JSON.stringify(result)
-      )
-      .commit();
   } catch (err) {
-    console.error(err);
-    await commandLog.setStatus("fail", err).setBody(err).commit();
+    console.error(`failed to complete sync due to an exception : ${err}`);
+    await commandLog
+      .setStatus("fail", "failed to complete sync due to an exception")
+      .setBody(err)
+      .commit();
   }
   return result;
+};
+
+const promisify = (
+  qb_items: Item.itemObject[],
+  repzo_products: Service.Product.Get.Result[],
+  repzo: Repzo
+) => {
+  let jobs: any[] = []; // save all jobs here
+
+  return new Promise<any[]>((resolve, reject) => {
+    qb_items.forEach((item, index, array) => {
+      get_repzo_default_category(repzo, item.ParentRef?.name).then(
+        (repzo_default_category) => {
+          let existProduct = repzo_products.filter(
+            (i) => i.integration_meta?.QuickBooks_id === item.Id
+          );
+          if (existProduct[0]) {
+            if (
+              new Date(
+                existProduct[0]?.integration_meta?.QuickBooks_last_sync
+              ) < new Date(item.MetaData?.LastUpdatedTime)
+            ) {
+              let repzo_product = map_products(
+                item,
+                repzo_default_category._id
+              );
+              jobs.push(
+                repzo.product.update(existProduct[0]._id, repzo_product)
+              );
+            }
+          } else {
+            //create a new  repzo client
+            let repzo_product = map_products(item, repzo_default_category._id);
+            jobs.push(repzo.product.create(repzo_product));
+          }
+          if (index === array.length - 1) resolve(jobs);
+        }
+      );
+    });
+  });
 };
 
 const get_all_repzo_products = async (
@@ -182,7 +187,7 @@ const get_all_QuickBooks_items = async (
   app: any
 ): Promise<Item.Find.Result> => {
   const { Products } = app.formData;
-  let { bench_time_products } = app.options_formData;
+  let bench_time_products = app.options_formData[bench_time_key];
 
   try {
     let query = `select * from Item where Type In`;

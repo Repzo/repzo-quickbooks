@@ -9,7 +9,6 @@
     "properties": {
       "repzoApiKey": {
         "type": "string",
-        "format": "email",
         "title": "repzoApiKey"
       },
       "errorEmail": {

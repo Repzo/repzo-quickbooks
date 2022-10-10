@@ -50,20 +50,20 @@ let commandEvent: CommandEvent = {
     __v: 0,
   },
 
-  command: "sync_client",
-  // command: "sync_products",
+  //command: "sync_client",
+  command: "sync_products",
   //command: "sync_invoices",
 
   end_of_day: "04:00",
   nameSpace: ["quickbooksintg"], // quickbooksintg
   timezone: "Asia/Amman",
   meta: '{\r\n "test":"hi", "invoice_id": "626a58f9eaf66e59747e0460" \r\n}',
-  sync_id: "28388d4f-a3de-4f02-895e-69079ac075aa",
+  sync_id: "bfe85d8e-04d7-4529-9c7d-c774e7a3dbb7",
   env: "staging", // ""staging | production | local""
 
   oauth2_data: {
     access_token:
-      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..0U6pTiVPgHwToIqfff5xjw.5PLQQmfRkMPRadPYFJM4z4JPVKHQHNKP9t8rcfhOTant84k9UpJ29LfsVol1Dh4rQ3xx-9YmeEhH-uFRuraF-AVGBmolCFgyfLIvVFMZ9WqfgSpOf3gZ1l5Ti9r_TwHHFq3AvdSxynJCPwG5nqK_Rc9Z2REwnYag9Vw6tvPM130LS-Wse_zp-O3RQsirsImKzvjdO_dy6OY8zaChnMb-8gGeyQ887n3djUm9IuVzTUKFKZgw4fuqzRmJ22hSLppJh4FA-euaEdUUH4Hrm2JQk85UlImKDb7YYqGN_UlkAPVgimorCCpkqQ_kdqfGnj-2ejK1j0DTfAiprBCv2b7skGvOLRG4WAqGjc82dH0piCt1_7jNWU5Cstunvyus4immtp6X7oO30uMgZuciq4yFyWKUhAwfhQhsMB8iY2NCH4kz5UobtJTDKOD034ftFbPY-sgC3gyw_m2Kz_u7xuwdiy6qFo44twuEeLXNBH7kmTOhipU997gYGp68ifnP7QGdyKkYb7O5MaTrn37o-T7WWaN1ASdgUnymBH7vuKBFXnlvS5rIjxHxCuKiYc3Cb_XPXX9iucyGmT9tHMd0y4wohzrNFajTDO8EKOhlqhZ9RMPpztdZW5Bv1ay3OSnh4rsTmRIuVk9f308676lKb5mPUWHvgYu7E1bwoe268-1YXGfsZPlXfPJpIqpoKYo3pB-b4XU-co6KQ-5zwrD7q-98yHtdLu0snZvT76V4CASiEGdXXem29zd7c3v94TKog8MQ.a0uAiPthIhFcyFFTjZFXjQ",
+      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..5xD8DgmgsIwxbMYMIS4c0Q.K5YYcIyrZTPiAN7il5nr-aDTfkelx165CKPjoBAk-G0W3IP2F0igpcPSk9SDN0B6_lF3g3PvQZAO1qSlij8yMu15qIRrXLGAFa3kUIGWqQPX4PqrV7mje9P4oD4Mca0dbuhjXs8FSerRTaCACUPf5DVA6K5re5WvxwsQNxqsWTI7xih_wVwYx5TdwIeS-Ug4Upx1LlD2T4unnxPGVtr6JAYerLmFuehszYKhXigkSgI_Q6so1KUvOFjT_249C9TuaH3Fe4iX8ru6TvXG1qHMRn-QWDed2gCFNUgUDNJ_MkyCshcq2aonJb0uA0Cw8fNyoWWqdRnv9U-8Ke4sPIDdOiTL4oDCzubv1wZ6Ov1U2npk1Krhk8iSa51tnyKx4viRcJrTYNKokNpCMXM_4UvZWCi2ftkB9nbpf5QEuOqqd5mmjaNnyWzUN0HORaGPab3tNX6Xhmnlo3jQLpdvqjl_65htRx_y5m5zn_iIAN69JancH8UcYNRna6dKs1_SJEuHfvaxivNxvPt-2Hx9yypUdfycswwoJEc6xSNX5IE-f_yhcwkMM-dyfWqurporGZY7_xbi00bgt6MLl7ZUVeDP35mJTzDFzkaW6_g8wPHXpgu3EAJpAym5-PeBv4NLP56rPanYKKqsIqVUw602MQrbUnbs6BG_Dj8bCssRrZY0YV6dR53f6Fw5wgfKC1b3dJWFhXSTyW_yOY0aRskuaD8JdHZdZWRE9NHgAl6yLzhSV0odEvq7KcaGCNsSiGs_PKWI.U_TSRbjbJ1kBgk4OFdp4Sw",
     realmId: "4620816365241355500",
   },
 };
