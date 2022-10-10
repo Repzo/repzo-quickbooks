@@ -4,16 +4,11 @@ import { Service } from "repzo/src/types";
 import { Customer } from "../quickbooks/types/customer";
 import QuickBooks from "../quickbooks/index.js";
 
+const bench_time_key = "bench_time_client";
+
 export const customers = async (
   commandEvent: CommandEvent
 ): Promise<Result> => {
-  let result: Result = {
-    QuickBooks_total: 0,
-    repzo_total: 0,
-    created: 0,
-    updated: 0,
-    failed: 0,
-  };
   // init Repzo object
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
     env: commandEvent.env,
@@ -24,6 +19,13 @@ export const customers = async (
     commandEvent.app,
     commandEvent.command
   );
+
+  let result: Result = {
+    QuickBooks_total: 0,
+    repzo_total: 0,
+    sync: 0,
+    failed: 0,
+  };
 
   // init QuickBooks object
   const qbo = new QuickBooks({
@@ -36,7 +38,7 @@ export const customers = async (
     await commandLog
       .addDetail("Repzo QuickBooks: Started Syncing Clients ..")
       .commit();
-    if (!commandEvent.app?.options_formData?.bench_time_client) {
+    if (!commandEvent.app?.options_formData[bench_time_key]) {
       await commandLog
         .setStatus("skipped")
         .setBody("bench_time_client undefined")
@@ -59,15 +61,15 @@ export const customers = async (
         promisify(qb_customers.QueryResponse.Customer, repzo_client, repzo)
       )
         .then((values) => {
+          result.sync = values.length;
           commandLog
             .addDetail(
-              `Complete : Sync ${values.length} Clients with Quickbooks ,and bench_time  ${commandEvent.app.options_formData?.bench_time_client}`
+              `Complete : Sync ${values.length} Clients with Quickbooks ,and bench_time  ${commandEvent.app?.options_formData[bench_time_key]}`
             )
             .commit();
         })
         .catch((err) => {
           console.error(`failed to complete sync due to an exception : ${err}`);
-
           commandLog.setStatus("fail", err).setBody(err).commit();
         });
     } catch (err) {
@@ -86,8 +88,7 @@ const promisify = (
   repzo_client: Service.Client.Get.Result[],
   repzo: Repzo
 ): any[] => {
-  let pro = [{}];
-  pro.pop();
+  let jobs: any[] = []; // save all jobs here
   arr.forEach((cutomer: any) => {
     let existClient = repzo_client.filter(
       (i) =>
@@ -100,11 +101,11 @@ const promisify = (
         new Date(cutomer.MetaData?.LastUpdatedTime)
       ) {
         let repzo_client = map_customers(cutomer);
-        pro.push(repzo.client.update(existClient[0]._id, repzo_client));
+        jobs.push(repzo.client.update(existClient[0]._id, repzo_client));
       }
     } else {
       let repzo_client = map_customers(cutomer);
-      pro.push(
+      jobs.push(
         repzo.client.create({
           client_code: `QB_${cutomer.Id}`,
           ...repzo_client,
@@ -112,7 +113,7 @@ const promisify = (
       );
     }
   });
-  return pro;
+  return jobs;
 };
 
 const get_all_repzo_clients = async (
