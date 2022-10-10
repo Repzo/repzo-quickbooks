@@ -106,7 +106,7 @@ const prepareInvoiceLines = (
               },
               Amount: item.line_total,
               LineNum: i + 1,
-              Description: `simple invoice from repzo ${item.serial_number?.formatted}`,
+              Description: `measureunit  ${item.measureunit?.factor} /  ${item.measureunit?.name}`,
             });
           }
           if (i === arr.length - 1) resolve(Line);
