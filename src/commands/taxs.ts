@@ -4,6 +4,7 @@ import { Service } from "repzo/src/types";
 import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
 import { v4 as uuid } from "uuid";
+import { TaxRate } from "../quickbooks/types/taxRate";
 
 // const new_bench_time = new Date().toISOString();
 const bench_time_key = "bench_time_taxs";
@@ -40,10 +41,10 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
   };
 
   try {
-    // await commandLog.load(command_sync_id);
-    // await commandLog
-    //   .addDetail("Repzo QuickBooks: Started Syncing Taxs")
-    //   .commit();
+    await commandLog.load(command_sync_id);
+    await commandLog
+      .addDetail("Repzo QuickBooks: Started Syncing Taxs")
+      .commit();
 
     if (!app.options_formData[bench_time_key]) {
       await commandLog
@@ -51,14 +52,29 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
         .setBody("bench_time_taxs undefined")
         .commit();
     }
-    // return all repzo taxs
-    // let qb_taxs = await get_all_QuickBooks_taxs(qbo, app);
 
+    // return all repzo taxs
+    let qb_taxs = await get_all_QuickBooks_taxs(qbo);
     // return all quickbooks taxs
     let repzo_taxs = await get_all_repzo_taxs(repzo);
-    console.log(repzo_taxs);
+
+    Promise.all(promisify(qb_taxs, repzo_taxs, repzo))
+      .then((values) => {
+        result.sync = values.length;
+        commandLog
+          .addDetail(
+            `Complete : Sync ${values.length} Item / Product with Quickbooks ,and bench_time  ${commandEvent.app.options_formData[bench_time_key]}`
+          )
+          .commit();
+      })
+      .catch((err) => {
+        console.error(`failed to complete sync due to an exception : ${err}`);
+        commandLog
+          .setStatus("fail", "failed to complete sync due to an exception")
+          .setBody(err)
+          .commit();
+      });
   } catch (err) {
-    console.error(`failed to complete sync due to an exception : ${err}`);
     await commandLog
       .setStatus("fail", "failed to complete sync due to an exception")
       .setBody(err)
@@ -67,132 +83,28 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
   return result;
 };
 
-const promisify = (
-  qb_taxs: Item.itemObject[],
-  repzo_taxs: Service.Product.Get.Result[],
-  repzo: Repzo
-) => {
-  let jobs: any[] = []; // save all jobs here
-
-  return new Promise<any[]>((resolve, reject) => {
-    qb_taxs.forEach((item, index, array) => {
-      get_repzo_default_category(repzo, item.ParentRef?.name).then(
-        (repzo_default_category) => {
-          let existProduct = repzo_taxs.filter(
-            (i) => i.integration_meta?.QuickBooks_id === item.Id
-          );
-          if (existProduct[0]) {
-            if (
-              new Date(
-                existProduct[0]?.integration_meta?.QuickBooks_last_sync
-              ) < new Date(item.MetaData?.LastUpdatedTime)
-            ) {
-              let repzo_product = map_taxs(item, repzo_default_category._id);
-              jobs.push(
-                repzo.product.update(existProduct[0]._id, repzo_product)
-              );
-            }
-          } else {
-            //create a new  repzo client
-            let repzo_product = map_taxs(item, repzo_default_category._id);
-            jobs.push(repzo.product.create(repzo_product));
-          }
-          if (index === array.length - 1) resolve(jobs);
-        }
-      );
-    });
-  });
-};
-
 const get_all_repzo_taxs = async (
   repzo: Repzo
-): Promise<Service.Product.Get.Result[]> => {
+): Promise<Service.Tax.Get.Result[]> => {
   try {
-    console.log("Searching for taxs");
-    const per_page = 5000;
-    let next_page_url = undefined;
-    let repzo_taxs: any[];
-    repzo_taxs = [];
-    while (next_page_url !== null) {
-      let repzoObj = await repzo.tax.find({
-        page: 1,
-        per_page,
-        disabled: false,
-      });
-      next_page_url = repzoObj.next_page_url;
-      repzo_taxs = [...repzo_taxs, ...repzoObj.data];
-    }
-    return repzo_taxs;
+    const repzo_taxes = await repzo.tax.find({
+      per_page: 50000,
+      disabled: false,
+    });
+    return repzo_taxes.data;
   } catch (err) {
     console.error(err);
     return [];
   }
 };
 
-const get_repzo_default_category = async (
-  repzo: Repzo,
-  name: string | undefined
-): Promise<Service.Category.Get.Result> => {
-  try {
-    if (name) {
-      let repzoObj = await repzo.category.find({
-        name,
-        disabled: false,
-      });
-      if (repzoObj.data[0]) {
-        return repzoObj.data[0];
-      } else {
-        return await repzo.category.create({
-          name: "default",
-          local_name: "Created by Quickbooks",
-        });
-      }
-    } else {
-      let repzoObj = await repzo.category.find({
-        name: "default",
-        disabled: false,
-      });
-      if (repzoObj.data[0]) {
-        return repzoObj.data[0];
-      } else {
-        return await repzo.category.create({
-          name: "default",
-          local_name: "Created by Quickbooks",
-        });
-      }
-    }
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-};
-
 const get_all_QuickBooks_taxs = async (
-  qb: QuickBooks,
-  app: any
-): Promise<Item.Find.Result> => {
-  const { taxs } = app.formData;
-  let bench_time_taxs = app.options_formData[bench_time_key];
-
+  qb: QuickBooks
+): Promise<TaxRate.Find.Result> => {
   try {
-    let query = `select * from Item where Type In`;
-    if (taxs.pullInventorytaxs || taxs.pullServicetaxs) {
-      query += `(`;
-      if (taxs.pullInventorytaxs) {
-        query += `'Inventory'`;
-      }
-      if (taxs.pullServicetaxs) {
-        query += `,'Service'`;
-      }
-      query += `)`;
-    }
-    if (bench_time_taxs) {
-      bench_time_taxs = bench_time_taxs.slice(0, 10);
-      query += ` AND MetaData.LastUpdatedTime >= '${bench_time_taxs}'`;
-    }
-    query += ` maxresults 1000`;
+    let query = `Select * From TaxRate`;
 
-    const qb_taxs = await qb.item.query({
+    const qb_taxs = await qb.taxRate.query({
       query,
     });
     return qb_taxs;
@@ -201,28 +113,40 @@ const get_all_QuickBooks_taxs = async (
   }
 };
 
-const map_taxs = (
-  item: Item.itemObject,
-  categoryID: string
-): Service.Product.Create.Body => {
+const promisify = (
+  qb_taxs: TaxRate.Find.Result,
+  repzo_taxs: Service.Tax.Get.Result[],
+  repzo: Repzo
+): any[] => {
+  let jobs: any[] = []; // save all jobs here
+  qb_taxs.QueryResponse.TaxRate.forEach((tax, index, array) => {
+    let existTax = repzo_taxs.filter(
+      (i) => i.integration_meta?.QuickBooks_id === tax.Id
+    );
+    if (existTax[0]) {
+      if (
+        new Date(existTax[0]?.integration_meta?.QuickBooks_last_sync) <
+        new Date(tax.MetaData?.LastUpdatedTime)
+      ) {
+        let repzo_tax = map_taxs(tax);
+        jobs.push(repzo.tax.update(existTax[0]._id, repzo_tax));
+      }
+    } else {
+      //create a new  repzo client
+      let repzo_tax = map_taxs(tax);
+      jobs.push(repzo.tax.create(repzo_tax));
+    }
+  });
+  return jobs;
+};
+
+const map_taxs = (tax: TaxRate.TaxRateObject): Service.Tax.Create.Body => {
   return {
-    name: item.Name,
-    description: item.Description,
-    active: item.Active,
-    sku: item.Sku,
-    local_name: item.FullyQualifiedName,
-    base_price: item.UnitPrice ? String(Math.round(item.UnitPrice * 1000)) : "",
-    category: categoryID,
-    variants: [
-      {
-        default: true,
-        disabled: false,
-        name: item.Name,
-        price: item.UnitPrice ? Math.round(item.UnitPrice * 1000) : 0,
-      },
-    ],
+    name: tax.Name,
+    rate: Number(tax.RateValue) / 100,
+    type: "inclusive",
     integration_meta: {
-      QuickBooks_id: item.Id,
+      QuickBooks_id: tax.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },
   };

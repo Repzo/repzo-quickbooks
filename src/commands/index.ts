@@ -11,7 +11,7 @@ export const commands = async (CommandEvent: CommandEvent) => {
     case "sync_products":
       return await items(CommandEvent);
 
-    case "sync_client":
+    case "sync_clients":
       return await customers(CommandEvent);
 
     case "sync_taxs":
@@ -32,7 +32,7 @@ export const commandsList: Command[] = [
     description: "this command to sync Join actions  ",
   },
   {
-    command: "sync_client",
+    command: "sync_clients",
     name: "Sync Clients",
     description:
       "this command to sync all quickbooks customers with your repzo clients",

@@ -1,6 +1,7 @@
 import { Params, QuickBooksConfig } from "./types/index";
 import { Customer } from "./types/customer";
 import { Item } from "./types/item";
+import { TaxRate } from "./types/taxRate";
 import { Invoice } from "./types/invoice";
 export default class QuickBooks {
   private config;
@@ -21,6 +22,10 @@ export default class QuickBooks {
     query: (params: Item.Find.Params) => Promise<Item.Find.Result>;
     create: (body: Item.Create.Body) => Promise<Item.Create.Result>;
     update: (body: Item.Update.Body) => Promise<Item.Update.Result>;
+  };
+  taxRate: {
+    _path: string;
+    query: (params: TaxRate.Find.Params) => Promise<TaxRate.Find.Result>;
   };
   invoice: {
     _path: string;

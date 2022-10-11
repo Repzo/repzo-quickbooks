@@ -40,8 +40,7 @@ export const customers = async (
       .commit();
     if (!commandEvent.app?.options_formData[bench_time_key]) {
       await commandLog
-        .setStatus("skipped")
-        .setBody("bench_time_client undefined")
+        .addDetail("Failed in : bench_time_client undefined")
         .commit();
     }
     try {
@@ -70,15 +69,15 @@ export const customers = async (
         })
         .catch((err) => {
           console.error(`failed to complete sync due to an exception : ${err}`);
-          commandLog.setStatus("fail", err).setBody(err).commit();
+          commandLog.setStatus("fail", err).commit();
         });
     } catch (err) {
-      await commandLog.setStatus("fail", err).setBody(err).commit();
+      await commandLog.setStatus("fail", err).addDetail(err).commit();
     }
     return result;
   } catch (err) {
     console.error(`failed to complete sync due to an exception : ${err}`);
-    await commandLog.setStatus("fail", err).setBody(err).commit();
+    await commandLog.setStatus("fail", err).commit();
     return result;
   }
 };
