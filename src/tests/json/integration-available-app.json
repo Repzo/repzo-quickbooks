@@ -96,7 +96,12 @@
   },
   "commands": [
     {
-      "command": "sync_client",
+      "command": "join",
+      "name": "Join",
+      "description": "this command to sync Join actions  "
+    },
+    {
+      "command": "sync_clients",
       "name": "Sync Clients",
       "description": "this command to sync all quickbooks customers with your repzo clients"
     },
@@ -104,6 +109,11 @@
       "command": "sync_products",
       "name": "Sync products",
       "description": "this command to syncing all quickbooks items with your repzo products"
+    },
+    {
+      "command": "sync_taxs",
+      "name": "Sync taxs",
+      "description": "this command to syncing all quickbooks items with your repzo taxs"
     }
   ],
   "app_category": "629c62fcff7a8a2dc7a21ba1",
