@@ -36,6 +36,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     const repzo_invoice = body;
     const repzo_client = await repzo.client.get(repzo_invoice.client_id);
     invoice.CustomerRef.value = repzo_client.integration_meta?.QuickBooks_id;
+    invoice.CurrencyRef.value = repzo_invoice.currency;
 
     prepareInvoiceLines(repzo, repzo_invoice)
       .then((Line) => {
@@ -43,6 +44,9 @@ export const create_invoice = async (event: EVENT, options: Config) => {
         qbo.invoice
           .create(invoice)
           .then((res) => {
+            console.log(
+              `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
+            );
             actionLog
               .addDetail(
                 `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`,
@@ -53,10 +57,22 @@ export const create_invoice = async (event: EVENT, options: Config) => {
           })
           .catch((e) => {
             console.dir(e, { depth: null });
+            actionLog
+              .setStatus("fail", e)
+              .setBody(
+                `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
+              )
+              .commit();
           });
         return invoice;
       })
       .catch((e) => {
+        // actionLog
+        //   .setStatus("fail", e)
+        //   .setBody(
+        //     `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
+        //   )
+        //   .commit();
         throw new Error(
           `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
         );
@@ -66,7 +82,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
   } catch (e: any) {
     //@ts-ignore
     console.dir(e, { depth: null });
-    await actionLog.setStatus("fail", e).setBody(body).commit();
+    await actionLog.setStatus("fail", e).setBody(e).commit();
     throw e;
   }
 };
@@ -87,24 +103,27 @@ const prepareInvoiceLines = (
               Id: String(i + 1),
               DetailType: "SalesItemLineDetail",
               SalesItemLineDetail: {
-                TaxInclusiveAmt: 1,
+                TaxInclusiveAmt: item.tax_amount,
                 DiscountAmt: 1,
+                DiscountRate: item.discount_value / 1000,
                 ItemRef: {
                   name: product.name,
                   value: product.integration_meta?.QuickBooks_id,
                 },
                 // ClassRef: ReferenceType;
                 // ItemAccountRef?: ReferenceType;
-                // TaxCodeRef: ReferenceType;
-                // TaxClassificationRef?: ReferenceType;
+                TaxCodeRef: {
+                  name: "TAX",
+                  value: "TAX",
+                },
+                // TaxClassificationRef: ReferenceType,
                 // MarkupInfo: MarkupInfo;
                 // ServiceDate: Date;
 
-                DiscountRate: 1,
                 Qty: item.qty,
-                UnitPrice: item.price,
+                UnitPrice: item.discounted_price / 1000,
               },
-              Amount: item.line_total,
+              Amount: item.line_total / 1000,
               LineNum: i + 1,
               Description: `measureunit  ${item.measureunit?.factor} /  ${item.measureunit?.name}`,
             });

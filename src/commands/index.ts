@@ -2,6 +2,7 @@ import { Command, CommandEvent } from "./../types";
 
 // import { basic } from "./basic.js";
 import { customers } from "./customers.js";
+import { taxs } from "./taxs.js";
 import { items } from "./items.js";
 import { join } from "./join.js";
 
@@ -12,6 +13,9 @@ export const commands = async (CommandEvent: CommandEvent) => {
 
     case "sync_client":
       return await customers(CommandEvent);
+
+    case "sync_taxs":
+      return await taxs(CommandEvent);
 
     case "join":
       return await join(CommandEvent);
@@ -38,5 +42,11 @@ export const commandsList: Command[] = [
     name: "Sync products",
     description:
       "this command to syncing all quickbooks items with your repzo products",
+  },
+  {
+    command: "sync_taxs",
+    name: "Sync taxs",
+    description:
+      "this command to syncing all quickbooks items with your repzo taxs",
   },
 ];
