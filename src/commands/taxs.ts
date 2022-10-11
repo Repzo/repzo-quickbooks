@@ -47,10 +47,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
       .commit();
 
     if (!app.options_formData[bench_time_key]) {
-      await commandLog
-        .setStatus("skipped")
-        .setBody("bench_time_taxs undefined")
-        .commit();
+      await commandLog.addDetail("bench_time_taxs undefined").commit();
     }
 
     // return all repzo taxs
@@ -65,19 +62,20 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
           .addDetail(
             `Complete : Sync ${values.length} Item / Product with Quickbooks ,and bench_time  ${commandEvent.app.options_formData[bench_time_key]}`
           )
+          .setBody(result)
           .commit();
       })
       .catch((err) => {
         console.error(`failed to complete sync due to an exception : ${err}`);
         commandLog
           .setStatus("fail", "failed to complete sync due to an exception")
-          .setBody(err)
+          .setBody(result)
           .commit();
       });
   } catch (err) {
     await commandLog
       .setStatus("fail", "failed to complete sync due to an exception")
-      .setBody(err)
+      .setBody(result)
       .commit();
   }
   return result;

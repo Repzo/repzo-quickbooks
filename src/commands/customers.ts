@@ -65,6 +65,7 @@ export const customers = async (
             .addDetail(
               `Complete : Sync ${values.length} Clients with Quickbooks ,and bench_time  ${commandEvent.app?.options_formData[bench_time_key]}`
             )
+            .setBody(result)
             .commit();
         })
         .catch((err) => {
@@ -72,7 +73,7 @@ export const customers = async (
           commandLog.setStatus("fail", err).commit();
         });
     } catch (err) {
-      await commandLog.setStatus("fail", err).addDetail(err).commit();
+      await commandLog.setStatus("fail", err).setBody(result).commit();
     }
     return result;
   } catch (err) {
