@@ -36,57 +36,58 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     sync: 0,
     failed: 0,
   };
-
-  try {
-    await commandLog.load(command_sync_id);
-    await commandLog
-      .addDetail("Repzo QuickBooks: Started Syncing Products")
-      .commit();
-
-    if (!app.options_formData[bench_time_key]) {
+  return new Promise<Result>(async (resolve, reject) => {
+    try {
+      await commandLog.load(command_sync_id);
       await commandLog
-        .setStatus("skipped")
-        .setBody("bench_time_products undefined")
+        .addDetail("Repzo QuickBooks: Started Syncing Products")
         .commit();
-    }
-    // return all repzo items
-    let qb_items = await get_all_QuickBooks_items(qbo, app);
-    // return all quickbooks products
-    let repzo_products = await get_all_repzo_products(repzo);
-    result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
-    result.repzo_total = repzo_products?.length;
-    repzo_products = repzo_products.filter(
-      (i) => i.integration_meta?.QuickBooks_id !== undefined
-    );
 
-    promisify(qb_items.QueryResponse.Item, repzo_products, repzo).then((res) =>
-      Promise.all(res).then((values) => {
-        result.sync = values.length;
-        commandLog
-          .addDetail(
-            `Complete : Sync ${values.length} Item / Product with Quickbooks ,and bench_time  ${commandEvent.app.options_formData[bench_time_key]}`
-          )
-          .commit();
-      })
-    );
-    // commandLog Complete Sync QuickBooks items to Repzo
-  } catch (err) {
-    console.error(`failed to complete sync due to an exception : ${err}`);
-    await commandLog
-      .setStatus("fail", "failed to complete sync due to an exception")
-      .setBody(err)
-      .commit();
-  }
-  return result;
+      if (!app.options_formData[bench_time_key]) {
+        await commandLog.addDetail("bench_time_products undefined").commit();
+      }
+      // return all repzo items
+      let qb_items = await get_all_QuickBooks_items(qbo, app);
+      // return all quickbooks products
+      let repzo_products = await get_all_repzo_products(repzo);
+      result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
+      result.repzo_total = repzo_products?.length;
+      repzo_products = repzo_products.filter(
+        (i) => i.integration_meta?.QuickBooks_id !== undefined
+      );
+
+      get_promisify_jobs(qb_items.QueryResponse.Item, repzo_products, repzo)
+        .then((res) =>
+          Promise.all(res).then((values) => {
+            result.sync = values.length;
+            commandLog
+              .setStatus("success")
+              .addDetail(
+                `Complete : Sync ${values.length} Item / Product with Quickbooks`
+              )
+              .setBody(result)
+              .commit();
+            resolve(result);
+          })
+        )
+        .catch((err) => {
+          reject(result);
+          commandLog.setStatus("fail", err).setBody(result).commit();
+        });
+      // commandLog Complete Sync QuickBooks items to Repzo
+    } catch (err) {
+      console.error(`failed to complete sync due to an exception : ${err}`);
+      reject(result);
+    }
+  });
 };
 
-const promisify = (
+const get_promisify_jobs = (
   qb_items: Item.itemObject[],
   repzo_products: Service.Product.Get.Result[],
   repzo: Repzo
 ) => {
   let jobs: any[] = []; // save all jobs here
-
   return new Promise<any[]>((resolve, reject) => {
     qb_items.forEach((item, index, array) => {
       get_repzo_default_category(repzo, item.ParentRef?.name).then(

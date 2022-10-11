@@ -33,54 +33,60 @@ export const customers = async (
     realmId: commandEvent.oauth2_data?.realmId || "",
     sandbox: commandEvent.env === "production" ? false : true,
   });
-  try {
-    await commandLog.load(commandEvent.sync_id);
-    await commandLog
-      .addDetail("Repzo QuickBooks: Started Syncing Clients ..")
-      .commit();
-    if (!commandEvent.app?.options_formData[bench_time_key]) {
-      await commandLog
-        .setStatus("skipped")
-        .setBody("bench_time_client undefined")
-        .commit();
-    }
+  return new Promise<Result>(async (resolve, reject) => {
     try {
-      // sync_customers_from_QuickBooks_to_repzo
-      // return all repzo clients
-      let repzo_client = await get_all_repzo_clients(repzo);
-      // return all quickbooks clients
-      const qb_customers = await get_all_QuickBooks_customers(
-        qbo,
-        commandEvent.app.formData?.bench_time_client
-      );
+      await commandLog.load(commandEvent.sync_id);
+      await commandLog
+        .addDetail("Repzo QuickBooks: Started Syncing Clients ..")
+        .commit();
+      if (!commandEvent.app?.options_formData[bench_time_key]) {
+        await commandLog
+          .addDetail("Failed in : bench_time_client undefined")
+          .commit();
+      }
+      try {
+        // return all repzo clients
+        let repzo_client = await get_all_repzo_clients(repzo);
+        // return all quickbooks clients
+        const qb_customers = await get_all_QuickBooks_customers(
+          qbo,
+          commandEvent.app.formData?.bench_time_client
+        );
 
-      repzo_client = repzo_client.filter(
-        (i) => i.integration_meta?.QuickBooks_id !== undefined
-      );
-      Promise.all(
-        promisify(qb_customers.QueryResponse.Customer, repzo_client, repzo)
-      )
-        .then((values) => {
-          result.sync = values.length;
-          commandLog
-            .addDetail(
-              `Complete : Sync ${values.length} Clients with Quickbooks ,and bench_time  ${commandEvent.app?.options_formData[bench_time_key]}`
-            )
-            .commit();
-        })
-        .catch((err) => {
-          console.error(`failed to complete sync due to an exception : ${err}`);
-          commandLog.setStatus("fail", err).setBody(err).commit();
-        });
+        repzo_client = repzo_client.filter(
+          (i) => i.integration_meta?.QuickBooks_id !== undefined
+        );
+        Promise.all(
+          promisify(qb_customers.QueryResponse.Customer, repzo_client, repzo)
+        )
+          .then((values) => {
+            result.sync = values.length;
+            commandLog
+              .setStatus("success")
+              .addDetail(
+                `Complete : Sync ${values.length} Clients with Quickbooks`
+              )
+              .setBody(result)
+              .commit();
+            resolve(result);
+          })
+          .catch((err) => {
+            console.error(
+              `failed to complete sync due to an exception : ${err}`
+            );
+            commandLog.setStatus("fail", err).commit();
+            reject(result);
+          });
+      } catch (err) {
+        await commandLog.setStatus("fail", err).setBody(result).commit();
+        reject(result);
+      }
     } catch (err) {
-      await commandLog.setStatus("fail", err).setBody(err).commit();
+      console.error(`failed to complete sync due to an exception : ${err}`);
+      await commandLog.setStatus("fail", err).commit();
+      reject(result);
     }
-    return result;
-  } catch (err) {
-    console.error(`failed to complete sync due to an exception : ${err}`);
-    await commandLog.setStatus("fail", err).setBody(err).commit();
-    return result;
-  }
+  });
 };
 
 const promisify = (
