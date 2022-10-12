@@ -17,11 +17,9 @@ export const create_customer = async (event: EVENT, options: Config) => {
       realmId: options.oauth2_data.realmId,
       sandbox: options.env === "production" ? false : true,
     });
-
-    // console.log("create_customer");
     await actionLog.load(action_sync_id);
-
     body = event.body;
+    console.log(body);
     try {
       if (body) body = JSON.parse(body);
     } catch (e) {}
@@ -57,21 +55,18 @@ export const create_customer = async (event: EVENT, options: Config) => {
 
     await actionLog
       .addDetail(
-        `Repzo Quickbooks: Customer - ${QB_customer_body?.DisplayName}`,
-        QB_customer_body
+        `Repzo Quickbooks: Customer - ${QB_customer_body?.DisplayName}`
       )
       .commit();
 
     const result = await qbo.customer.create(QB_customer_body);
-
-    console.log(result);
-
-    await actionLog
-      .addDetail(`quickbooks Responded with `, result)
-      .setStatus("success")
-      .setBody(body)
-      .commit();
-    return result;
+    if (result) {
+      await actionLog
+        .addDetail(`quickbooks Responded with `, result)
+        .setStatus("success")
+        .setBody(body)
+        .commit();
+    }
   } catch (e: any) {
     console.error(e?.response || e);
     await actionLog.setStatus("fail", e).setBody(body).commit();
