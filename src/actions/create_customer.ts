@@ -19,7 +19,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
     });
     await actionLog.load(action_sync_id);
     body = event.body;
-    console.log(body);
+
     try {
       if (body) body = JSON.parse(body);
     } catch (e) {}
