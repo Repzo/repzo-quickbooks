@@ -26,6 +26,14 @@ export const join = async (commandEvent: CommandEvent) => {
           join:
             commandEvent?.app?.formData?.Invoices?.createInvoiceHook || false,
         },
+        // client
+        {
+          app: "repzo-quickbooks",
+          action: "create_customer",
+          event: "client.create",
+          join:
+            commandEvent?.app?.formData?.Customers?.createClientHook || false,
+        },
       ],
     };
     const result = await repzo.joinActionsWebHook.update(null, body);

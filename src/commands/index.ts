@@ -6,6 +6,11 @@ import { taxs } from "./taxs.js";
 import { items } from "./items.js";
 import { join } from "./join.js";
 
+/**
+ * Route Command Event - Function
+ * @param CommandEvent
+ * @returns
+ */
 export const commands = async (CommandEvent: CommandEvent) => {
   switch (CommandEvent.command) {
     case "sync_products":
