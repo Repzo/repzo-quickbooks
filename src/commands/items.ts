@@ -8,6 +8,11 @@ import { v4 as uuid } from "uuid";
 // const new_bench_time = new Date().toISOString();
 const bench_time_key = "bench_time_products";
 
+/**
+ * Event To Sync Quickbooks Items - Repzo products
+ * @param commandEvent
+ * @returns
+ */
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   const command_sync_id: string = commandEvent.sync_id || uuid();
   const { app }: any = commandEvent || {};
@@ -29,7 +34,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     realmId: commandEvent.oauth2_data?.realmId || "",
     sandbox: commandEvent.env === "production" ? false : true,
   });
-
+  // init result object
   let result: Result = {
     QuickBooks_total: 0,
     repzo_total: 0,
@@ -82,6 +87,13 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   });
 };
 
+/**
+ * Get Promisify Async Jobs
+ * @param qb_items
+ * @param repzo_products
+ * @param repzo
+ * @returns
+ */
 const get_promisify_jobs = (
   qb_items: Item.itemObject[],
   repzo_products: Service.Product.Get.Result[],
@@ -121,6 +133,11 @@ const get_promisify_jobs = (
   });
 };
 
+/**
+ * Get all repzo products
+ * @param repzo
+ * @returns
+ */
 const get_all_repzo_products = async (
   repzo: Repzo
 ): Promise<Service.Product.Get.Result[]> => {
@@ -145,6 +162,12 @@ const get_all_repzo_products = async (
   }
 };
 
+/**
+ * Get repzo category
+ * @param repzo
+ * @param name
+ * @returns
+ */
 const get_repzo_default_category = async (
   repzo: Repzo,
   name: string | undefined
@@ -183,6 +206,12 @@ const get_repzo_default_category = async (
   }
 };
 
+/**
+ * Get All Quickbooks Items
+ * @param qb
+ * @param app
+ * @returns
+ */
 const get_all_QuickBooks_items = async (
   qb: QuickBooks,
   app: any
@@ -217,6 +246,12 @@ const get_all_QuickBooks_items = async (
   }
 };
 
+/**
+ * Map Items and Products
+ * @param item
+ * @param categoryID
+ * @returns
+ */
 const map_products = (
   item: Item.itemObject,
   categoryID: string

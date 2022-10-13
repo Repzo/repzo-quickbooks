@@ -6,6 +6,11 @@ import QuickBooks from "../quickbooks/index.js";
 
 const bench_time_key = "bench_time_client";
 
+/**
+ * Event To Sync Quickbooks Custommers - Repzo Clients
+ * @param commandEvent
+ * @returns
+ */
 export const customers = async (
   commandEvent: CommandEvent
 ): Promise<Result> => {
@@ -57,7 +62,11 @@ export const customers = async (
           (i) => i.integration_meta?.QuickBooks_id !== undefined
         );
         Promise.all(
-          promisify(qb_customers.QueryResponse.Customer, repzo_client, repzo)
+          get_promisify_jobs(
+            qb_customers.QueryResponse.Customer,
+            repzo_client,
+            repzo
+          )
         )
           .then((values) => {
             result.sync = values.length;
@@ -89,7 +98,14 @@ export const customers = async (
   });
 };
 
-const promisify = (
+/**
+ * Get Promisify Async Jobs
+ * @param arr
+ * @param repzo_client
+ * @param repzo
+ * @returns Promis[]
+ */
+const get_promisify_jobs = (
   arr: Customer.CustomerObject[],
   repzo_client: Service.Client.Get.Result[],
   repzo: Repzo
@@ -122,6 +138,11 @@ const promisify = (
   return jobs;
 };
 
+/**
+ * Get All Repzo Clients
+ * @param repzo
+ * @returns
+ */
 const get_all_repzo_clients = async (
   repzo: Repzo
 ): Promise<Service.Client.Get.Result[]> => {
@@ -146,6 +167,12 @@ const get_all_repzo_clients = async (
   }
 };
 
+/**
+ * Get All Quickbooks Customers
+ * @param qb
+ * @param bench_time_client
+ * @returns
+ */
 const get_all_QuickBooks_customers = async (
   qb: QuickBooks,
   bench_time_client: string
@@ -163,6 +190,11 @@ const get_all_QuickBooks_customers = async (
   }
 };
 
+/**
+ * Map Custommer object with Client
+ * @param cutomer
+ * @returns
+ */
 const map_customers = (
   cutomer: Customer.CustomerObject
 ): Service.Client.Create.Body => {

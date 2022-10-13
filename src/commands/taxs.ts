@@ -70,17 +70,11 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
         })
         .catch((err) => {
           console.error(`failed to complete sync due to an exception : ${err}`);
-          commandLog
-            .setStatus("fail", "failed to complete sync due to an exception")
-            .setBody(result)
-            .commit();
+          commandLog.setStatus("fail", err).setBody(result).commit();
           reject(result);
         });
     } catch (err) {
-      await commandLog
-        .setStatus("fail", "failed to complete sync due to an exception")
-        .setBody(result)
-        .commit();
+      await commandLog.setStatus("fail", err).setBody(result).commit();
       reject(result);
     }
   });
