@@ -8,7 +8,7 @@ import { Invoice } from "../quickbooks/types/invoice.js";
 export const create_invoice = async (event: EVENT, options: Config) => {
   const repzo = new Repzo(options.data?.repzoApiKey, { env: options.env });
   const action_sync_id: string = event?.headers?.action_sync_id || uuid();
-  const actionLog = new Repzo.ActionLogs(repzo, action_sync_id);
+  // const actionLog = new Repzo.ActionLogs(repzo, action_sync_id);
   let body: Service.FullInvoice.InvoiceSchema | any;
   let invoice: Invoice.Create.Body = {
     CurrencyRef: { name: "", value: "" },
@@ -16,12 +16,12 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     Line: [],
   };
   try {
-    await actionLog.load(action_sync_id);
-    await actionLog
-      .addDetail(
-        `Repzo QuickBooks: Started Create Invoice - ${body?.serial_number?.formatted}`
-      )
-      .commit();
+    // await actionLog.load(action_sync_id);
+    // await actionLog
+    //   .addDetail(
+    //     `Repzo QuickBooks: Started Create Invoice - ${body?.serial_number?.formatted}`
+    //   )
+    //   .commit();
     body = event.body;
     const qbo = new QuickBooks({
       oauthToken: options.oauth2_data.access_token,
@@ -47,22 +47,22 @@ export const create_invoice = async (event: EVENT, options: Config) => {
             console.log(
               `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
             );
-            actionLog
-              .addDetail(
-                `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`,
-                res
-              )
-              .setStatus("success")
-              .commit();
+            // actionLog
+            //   .addDetail(
+            //     `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`,
+            //     res
+            //   )
+            //   .setStatus("success")
+            //   .commit();
           })
           .catch((e) => {
             console.dir(e, { depth: null });
-            actionLog
-              .setStatus("fail", e)
-              .setBody(
-                `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
-              )
-              .commit();
+            // actionLog
+            //   .setStatus("fail", e)
+            //   .setBody(
+            //     `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
+            //   )
+            //   .commit();
           });
         return invoice;
       })
@@ -82,7 +82,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
   } catch (e: any) {
     //@ts-ignore
     console.dir(e, { depth: null });
-    await actionLog.setStatus("fail", e).setBody(e).commit();
+    // await actionLog.setStatus("fail", e).setBody(e).commit();
     throw e;
   }
 };
