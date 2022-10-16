@@ -187,6 +187,7 @@ export namespace Invoice {
     export type XLine = Line[];
     export interface Body {
       Line: Line[];
+      DueDate?: Date;
       CustomerRef: ReferenceType;
       CurrencyRef: ReferenceType;
     }

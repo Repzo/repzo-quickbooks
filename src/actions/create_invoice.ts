@@ -37,7 +37,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     const repzo_client = await repzo.client.get(repzo_invoice.client_id);
     invoice.CustomerRef.value = repzo_client.integration_meta?.QuickBooks_id;
     invoice.CurrencyRef.value = repzo_invoice.currency;
-
+    invoice.DueDate = new Date(repzo_invoice.due_date);
     prepareInvoiceLines(repzo, repzo_invoice)
       .then((Line) => {
         invoice.Line = Line;
