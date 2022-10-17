@@ -56,7 +56,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
               .commit();
           })
           .catch((e) => {
-            console.dir(e, { depth: null });
+            // console.dir(e, { depth: null });
             actionLog
               .setStatus("fail", e)
               .setBody(
@@ -77,7 +77,6 @@ export const create_invoice = async (event: EVENT, options: Config) => {
           `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
         );
       });
-    // return result;
   } catch (e: any) {
     //@ts-ignore
     console.dir(e, { depth: null });
@@ -96,8 +95,7 @@ const prepareInvoiceLines = (
       repzo.product
         .get(item.variant?.product_id)
         .then((product) => {
-          if (product.integration_meta?.QuickBooks_id) {
-            console.log(`add new Line id : ${item._id} to invoice`);
+          if (product.integration_meta?.QuickBooks_id !== undefined) {
             Line.push({
               Id: String(i + 1),
               DetailType: "SalesItemLineDetail",
@@ -124,8 +122,10 @@ const prepareInvoiceLines = (
               },
               Amount: item.line_total / 1000,
               LineNum: i + 1,
-              Description: `measureunit  ${item.measureunit?.factor} /  ${item.measureunit?.name}`,
+              // Description: `measureunit  ${item.measureunit?.factor} /  ${item.measureunit?.name}`,
             });
+          } else {
+            reject(`Product Not found .. ${item.variant?.product_name}`);
           }
           if (i === arr.length - 1) resolve(Line);
         })
