@@ -34,18 +34,16 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     } catch (e) {}
 
     const repzo_invoice = body;
-    const repzo_client = await repzo.client.get(repzo_invoice.client_id);\
+    const repzo_client = await repzo.client.get(repzo_invoice.client_id);
     if (repzo_client.integration_meta?.QuickBooks_id !== undefined) {
       invoice.CustomerRef.value = repzo_client.integration_meta?.QuickBooks_id;
       invoice.CurrencyRef.value = repzo_invoice.currency;
       invoice.DueDate = new Date(repzo_invoice.due_date);
-    }else {
-      await actionLog
-      .setStatus("fail", "invalid Client")
-      .commit();
-      throw new Error('invalid Client');
+    } else {
+      await actionLog.setStatus("fail", "invalid Client").commit();
+      throw new Error("invalid Client");
     }
-   
+
     prepareInvoiceLines(repzo, repzo_invoice)
       .then((Line) => {
         invoice.Line = Line;
