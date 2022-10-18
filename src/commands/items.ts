@@ -30,8 +30,8 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
 
   // init QuickBooks object
   const qbo = new QuickBooks({
-    oauthToken: commandEvent.oauth2_data?.access_token,
-    realmId: commandEvent.oauth2_data?.realmId,
+    oauthToken: commandEvent.oauth2_data?.access_token || "",
+    realmId: commandEvent.oauth2_data?.realmId || "",
     sandbox: commandEvent.env === "production" ? false : true,
   });
   // init result object
