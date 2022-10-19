@@ -23,12 +23,12 @@ export const create_invoice = async (event: EVENT, options: Config) => {
       )
       .commit();
     body = event.body;
+
     const qbo = new QuickBooks({
-      oauthToken: options.oauth2_data.access_token,
-      realmId: options.oauth2_data.realmId,
+      oauthToken: options.oauth2_data?.access_token || "",
+      realmId: options.oauth2_data?.realmId || "",
       sandbox: options.env === "production" ? false : true,
     });
-
     try {
       if (body) body = JSON.parse(body);
     } catch (e) {}
