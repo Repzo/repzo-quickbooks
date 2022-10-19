@@ -5,10 +5,12 @@ import { Customer } from "./types/customer";
 import { Item } from "./types/item";
 import { TaxRate } from "./types/taxRate";
 import { Invoice } from "./types/invoice";
+// import { Axios } from "axios";
 
 export default class QuickBooks {
   private config: QuickBooksConfig;
   private headers: Authorization;
+  // private axios: Axios;
 
   constructor(config: QuickBooksConfig) {
     this.config = config;

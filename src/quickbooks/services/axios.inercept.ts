@@ -1,7 +1,7 @@
 import axios from "axios";
 import { v4 as uuid } from "uuid";
 const sandbox = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
-// const production = "https://quickbooks.api.intuit.com/v3/company/";
+const production = "https://quickbooks.api.intuit.com/v3/company/";
 
 const axiosInstance = axios.create({
   baseURL: sandbox,
@@ -30,13 +30,14 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async function (error) {
-    if (error.config && error.response && error.response.status === 401) {
+    const originalRequest = error.config;
+    if (originalRequest && error.response && error.response.status === 401) {
       return refreshToken(
-        error.config.headers.intg_app,
-        error.config.headers.refreshKey
+        originalRequest.headers.intg_app,
+        originalRequest.headers.refreshKey
       ).then((token) => {
-        error.config.headers.Authorization = `Bearer ${token.data.access_token}`;
-        return axios.request(error.config);
+        originalRequest.headers.Authorization = `Bearer ${token.data.access_token}`;
+        return axios.request(originalRequest);
       });
     }
     return Promise.reject(error);
@@ -44,7 +45,6 @@ axiosInstance.interceptors.response.use(
 );
 
 const refreshToken = async (intg_app: string, apikey: string): Promise<any> => {
-  // console.log("refresh token ....");
   return axios.put("https://staging.sv.api.repzo.me/oauth2", null, {
     headers: {
       "api-key": apikey,

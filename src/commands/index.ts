@@ -13,24 +13,28 @@ import { oAuth2 } from "./oAuth2.js";
  * @returns
  */
 export const commands = async (CommandEvent: CommandEvent) => {
-  switch (CommandEvent.command) {
-    case "sync_products":
-      return await items(CommandEvent);
+  try {
+    switch (CommandEvent.command) {
+      case "sync_products":
+        return await items(CommandEvent);
 
-    case "sync_clients":
-      return await customers(CommandEvent);
+      case "sync_clients":
+        return await customers(CommandEvent);
 
-    case "sync_taxs":
-      return await taxs(CommandEvent);
+      case "sync_taxs":
+        return await taxs(CommandEvent);
 
-    case "join":
-      return await join(CommandEvent);
+      case "join":
+        return await join(CommandEvent);
 
-    case "oAuth2":
-      return await oAuth2(CommandEvent);
+      case "oAuth2":
+        return await oAuth2(CommandEvent);
 
-    default:
-      throw `Route: ${CommandEvent.command} not found`;
+      default:
+        throw `Route: ${CommandEvent.command} not found`;
+    }
+  } catch (e: any) {
+    throw new Error(e);
   }
 };
 
