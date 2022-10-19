@@ -5,7 +5,6 @@ import { TaxRate } from "./types/taxRate";
 import { Invoice } from "./types/invoice";
 export default class QuickBooks {
   private config;
-  private baseUrl;
   private headers;
   constructor(config: QuickBooksConfig);
   private _fetch;

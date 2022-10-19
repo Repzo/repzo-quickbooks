@@ -13,8 +13,9 @@ export const create_customer = async (event: EVENT, options: Config) => {
   try {
     // init QuickBooks object
     const qbo = new QuickBooks({
-      oauthToken: options.oauth2_data.access_token,
-      realmId: options.oauth2_data.realmId,
+      // intgAppId: options.app._id || "",
+      oauthToken: options.oauth2_data?.access_token || "",
+      realmId: options.oauth2_data?.realmId || "",
       sandbox: options.env === "production" ? false : true,
     });
     await actionLog.load(action_sync_id);

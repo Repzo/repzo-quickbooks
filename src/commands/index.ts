@@ -5,6 +5,7 @@ import { customers } from "./customers.js";
 import { taxs } from "./taxs.js";
 import { items } from "./items.js";
 import { join } from "./join.js";
+import { oAuth2 } from "./oAuth2.js";
 
 /**
  * Route Command Event - Function
@@ -24,6 +25,9 @@ export const commands = async (CommandEvent: CommandEvent) => {
 
     case "join":
       return await join(CommandEvent);
+
+    case "oAuth2":
+      return await oAuth2(CommandEvent);
 
     default:
       throw `Route: ${CommandEvent.command} not found`;
