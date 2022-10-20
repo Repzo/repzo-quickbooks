@@ -10,7 +10,7 @@ type NameSpaces = string[];
 export interface Config {
   data?: any;
   env: ENV;
-  oauth2_data: Oauth2_data;
+  oauth2_data?: Oauth2_data;
 }
 
 export type Decoded = jwt.JwtPayload & {
