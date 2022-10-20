@@ -37,9 +37,6 @@ export const customers = async (
     console.log(result);
     // init QuickBooks object
     const qbo = new QuickBooks({
-      minorversion: 65,
-      intgAppId: commandEvent.app._id || "",
-      refreshKey: commandEvent.app.formData.repzoApiKey || "",
       oauthToken: commandEvent.oauth2_data?.access_token || "",
       realmId: commandEvent.oauth2_data?.realmId || "",
       sandbox: commandEvent.env === "production" ? false : true,

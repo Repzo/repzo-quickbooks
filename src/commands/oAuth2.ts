@@ -1,6 +1,5 @@
 import { CommandEvent, Result } from "../types";
 import QuickBooks from "../quickbooks/index.js";
-import axios from "axios";
 
 /**
  * Event To Sync Quickbooks Custommers - Repzo Clients
@@ -11,9 +10,6 @@ export const oAuth2 = async (commandEvent: CommandEvent) => {
   // init QuickBooks object
 
   const qbo = new QuickBooks({
-    minorversion: 65,
-    intgAppId: commandEvent.app._id || "",
-    refreshKey: commandEvent.app.formData.repzoApiKey || "",
     oauthToken: commandEvent.oauth2_data?.access_token || "",
     realmId: commandEvent.oauth2_data?.realmId || "",
     sandbox: commandEvent.env === "production" ? false : true,

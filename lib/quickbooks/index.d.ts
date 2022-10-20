@@ -6,6 +6,8 @@ import { Invoice } from "./types/invoice";
 export default class QuickBooks {
   private config;
   private headers;
+  private endpoint;
+  private axiosInstance;
   constructor(config: QuickBooksConfig);
   private _fetch;
   private _create;
