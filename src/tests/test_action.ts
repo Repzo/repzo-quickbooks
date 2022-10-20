@@ -186,6 +186,7 @@ const body = {
   note: "",
 };
 const action = "create_invoice";
+const action_sync_id = "5c541bc9-588c-41da-bca7-9417a4acb0e2";
 Actions(
   {
     version: "2.0",
@@ -193,7 +194,7 @@ Actions(
     rawPath: "/actions",
     rawQueryString: `app=repzo-qoyod&action=${action}`,
     headers: {
-      action_sync_id: "332e4ae4-eafc-4d50-a873-ad498de1c612",
+      action_sync_id,
       accept: "*/*",
       "accept-encoding": "gzip, deflate",
       "content-length": "3658",

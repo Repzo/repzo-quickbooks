@@ -57,7 +57,8 @@ interface Oauth2_data {
 export interface Result {
   QuickBooks_total: number;
   repzo_total: number;
-  sync: number;
+  created: number;
+  updated: number;
   failed: number;
 }
 export interface CommandEvent {

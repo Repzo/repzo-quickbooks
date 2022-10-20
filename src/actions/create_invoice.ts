@@ -4,6 +4,7 @@ import { Service } from "repzo/src/types";
 import { v4 as uuid } from "uuid";
 import QuickBooks from "../quickbooks/index.js";
 import { Invoice } from "../quickbooks/types/invoice.js";
+import { exit } from "process";
 
 export const create_invoice = async (event: EVENT, options: Config) => {
   const repzo = new Repzo(options.data?.repzoApiKey, { env: options.env });
@@ -16,76 +17,49 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     Line: [],
   };
   try {
-    await actionLog.load(action_sync_id);
-    await actionLog
-      .addDetail(
-        `Repzo QuickBooks: Started Create Invoice - ${body?.serial_number?.formatted}`
-      )
-      .commit();
     body = event.body;
+    await actionLog.load(action_sync_id);
+    await actionLog.addDetail(`Initializing Quickbooks Invoice`).commit();
 
     const qbo = new QuickBooks({
       oauthToken: options.oauth2_data?.access_token || "",
       realmId: options.oauth2_data?.realmId || "",
       sandbox: options.env === "production" ? false : true,
     });
-    try {
-      if (body) body = JSON.parse(body);
-    } catch (e) {}
-
+    if (body) body = JSON.parse(body);
     const repzo_invoice = body;
-    const repzo_client = await repzo.client.get(repzo_invoice.client_id);
-    if (repzo_client.integration_meta?.QuickBooks_id !== undefined) {
-      invoice.CustomerRef.value = repzo_client.integration_meta?.QuickBooks_id;
-      invoice.CurrencyRef.value = repzo_invoice.currency;
-      invoice.DueDate = new Date(repzo_invoice.due_date);
-    } else {
+    try {
+      const repzo_client = await repzo.client.get(repzo_invoice.client_id);
+      if (repzo_client.integration_meta?.QuickBooks_id !== undefined) {
+        invoice.CustomerRef.value =
+          repzo_client.integration_meta?.QuickBooks_id;
+        invoice.CurrencyRef.value = repzo_invoice.currency;
+        invoice.DueDate = new Date(repzo_invoice.due_date);
+      }
+    } catch (e) {
       await actionLog.setStatus("fail", "invalid Client").commit();
-      throw new Error("invalid Client");
+      exit;
     }
 
-    prepareInvoiceLines(repzo, repzo_invoice)
-      .then((Line) => {
-        invoice.Line = Line;
-        qbo.invoice
-          .create(invoice)
-          .then((res) => {
-            console.log(
-              `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
-            );
-            actionLog
-              .addDetail(
-                `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`,
-                res
-              )
-              .setStatus("success")
-              .commit();
-          })
-          .catch((e) => {
-            // console.dir(e, { depth: null });
-            actionLog
-              .setStatus("fail", e)
-              .setBody(
-                `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
-              )
-              .commit();
-          });
-        return invoice;
-      })
-      .catch((e) => {
-        actionLog
-          .setStatus("fail", e)
-          .setBody(
-            `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
-          )
-          .commit();
-        throw new Error(
-          `Sync Invoice Failed >> invoice.client: ${repzo_invoice.client_id} - ${repzo_invoice.client_name} : Error ${e}`
-        );
-      });
+    const Line = await prepareInvoiceLines(repzo, repzo_invoice);
+    invoice.Line = Line;
+    await actionLog
+      .addDetail(`Preparing Quickbooks invoice items`, invoice.Line)
+      .commit();
+    const res = await qbo.invoice.create(invoice);
+    console.log(
+      `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
+    );
+    await actionLog
+      .addDetail(
+        `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
+      )
+      .setStatus("success")
+      .setBody(res)
+      .commit();
   } catch (e: any) {
     //@ts-ignore
-    console.dir(e, { depth: null });
+    // console.dir(e, { depth: null });
     await actionLog.setStatus("fail", e).setBody(e).commit();
     throw e;
   }
