@@ -11,6 +11,7 @@ export const oAuth2 = async (commandEvent: CommandEvent) => {
   // init QuickBooks object
 
   const qbo = new QuickBooks({
+    minorversion: 65,
     intgAppId: commandEvent.app._id || "",
     refreshKey: commandEvent.app.formData.repzoApiKey || "",
     oauthToken: commandEvent.oauth2_data?.access_token || "",
@@ -25,7 +26,7 @@ export const oAuth2 = async (commandEvent: CommandEvent) => {
 
     console.log(qb_Clients);
   } catch (e: any) {
-    // console.dir(e, { depth: null });
-    throw new Error(e);
+    console.dir(e, { depth: null });
+    //throw new Error(e);
   }
 };
