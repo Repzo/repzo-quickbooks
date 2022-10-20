@@ -8,7 +8,7 @@ declare type NameSpaces = string[];
 export interface Config {
   data?: any;
   env: ENV;
-  oauth2_data: Oauth2_data;
+  oauth2_data?: Oauth2_data;
 }
 export declare type Decoded = jwt.JwtPayload & {
   id?: StringId;
@@ -57,7 +57,8 @@ interface Oauth2_data {
 export interface Result {
   QuickBooks_total: number;
   repzo_total: number;
-  sync: number;
+  created: number;
+  updated: number;
   failed: number;
 }
 export interface CommandEvent {

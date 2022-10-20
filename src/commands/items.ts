@@ -16,7 +16,6 @@ const bench_time_key = "bench_time_products";
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   const command_sync_id: string = commandEvent.sync_id || uuid();
   const { app }: any = commandEvent || {};
-
   // init Repzo object
   const repzo = new Repzo(app.formData?.repzoApiKey, {
     env: commandEvent.env,
@@ -27,12 +26,8 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     commandEvent.app,
     commandEvent.command
   );
-
   // init QuickBooks object
   const qbo = new QuickBooks({
-    minorversion: 65,
-    intgAppId: commandEvent.app._id || "",
-    refreshKey: commandEvent.app.formData.repzoApiKey || "",
     oauthToken: commandEvent.oauth2_data?.access_token || "",
     realmId: commandEvent.oauth2_data?.realmId || "",
     sandbox: commandEvent.env === "production" ? false : true,
@@ -41,99 +36,79 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   let result: Result = {
     QuickBooks_total: 0,
     repzo_total: 0,
-    sync: 0,
+    created: 0,
+    updated: 0,
     failed: 0,
   };
-  return new Promise<Result>(async (resolve, reject) => {
-    try {
-      await commandLog.load(command_sync_id);
-      await commandLog
-        .addDetail("Repzo QuickBooks: Started Syncing Products")
-        .commit();
+  let sync: string[] = [];
+  try {
+    await commandLog.load(command_sync_id);
+    await commandLog
+      .addDetail("Repzo QuickBooks: Started Syncing Products")
+      .commit();
 
-      if (!app.options_formData[bench_time_key]) {
-        await commandLog.addDetail("bench_time_products undefined").commit();
-      }
-      // return all repzo items
-      let qb_items = await get_all_QuickBooks_items(qbo, app);
-      // return all quickbooks products
-      let repzo_products = await get_all_repzo_products(repzo);
-      result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
-      result.repzo_total = repzo_products?.length;
-      repzo_products = repzo_products.filter(
-        (i) => i.integration_meta?.QuickBooks_id !== undefined
-      );
-
-      get_promisify_jobs(qb_items.QueryResponse.Item, repzo_products, repzo)
-        .then((res) =>
-          Promise.all(res).then((values) => {
-            result.sync = values.length;
-            commandLog
-              .setStatus("success")
-              .addDetail(
-                `Complete : Sync ${values.length} Item / Product with Quickbooks`
-              )
-              .setBody(result)
-              .commit();
-            resolve(result);
-          })
-        )
-        .catch((err) => {
-          reject(result);
-          commandLog.setStatus("fail", err).setBody(result).commit();
-        });
-      // commandLog Complete Sync QuickBooks items to Repzo
-    } catch (err) {
-      console.error(`failed to complete sync due to an exception : ${err}`);
-      reject(result);
+    if (!app.options_formData[bench_time_key]) {
+      await commandLog.addDetail("bench_time_products undefined").commit();
     }
-  });
-};
+    // return all repzo items
+    let qb_items = await get_all_QuickBooks_items(qbo, app);
+    // return all quickbooks products
+    let repzo_products = await get_all_repzo_products(repzo);
+    result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
+    result.repzo_total = repzo_products?.length;
+    repzo_products = repzo_products.filter(
+      (i) => i.integration_meta?.QuickBooks_id !== undefined
+    );
 
-/**
- * Get Promisify Async Jobs
- * @param qb_items
- * @param repzo_products
- * @param repzo
- * @returns
- */
-const get_promisify_jobs = (
-  qb_items: Item.itemObject[],
-  repzo_products: Service.Product.Get.Result[],
-  repzo: Repzo
-) => {
-  let jobs: any[] = []; // save all jobs here
-  return new Promise<any[]>((resolve, reject) => {
-    qb_items.forEach((item, index, array) => {
-      get_repzo_default_category(repzo, item.ParentRef?.name).then(
-        (repzo_default_category) => {
-          let existProduct = repzo_products.filter(
-            (i) => i.integration_meta?.QuickBooks_id === item.Id
-          );
-          if (existProduct[0]) {
-            if (
-              new Date(
-                existProduct[0]?.integration_meta?.QuickBooks_last_sync
-              ) < new Date(item.MetaData?.LastUpdatedTime)
-            ) {
-              let repzo_product = map_products(
-                item,
-                repzo_default_category._id
-              );
-              jobs.push(
-                repzo.product.update(existProduct[0]._id, repzo_product)
-              );
-            }
-          } else {
-            //create a new  repzo client
-            let repzo_product = map_products(item, repzo_default_category._id);
-            jobs.push(repzo.product.create(repzo_product));
-          }
-          if (index === array.length - 1) resolve(jobs);
-        }
+    qb_items.QueryResponse.Item.forEach(async (item: any, index, array) => {
+      const repzo_default_category = await get_repzo_default_category(
+        repzo,
+        item.ParentRef?.name
       );
+
+      let existProduct = repzo_products.filter(
+        (i) => i.integration_meta?.QuickBooks_id === item.Id
+      );
+      if (existProduct[0]) {
+        if (
+          new Date(existProduct[0]?.integration_meta?.QuickBooks_last_sync) <
+          new Date(item.MetaData?.LastUpdatedTime)
+        ) {
+          let repzo_product = map_products(item, repzo_default_category._id);
+          try {
+            result.updated++;
+            sync.push(repzo_product.name);
+            await repzo.product.update(existProduct[0]._id, repzo_product);
+          } catch (e) {
+            result.failed++;
+          }
+        }
+      } else {
+        //create a new  repzo client
+        let repzo_product = map_products(item, repzo_default_category._id);
+        try {
+          result.created++;
+          sync.push(repzo_product.name);
+          await repzo.product.create(repzo_product);
+        } catch (e) {
+          result.failed++;
+        }
+      }
+      // end async calls
+      if (index === array.length - 1) {
+        await commandLog
+          .addDetail(`Complete Sync Products`, sync)
+          .setStatus("success")
+          .setBody(result)
+          .commit();
+      }
     });
-  });
+  } catch (err) {
+    console.error(`failed to complete sync due to an exception : ${err}`);
+    await commandLog.setStatus("fail", err).setBody(err).commit();
+  } finally {
+    return result;
+  }
 };
 
 /**

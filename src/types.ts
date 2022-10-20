@@ -10,7 +10,7 @@ type NameSpaces = string[];
 export interface Config {
   data?: any;
   env: ENV;
-  oauth2_data: Oauth2_data;
+  oauth2_data?: Oauth2_data;
 }
 
 export type Decoded = jwt.JwtPayload & {
@@ -60,7 +60,8 @@ interface Oauth2_data {
 export interface Result {
   QuickBooks_total: number;
   repzo_total: number;
-  sync: number;
+  created: number;
+  updated: number;
   failed: number;
 }
 

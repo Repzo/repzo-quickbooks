@@ -15,44 +15,37 @@ export const customers = async (
   commandEvent: CommandEvent
 ): Promise<Result> => {
   // init Repzo object
-  console.log("running customers command function..");
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
     env: commandEvent.env,
   });
   let result: Result = {
     QuickBooks_total: 0,
     repzo_total: 0,
-    sync: 0,
+    created: 0,
+    updated: 0,
     failed: 0,
   };
-
+  const commandLog = new Repzo.CommandLog(
+    repzo,
+    commandEvent.app,
+    commandEvent.command
+  );
   try {
     // init commandLog
-    // const commandLog = new Repzo.CommandLog(
-    //   repzo,
-    //   commandEvent.app,
-    //   commandEvent.command
-    // );
 
-    console.log(result);
     // init QuickBooks object
     const qbo = new QuickBooks({
-      minorversion: 65,
-      intgAppId: commandEvent.app._id || "",
-      refreshKey: commandEvent.app.formData.repzoApiKey || "",
       oauthToken: commandEvent.oauth2_data?.access_token || "",
       realmId: commandEvent.oauth2_data?.realmId || "",
       sandbox: commandEvent.env === "production" ? false : true,
     });
-    // await commandLog.load(commandEvent.sync_id);
-    // await commandLog
-    //   .addDetail("Repzo QuickBooks: Started Syncing Clients ..")
-    //   .commit();
-    // if (!commandEvent.app?.options_formData[bench_time_key]) {
-    //   await commandLog
-    //     .addDetail("Failed in : bench_time_client undefined")
-    //     .commit();
-    // }
+    await commandLog.load(commandEvent.sync_id);
+    await commandLog.addDetail("Syncing Clients ......").commit();
+    if (!commandEvent.app?.options_formData[bench_time_key]) {
+      await commandLog
+        .addDetail("Failed in : bench_time_client undefined")
+        .commit();
+    }
 
     // return all repzo clients
     let repzo_client = await get_all_repzo_clients(repzo);
@@ -61,84 +54,61 @@ export const customers = async (
       qbo,
       commandEvent.app.formData?.bench_time_client
     );
-    console.log("repzo_client", repzo_client);
-    console.log("qb_customers", qb_customers.QueryResponse.Customer);
+
     repzo_client = repzo_client.filter(
       (i) => i.integration_meta?.QuickBooks_id !== undefined
     );
     result.repzo_total = repzo_client.length;
     result.QuickBooks_total = qb_customers.QueryResponse.Customer.length;
-    console.log(repzo_client.length);
-    console.log(qb_customers.QueryResponse.Customer.length);
 
-    // Promise.all(
-    //   get_promisify_jobs(
-    //     qb_customers.QueryResponse.Customer,
-    //     repzo_client,
-    //     repzo
-    //   )
-    // )
-    //   .then((values) => {
-    //     result.sync = values.length;
-    //     // commandLog
-    //     //   .setStatus("success")
-    //     //   .addDetail(
-    //     //     `Complete : Sync ${values.length} Clients with Quickbooks`
-    //     //   )
-    //     //   .setBody(result)
-    //     //   .commit();
-    //     return result;
-    //   })
-    //   .catch((err) => {
-    //     console.error(`failed to complete sync due to an exception : ${err}`);
-    //     // commandLog.setStatus("fail", err).commit();
-    //     return result;
-    //   });
-  } catch (err) {
-    console.error(`failed to complete sync due to an exception : ${err}`);
-    // await commandLog.setStatus("fail", err).commit();
-  }
-  return result;
-};
-
-/**
- * Get Promisify Async Jobs
- * @param arr
- * @param repzo_client
- * @param repzo
- * @returns Promis[]
- */
-const get_promisify_jobs = (
-  arr: Customer.CustomerObject[],
-  repzo_client: Service.Client.Get.Result[],
-  repzo: Repzo
-): any[] => {
-  let jobs: any[] = []; // save all jobs here
-  arr.forEach((cutomer: any) => {
-    let existClient = repzo_client.filter(
-      (i) =>
-        i.integration_meta?.QuickBooks_id === cutomer.Id ||
-        i.client_code === `QB_${cutomer.Id}`
-    );
-    if (existClient[0]) {
-      if (
-        new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
-        new Date(cutomer.MetaData?.LastUpdatedTime)
-      ) {
-        let repzo_client = map_customers(cutomer);
-        jobs.push(repzo.client.update(existClient[0]._id, repzo_client));
+    qb_customers.QueryResponse.Customer.forEach(
+      async (cutomer: any, index, array) => {
+        let existClient = repzo_client.filter(
+          (i) =>
+            i.integration_meta?.QuickBooks_id === cutomer.Id ||
+            i.client_code === `QB_${cutomer.Id}`
+        );
+        if (existClient[0]) {
+          if (
+            new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
+            new Date(cutomer.MetaData?.LastUpdatedTime)
+          ) {
+            let repzo_client = map_customers(cutomer);
+            try {
+              result.updated++;
+              await repzo.client.update(existClient[0]._id, repzo_client);
+            } catch (e) {
+              result.failed++;
+            }
+          }
+        } else {
+          let repzo_client = map_customers(cutomer);
+          try {
+            result.created++;
+            await repzo.client.create({
+              client_code: `QB_${cutomer.Id}`,
+              ...repzo_client,
+            });
+          } catch (e) {
+            result.failed++;
+          }
+        }
+        // end async calls
+        if (index === array.length - 1) {
+          await commandLog
+            .addDetail(`Complete Sync Clients`)
+            .setStatus("success")
+            .setBody(result)
+            .commit();
+        }
       }
-    } else {
-      let repzo_client = map_customers(cutomer);
-      jobs.push(
-        repzo.client.create({
-          client_code: `QB_${cutomer.Id}`,
-          ...repzo_client,
-        })
-      );
-    }
-  });
-  return jobs;
+    );
+  } catch (e) {
+    console.error(`failed to complete sync due to an exception : ${e}`);
+    await commandLog.setStatus("fail", e).setBody(e).commit();
+  } finally {
+    return result;
+  }
 };
 
 /**
