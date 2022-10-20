@@ -1,7 +1,7 @@
 {
   "name": "repzo-quickbooks",
   "description": "repzo quickbooks integration",
-  "version": "0.1.12",
+  "version": "0.1.13",
   "homepage": "",
   "main": "./lib/index.js",
   "keywords": [

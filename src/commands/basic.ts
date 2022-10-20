@@ -6,17 +6,14 @@ export const basic = async (commandEvent: CommandEvent) => {
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
     env: commandEvent.env,
   });
-
   const commandLog = new Repzo.CommandLog(
     repzo,
     commandEvent.app,
     commandEvent.command
   );
   try {
-    console.log("basic sync");
     await commandLog.load(commandEvent.sync_id);
     await commandLog.addDetail("Repzo QuickBooks: Basic Sync").commit();
-
     const required_syncing_commands = [
       "sync_clients",
       "sync_taxs",

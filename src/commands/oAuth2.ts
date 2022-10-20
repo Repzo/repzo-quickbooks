@@ -8,7 +8,6 @@ import QuickBooks from "../quickbooks/index.js";
  */
 export const oAuth2 = async (commandEvent: CommandEvent) => {
   // init QuickBooks object
-
   const qbo = new QuickBooks({
     oauthToken: commandEvent.oauth2_data?.access_token || "",
     realmId: commandEvent.oauth2_data?.realmId || "",
@@ -19,8 +18,7 @@ export const oAuth2 = async (commandEvent: CommandEvent) => {
     const qb_Clients = await qbo.customer.query({
       query,
     });
-
-    console.log(qb_Clients);
+    // console.log(qb_Clients);
   } catch (e: any) {
     console.dir(e, { depth: null });
     //throw new Error(e);
