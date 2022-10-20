@@ -1,34 +1,29 @@
-import axios from "axios";
-import { v4 as uuid } from "uuid";
-import { Params, Data, Headers, QuickBooksConfig } from "./types/index";
+import axiosInstance from "./services/axios.inercept.js";
+// import { v4 as uuid } from "uuid";
+import { Params, Data, Authorization, QuickBooksConfig } from "./types/index";
 import { Customer } from "./types/customer";
 import { Item } from "./types/item";
 import { TaxRate } from "./types/taxRate";
 import { Invoice } from "./types/invoice";
+// import { Axios } from "axios";
 
 export default class QuickBooks {
   private config: QuickBooksConfig;
-  private baseUrl: string;
-  private headers: Headers;
+  private headers: Authorization;
+  // private axios: Axios;
 
   constructor(config: QuickBooksConfig) {
     this.config = config;
     config.minorversion === undefined ? 55 : config.minorversion;
     this.headers = {
-      "User-Agent": "repzo-quickbooks: version 0.0.1",
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "Request-Id": uuid(),
       Authorization: `Bearer ${this.config.oauthToken}`,
+      intg_app: this.config.intgAppId || "",
+      refreshKey: this.config.refreshKey || "",
     };
-
-    this.baseUrl = "https://quickbooks.api.intuit.com/v3/company/";
-    if (config.sandbox === true)
-      this.baseUrl = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
   }
 
   private async _fetch(params?: Params) {
-    let res = await axios.get(this.baseUrl + this.config.realmId + `/query`, {
+    let res = await axiosInstance.get(this.config.realmId + `/query`, {
       params: { ...params, minorversion: this.config.minorversion },
       headers: this.headers,
     });
@@ -36,19 +31,15 @@ export default class QuickBooks {
   }
 
   private async _create(path: string, body: Data, params?: Params) {
-    let res = await axios.post(
-      this.baseUrl + this.config.realmId + path,
-      body,
-      {
-        params: { minorversion: this.config.minorversion, ...params },
-        headers: this.headers,
-      }
-    );
+    let res = await axiosInstance.post(this.config.realmId + path, body, {
+      params: { minorversion: this.config.minorversion, ...params },
+      headers: this.headers,
+    });
     return res.data;
   }
 
   private async _update(path: string, body: Data, params?: Params) {
-    let res = await axios.put(this.baseUrl + path, body, {
+    let res = await axiosInstance.put(path, body, {
       params: { minorversion: this.config.minorversion, ...params },
       headers: this.headers,
     });

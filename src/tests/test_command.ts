@@ -52,14 +52,14 @@ let commandEvent: CommandEvent = {
 
   command: "sync_clients",
   //command: "sync_products",
-  // command: "sync_taxs",
+  //command: "oAuth2",
   //command: "sync_invoices",
 
   end_of_day: "04:00",
   nameSpace: ["quickbooksintg"], // quickbooksintg
   timezone: "Asia/Amman",
   meta: '{\r\n "test":"hi", "invoice_id": "626a58f9eaf66e59747e0460" \r\n}',
-  sync_id: "28388d4f-a3de-4f02-895e-69079ac075aa",
+  sync_id: "6f0c3be1-1e65-4a4d-b9ca-1376f1973614",
   env: "staging", // ""staging | production | local""
 
   oauth2_data: {
