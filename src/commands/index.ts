@@ -34,7 +34,7 @@ export const commands = async (CommandEvent: CommandEvent) => {
         throw `Route: ${CommandEvent.command} not found`;
     }
   } catch (e: any) {
-    throw new Error(e);
+    console.dir(e, { depth: null });
   }
 };
 
