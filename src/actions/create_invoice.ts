@@ -69,47 +69,50 @@ const prepareInvoiceLines = (
   repzo: Repzo,
   repzo_invoice: any
 ): Promise<Invoice.Create.XLine> => {
+  const TAX = { value: "TAX", name: "TAX" }; // taxable invoice ()
+  const NON = { value: "NON", name: "NON" }; // N/A  No Tax
+
   let Line: Invoice.Create.XLine = [];
   return new Promise((resolve, reject) => {
     repzo_invoice.items?.forEach(async (item: any, i: number, arr: []) => {
-      repzo.product
-        .get(item.variant?.product_id)
-        .then((product) => {
-          if (product.integration_meta?.QuickBooks_id !== undefined) {
-            Line.push({
-              Id: String(i + 1),
-              DetailType: "SalesItemLineDetail",
-              SalesItemLineDetail: {
-                TaxInclusiveAmt: item.tax_amount,
-                DiscountAmt: 1,
-                DiscountRate: item.discount_value / 1000,
-                ItemRef: {
-                  name: product.name,
-                  value: product.integration_meta?.QuickBooks_id,
-                },
-                // ClassRef: ReferenceType;
-                // ItemAccountRef?: ReferenceType;
-                TaxCodeRef: {
-                  name: "TAX",
-                  value: "TAX",
-                },
-                // TaxClassificationRef: ReferenceType,
-                // MarkupInfo: MarkupInfo;
-                // ServiceDate: Date;
-
-                Qty: item.qty,
-                UnitPrice: item.discounted_price / 1000,
+      try {
+        let product = await repzo.product.get(item.variant?.product_id);
+        if (product.integration_meta?.QuickBooks_id !== undefined) {
+          Line.push({
+            Id: String(i + 1),
+            DetailType: "SalesItemLineDetail",
+            SalesItemLineDetail: {
+              TaxInclusiveAmt: item.tax_amount,
+              DiscountAmt: 1,
+              DiscountRate: item.discount_value / 1000,
+              ItemRef: {
+                name: product.name,
+                value: product.integration_meta?.QuickBooks_id,
               },
-              Amount: item.line_total / 1000,
-              LineNum: i + 1,
-              // Description: `measureunit  ${item.measureunit?.factor} /  ${item.measureunit?.name}`,
-            });
-          } else {
-            reject(`Product Not found .. ${item.variant?.product_name}`);
-          }
-          if (i === arr.length - 1) resolve(Line);
-        })
-        .catch((e) => reject(e));
+              // ClassRef: ReferenceType;
+              // ItemAccountRef?: ReferenceType;
+              TaxCodeRef: item.tax?.type === "N/A" ? NON : TAX,
+              // TaxClassificationRef: {
+              //   value: "2",
+              //   name: "California",
+              // },
+              // MarkupInfo: MarkupInfo;
+              // ServiceDate: Date;
+
+              Qty: item.qty,
+              UnitPrice: item.discounted_price / 1000,
+            },
+            Amount: item.line_total / 1000,
+            LineNum: i + 1,
+            // Description: `measureunit  ${item.measureunit?.factor} /  ${item.measureunit?.name}`,
+          });
+        } else {
+          reject(`Product Not found .. ${item.variant?.product_name}`);
+        }
+      } catch (e) {
+        reject(e);
+      }
+      if (i === arr.length - 1) resolve(Line);
     });
   });
 };
