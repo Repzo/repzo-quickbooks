@@ -18,7 +18,7 @@ export const oAuth2 = async (commandEvent: CommandEvent) => {
     const qb_Clients = await qbo.customer.query({
       query,
     });
-    // console.log(qb_Clients);
+    return qb_Clients;
   } catch (e: any) {
     console.dir(e, { depth: null });
     //throw new Error(e);

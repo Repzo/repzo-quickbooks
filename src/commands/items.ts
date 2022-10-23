@@ -1,7 +1,7 @@
 import { CommandEvent, Result } from "../types";
 import Repzo from "repzo";
 import { Service } from "repzo/src/types";
-import { Item } from "../quickbooks/types/item";
+import { Item } from "../quickbooks/types/Item";
 import QuickBooks from "../quickbooks/index.js";
 import { v4 as uuid } from "uuid";
 
@@ -104,8 +104,8 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       }
     });
   } catch (err) {
-    console.error(`failed to complete sync due to an exception : ${err}`);
     await commandLog.setStatus("fail", err).setBody(err).commit();
+    console.error(err);
   } finally {
     return result;
   }
@@ -135,8 +135,7 @@ const get_all_repzo_products = async (
     }
     return repzo_products;
   } catch (err) {
-    console.error(err);
-    return [];
+    throw err;
   }
 };
 
@@ -179,7 +178,6 @@ const get_repzo_default_category = async (
       }
     }
   } catch (err) {
-    console.error(err);
     throw err;
   }
 };
@@ -231,7 +229,7 @@ const get_all_QuickBooks_items = async (
  * @returns
  */
 const map_products = (
-  item: Item.itemObject,
+  item: Item.ItemObject,
   categoryID: string
 ): Service.Product.Create.Body => {
   return {

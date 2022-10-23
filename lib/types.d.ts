@@ -5,6 +5,10 @@ declare type DecodedScope = "admin" | "client" | "rep";
 declare type StringId = string;
 declare type Email = string;
 declare type NameSpaces = string[];
+export declare type Endpoint = {
+  sandbox: string;
+  production: string;
+};
 export interface Config {
   data?: any;
   env: ENV;

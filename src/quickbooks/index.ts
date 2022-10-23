@@ -1,21 +1,33 @@
 // import axiosInstance from "./services/axios.inercept.js";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
-import { Params, Data, Authorization, QuickBooksConfig } from "./types/index";
-import { Customer } from "./types/customer";
-import { Item } from "./types/item";
-import { TaxRate } from "./types/taxRate";
-import { Invoice } from "./types/invoice";
+import { Params, Data, Authorization, QuickBooksConfig } from "./types/Index";
+import { Customer } from "./types/Customer";
+import { Item } from "./types/Item";
+import { TaxRate } from "./types/TaxRate";
+import { Invoice } from "./types/Invoice";
 import { Axios } from "axios";
+import { Endpoint } from "../types";
 
 const sandbox = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
 const production = "https://quickbooks.api.intuit.com/v3/company/";
 
-export default class QuickBooks {
-  private config: QuickBooksConfig;
+interface IQuickBooks {
+  config: QuickBooksConfig;
+  endpoint: Endpoint;
+  axiosInstance: Axios;
+  customer: {};
+  item: {};
+  tax: {};
+  invoice: {};
+}
+
+export default class QuickBooks implements IQuickBooks {
+  config: QuickBooksConfig;
+  endpoint: Endpoint;
+  axiosInstance: Axios;
+
   private headers: Authorization;
-  private endpoint: any;
-  private axiosInstance: Axios;
 
   constructor(config: QuickBooksConfig) {
     this.config = config;
@@ -40,27 +52,43 @@ export default class QuickBooks {
   }
 
   private async _fetch(params?: Params) {
-    let res = await this.axiosInstance.get(this.config.realmId + `/query`, {
-      params: { ...params, minorversion: this.config.minorversion },
-      headers: this.headers,
-    });
-    return res.data;
+    try {
+      let res = await this.axiosInstance.get(this.config.realmId + `/query`, {
+        params: { ...params, minorversion: this.config.minorversion },
+        headers: this.headers,
+      });
+      return res.data;
+    } catch (e) {
+      throw e;
+    }
   }
 
   private async _create(path: string, body: Data, params?: Params) {
-    let res = await this.axiosInstance.post(this.config.realmId + path, body, {
-      params: { minorversion: this.config.minorversion, ...params },
-      headers: this.headers,
-    });
-    return res.data;
+    try {
+      let res = await this.axiosInstance.post(
+        this.config.realmId + path,
+        body,
+        {
+          params: { minorversion: this.config.minorversion, ...params },
+          headers: this.headers,
+        }
+      );
+      return res.data;
+    } catch (e) {
+      throw e;
+    }
   }
 
   private async _update(path: string, body: Data, params?: Params) {
-    let res = await this.axiosInstance.put(path, body, {
-      params: { minorversion: this.config.minorversion, ...params },
-      headers: this.headers,
-    });
-    return res.data;
+    try {
+      let res = await this.axiosInstance.put(path, body, {
+        params: { minorversion: this.config.minorversion, ...params },
+        headers: this.headers,
+      });
+      return res.data;
+    } catch (e) {
+      throw e;
+    }
   }
 
   customer = {
@@ -105,7 +133,7 @@ export default class QuickBooks {
     },
   };
 
-  taxRate = {
+  tax = {
     _path: `/TaxRate`,
     query: async (
       params: TaxRate.Find.Params

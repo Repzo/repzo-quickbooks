@@ -3,7 +3,7 @@ import { EVENT, Config } from "../types";
 import { Service } from "repzo/src/types";
 import { v4 as uuid } from "uuid";
 import QuickBooks from "../quickbooks/index.js";
-import { Invoice } from "../quickbooks/types/invoice.js";
+import { Invoice } from "../quickbooks/types/Invoice.js";
 import { exit } from "process";
 
 export const create_invoice = async (event: EVENT, options: Config) => {

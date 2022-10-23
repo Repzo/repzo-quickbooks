@@ -1,7 +1,7 @@
 import Repzo from "repzo";
 import { EVENT, Config } from "../types";
 import { Service } from "repzo/src/types";
-import { Customer } from "../quickbooks/types/customer";
+import { Customer } from "../quickbooks/types/Customer";
 import { v4 as uuid } from "uuid";
 import QuickBooks from "../quickbooks/index.js";
 

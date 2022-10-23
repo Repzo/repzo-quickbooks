@@ -8,7 +8,7 @@ export namespace Item {
     CreateTime: Date;
     LastUpdatedTime: Date;
   }
-  export interface itemObject {
+  export interface ItemObject {
     Id: string;
     ItemCategoryType: string;
     Name: string;
@@ -88,7 +88,7 @@ export namespace Item {
     };
     export interface Result {
       QueryResponse: {
-        Item: itemObject[];
+        Item: ItemObject[];
       };
       time: Date;
     }
@@ -96,7 +96,7 @@ export namespace Item {
 
   export namespace Create {
     export interface Body extends itemBody {}
-    export type Result = itemObject;
+    export type Result = ItemObject;
   }
 
   export namespace Update {
@@ -105,6 +105,6 @@ export namespace Item {
       Id: string;
       SyncToken: string;
     }
-    export type Result = itemObject;
+    export type Result = ItemObject;
   }
 }

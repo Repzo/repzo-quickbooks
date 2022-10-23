@@ -1,4 +1,3 @@
-/*
 import axios from "axios";
 import { v4 as uuid } from "uuid";
 const sandbox = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
@@ -61,5 +60,3 @@ const refreshToken = async (intg_app: string, apikey: string): Promise<any> => {
   });
 };
 export default axiosInstance;
-
-*/

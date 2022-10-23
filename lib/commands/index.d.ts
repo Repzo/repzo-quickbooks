@@ -6,5 +6,9 @@ import { Command, CommandEvent } from "./../types";
  */
 export declare const commands: (
   CommandEvent: CommandEvent
-) => Promise<void | import("./../types").Result>;
+) => Promise<
+  | void
+  | import("./../types").Result
+  | import("../quickbooks/types/Customer").Customer.Find.Result
+>;
 export declare const commandsList: Command[];
