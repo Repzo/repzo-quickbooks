@@ -43,6 +43,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
     }
     // return all repzo taxs
     let qb_taxs = await get_all_QuickBooks_taxs(qbo);
+
     // return all quickbooks taxs
     let repzo_taxs = await get_all_repzo_taxs(repzo);
     qb_taxs.QueryResponse.TaxRate.forEach(async (tax: any, index, array) => {
