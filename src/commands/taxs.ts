@@ -1,10 +1,9 @@
 import { CommandEvent, Result } from "../types";
 import Repzo from "repzo";
 import { Service } from "repzo/src/types";
-import { Item } from "../quickbooks/types/item";
 import QuickBooks from "../quickbooks/index.js";
 import { v4 as uuid } from "uuid";
-import { TaxRate } from "../quickbooks/types/taxRate";
+import { TaxRate } from "../quickbooks/types/TaxRate";
 
 const bench_time_key = "bench_time_taxs";
 export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
@@ -53,7 +52,8 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
       if (existTax[0]) {
         if (
           new Date(existTax[0]?.integration_meta?.QuickBooks_last_sync) <
-          new Date(tax.MetaData?.LastUpdatedTime)
+            new Date(tax.MetaData?.LastUpdatedTime) ||
+          existTax[0]?.rate !== Number(tax.RateValue) / 100
         ) {
           let repzo_tax = map_taxs(tax);
           try {
@@ -84,6 +84,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
     });
   } catch (err) {
     await commandLog.setStatus("fail", err).setBody(result).commit();
+    console.error(err);
   } finally {
     return result;
   }
@@ -110,7 +111,7 @@ const get_all_QuickBooks_taxs = async (
   try {
     let query = `Select * From TaxRate`;
 
-    const qb_taxs = await qb.taxRate.query({
+    const qb_taxs = await qb.tax.query({
       query,
     });
     return qb_taxs;

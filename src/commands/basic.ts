@@ -16,8 +16,8 @@ export const basic = async (commandEvent: CommandEvent) => {
     await commandLog.addDetail("Repzo QuickBooks: Basic Sync").commit();
     const required_syncing_commands = [
       "sync_clients",
-      "sync_taxs",
       "sync_products",
+      "sync_taxs",
     ];
     for (let i = 0; i < required_syncing_commands.length; i++) {
       const command = required_syncing_commands[i];

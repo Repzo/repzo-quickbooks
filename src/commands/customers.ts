@@ -1,7 +1,7 @@
 import { CommandEvent, Result } from "../types";
 import Repzo from "repzo";
 import { Service } from "repzo/src/types";
-import { Customer } from "../quickbooks/types/customer";
+import { Customer } from "../quickbooks/types/Customer";
 import QuickBooks from "../quickbooks/index.js";
 
 const bench_time_key = "bench_time_client";
@@ -135,8 +135,7 @@ const get_all_repzo_clients = async (
     }
     return repzo_clients;
   } catch (err) {
-    console.error(err);
-    return [];
+    throw err;
   }
 };
 

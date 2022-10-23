@@ -1,13 +1,24 @@
-import { Params, QuickBooksConfig } from "./types/index";
-import { Customer } from "./types/customer";
-import { Item } from "./types/item";
-import { TaxRate } from "./types/taxRate";
-import { Invoice } from "./types/invoice";
-export default class QuickBooks {
-  private config;
+import { Params, QuickBooksConfig } from "./types/Index";
+import { Customer } from "./types/Customer";
+import { Item } from "./types/Item";
+import { TaxRate } from "./types/TaxRate";
+import { Invoice } from "./types/Invoice";
+import { Axios } from "axios";
+import { Endpoint } from "../types";
+interface IQuickBooks {
+  config: QuickBooksConfig;
+  endpoint: Endpoint;
+  axiosInstance: Axios;
+  customer: {};
+  item: {};
+  tax: {};
+  invoice: {};
+}
+export default class QuickBooks implements IQuickBooks {
+  config: QuickBooksConfig;
+  endpoint: Endpoint;
+  axiosInstance: Axios;
   private headers;
-  private endpoint;
-  private axiosInstance;
   constructor(config: QuickBooksConfig);
   private _fetch;
   private _create;
@@ -24,7 +35,7 @@ export default class QuickBooks {
     create: (body: Item.Create.Body) => Promise<Item.Create.Result>;
     update: (body: Item.Update.Body) => Promise<Item.Update.Result>;
   };
-  taxRate: {
+  tax: {
     _path: string;
     query: (params: TaxRate.Find.Params) => Promise<TaxRate.Find.Result>;
   };
@@ -34,3 +45,4 @@ export default class QuickBooks {
     create: (params: Invoice.Create.Body) => Promise<Invoice.Create.Result>;
   };
 }
+export {};

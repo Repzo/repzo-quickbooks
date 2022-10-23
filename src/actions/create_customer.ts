@@ -1,7 +1,7 @@
 import Repzo from "repzo";
 import { EVENT, Config } from "../types";
 import { Service } from "repzo/src/types";
-import { Customer } from "../quickbooks/types/customer";
+import { Customer } from "../quickbooks/types/Customer";
 import { v4 as uuid } from "uuid";
 import QuickBooks from "../quickbooks/index.js";
 
@@ -25,9 +25,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
     } catch (e) {}
 
     await actionLog
-      .addDetail(
-        `Repzo QuickBooks: Started Create Client - ${body?.serial_number?.formatted}`
-      )
+      .addDetail(`Start Creating Client - ${body?.serial_number?.formatted}`)
       .commit();
 
     const repzo_client: Service.Client.ClientSchema = body;
@@ -55,20 +53,14 @@ export const create_customer = async (event: EVENT, options: Config) => {
 
     await actionLog
       .addDetail(
-        `Repzo Quickbooks: Customer - ${QB_customer_body?.DisplayName}`
+        `Quickbooks Customer - ${QB_customer_body?.DisplayName}`,
+        QB_customer_body
       )
       .commit();
 
-    const result = await qbo.customer.create(QB_customer_body);
-    if (result) {
-      await actionLog
-        .addDetail(`quickbooks Responded with `, result)
-        .setStatus("success")
-        .setBody(body)
-        .commit();
-    }
+    await qbo.customer.create(QB_customer_body);
+    await actionLog.setStatus("success").setBody(body).commit();
   } catch (e: any) {
-    console.error(e?.response || e);
     await actionLog.setStatus("fail", e).setBody(body).commit();
     throw e;
   }

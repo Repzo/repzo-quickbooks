@@ -7,6 +7,11 @@ type StringId = string;
 type Email = string;
 type NameSpaces = string[];
 
+export type Endpoint = {
+  sandbox: string;
+  production: string;
+};
+
 export interface Config {
   data?: any;
   env: ENV;

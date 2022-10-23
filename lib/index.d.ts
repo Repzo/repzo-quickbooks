@@ -5,5 +5,9 @@ export declare const Actions: (
 export declare const ActionsList: import("./types.js").Action[];
 export declare const Commands: (
   CommandEvent: import("./types.js").CommandEvent
-) => Promise<void | import("./types.js").Result>;
+) => Promise<
+  | void
+  | import("./types.js").Result
+  | import("./quickbooks/types/Customer.js").Customer.Find.Result
+>;
 export declare const CommandsList: import("./types.js").Command[];
