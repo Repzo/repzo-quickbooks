@@ -50,16 +50,21 @@ export const create_invoice = async (event: EVENT, options: Config) => {
 
     if (res) {
       // update integration_meta object with repzo_invoice
+      let integration_meta = {
+        quickBooks_id: res.Invoice?.Id,
+        quickBooks_DocNumber: res.Invoice?.DocNumber,
+      };
       try {
-        let update = await repzo.invoice.update(repzo_invoice._id, {
-          integration_meta: {
-            quickBooks_id: res.Invoice?.Id,
-            quickBooks_DocNumber: res.Invoice?.DocNumber,
-          },
+        await repzo.invoice.update(repzo_invoice._id, {
+          integration_meta,
         });
-        console.dir(update, { depth: null });
       } catch (e) {
-        throw e;
+        await actionLog
+          .addDetail(`fail to update invoice integration_meta`, {
+            integration_meta,
+            e,
+          })
+          .commit();
       }
     }
 

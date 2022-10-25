@@ -1,13 +1,13 @@
-// import axiosInstance from "./services/axios.inercept.js";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
 import { Params, Data, Authorization, QuickBooksConfig } from "./types/Index";
-import { Customer } from "./types/Customer";
-import { Item } from "./types/Item";
-import { TaxRate } from "./types/TaxRate";
-import { Invoice } from "./types/Invoice";
 import { Axios } from "axios";
 import { Endpoint } from "../types";
+import { Customer } from "./types/Customer";
+import { Item } from "./types/Item";
+import { Invoice } from "./types/Invoice";
+import { Payment } from "./types/Payment";
+import { TaxRate } from "./types/TaxRate";
 
 const sandbox = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
 const production = "https://quickbooks.api.intuit.com/v3/company/";
@@ -20,6 +20,7 @@ interface IQuickBooks {
   item: {};
   tax: {};
   invoice: {};
+  payment: {};
 }
 
 export default class QuickBooks implements IQuickBooks {
@@ -157,6 +158,19 @@ export default class QuickBooks implements IQuickBooks {
     ): Promise<Invoice.Create.Result> => {
       let res: Invoice.Create.Result = await this._create(
         this.invoice._path,
+        params
+      );
+      return res;
+    },
+  };
+
+  payment = {
+    _path: `/payment`,
+    create: async (
+      params: Payment.Create.Body
+    ): Promise<Payment.Create.Result> => {
+      let res: Payment.Create.Result = await this._create(
+        this.payment._path,
         params
       );
       return res;
