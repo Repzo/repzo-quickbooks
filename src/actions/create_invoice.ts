@@ -47,9 +47,23 @@ export const create_invoice = async (event: EVENT, options: Config) => {
       .addDetail(`Preparing Quickbooks invoice items`, invoice.Line)
       .commit();
     const res = await qbo.invoice.create(invoice);
-    console.log(
-      `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
-    );
+
+    if (res) {
+      // update integration_meta object with repzo_invoice
+      try {
+        let update = await repzo.invoice.update(repzo_invoice._id, {
+          integration_meta: {
+            quickBooks_id: res.Invoice?.Id,
+            quickBooks_DocNumber: res.Invoice?.DocNumber,
+          },
+        });
+        console.dir(update, { depth: null });
+      } catch (e) {
+        throw e;
+      }
+    }
+
+    // commit action log
     await actionLog
       .addDetail(
         `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`

@@ -48,7 +48,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
     let repzo_taxs = await get_all_repzo_taxs(repzo);
     qb_taxs.QueryResponse.TaxRate.forEach(async (tax: any, index, array) => {
       let existTax = repzo_taxs.filter(
-        (i) => i.integration_meta?.QuickBooks_id === tax.Id
+        (i) => i.integration_meta?.quickBooks_id === tax.Id
       );
       if (existTax[0]) {
         if (
@@ -127,7 +127,7 @@ const map_taxs = (tax: TaxRate.TaxRateObject): Service.Tax.Create.Body => {
     rate: Number(tax.RateValue) / 100,
     type: "inclusive",
     integration_meta: {
-      QuickBooks_id: tax.Id,
+      quickBooks_id: tax.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },
   };
