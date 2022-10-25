@@ -57,7 +57,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
     result.repzo_total = repzo_products?.length;
     repzo_products = repzo_products.filter(
-      (i) => i.integration_meta?.QuickBooks_id !== undefined
+      (i) => i.integration_meta?.quickBooks_id !== undefined
     );
 
     qb_items.QueryResponse.Item.forEach(async (item: any, index, array) => {
@@ -67,7 +67,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       );
 
       let existProduct = repzo_products.filter(
-        (i) => i.integration_meta?.QuickBooks_id === item.Id
+        (i) => i.integration_meta?.quickBooks_id === item.Id
       );
       if (existProduct[0]) {
         if (
@@ -199,8 +199,9 @@ const get_all_QuickBooks_items = async (
     let query = `select * from Item where Type In`;
     if (Products.pullInventoryItems || Products.pullServiceItems) {
       query += `(`;
+      query += `'NonInventory'`;
       if (Products.pullInventoryItems) {
-        query += `'Inventory'`;
+        query += `,'Inventory'`;
       }
       if (Products.pullServiceItems) {
         query += `,'Service'`;
@@ -249,7 +250,7 @@ const map_products = (
       },
     ],
     integration_meta: {
-      QuickBooks_id: item.Id,
+      quickBooks_id: item.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },
   };

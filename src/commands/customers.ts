@@ -56,7 +56,7 @@ export const customers = async (
     );
 
     repzo_client = repzo_client.filter(
-      (i) => i.integration_meta?.QuickBooks_id !== undefined
+      (i) => i.integration_meta?.quickBooks_id !== undefined
     );
     result.repzo_total = repzo_client.length;
     result.QuickBooks_total = qb_customers.QueryResponse.Customer.length;
@@ -65,7 +65,7 @@ export const customers = async (
       async (cutomer: any, index, array) => {
         let existClient = repzo_client.filter(
           (i) =>
-            i.integration_meta?.QuickBooks_id === cutomer.Id ||
+            i.integration_meta?.quickBooks_id === cutomer.Id ||
             i.client_code === `QB_${cutomer.Id}`
         );
         if (existClient[0]) {
@@ -185,7 +185,7 @@ const map_customers = (
     cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
     email: cutomer.PrimaryEmailAddr?.Address,
     integration_meta: {
-      QuickBooks_id: cutomer.Id,
+      quickBooks_id: cutomer.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },
   };

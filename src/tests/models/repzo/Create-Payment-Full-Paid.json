@@ -1,0 +1,69 @@
+{
+  "_id": "6357c2282bf5766235dd6cac",
+  "status": "consumed",
+  "remainder": 0,
+  "amount": 250000,
+  "client_id": "6351197bb6df11adb3c4917c",
+  "client_name": "Rondonuwu Fruit and Vegi",
+  "creator": {
+    "_id": "632058ccdee287551a179994",
+    "type": "admin",
+    "name": "Ahmed Khaled"
+  },
+  "time": 1666695719700,
+  "serial_number": {
+    "identifier": "ADM",
+    "formatted": "PAY-ADM-2",
+    "count": 2,
+    "_id": "6357c2282bf5766235dd6cad"
+  },
+  "paytime": "2022-10-25",
+  "currency": "JOD",
+  "payment_type": "cash",
+  "LinkedTxn": {
+    "Txn_serial_number": {
+      "identifier": "ADM",
+      "formatted": "INV-ADM-10",
+      "count": 10,
+      "_id": "63565853f2dce3b63dacac4b"
+    },
+    "Txn_invoice_total": 250000,
+    "TxnType": "invoice",
+    "_id": "6357c2282bf5766235dd6cae"
+  },
+  "company_namespace": ["quickbooksintg"],
+  "sync_id": "79042184-1094-4a94-a08b-e9c67fba0900",
+  "custom_status": null,
+  "teams": [],
+  "paymentsData": {
+    "amount": -250000,
+    "paid": -250000,
+    "balance": 0,
+    "payments": [
+      {
+        "invoice_serial_number": {
+          "identifier": "ADM",
+          "formatted": "INV-ADM-10",
+          "count": 10,
+          "_id": "63565853f2dce3b63dacac4b"
+        },
+        "fullinvoice_id": "63565853f2dce3b63dacac4a",
+        "view_serial_number": {
+          "identifier": "ADM",
+          "formatted": "INV-ADM-10",
+          "count": 10,
+          "_id": "63565853f2dce3b63dacac4b"
+        },
+        "type": "invoice",
+        "amount": 250000,
+        "is_linked_txn": true,
+        "is_original": false,
+        "_id": "6357c2282bf5766235dd6cc4"
+      }
+    ],
+    "_id": "6357c2282bf5766235dd6cb0"
+  },
+  "createdAt": "2022-10-25T11:02:00.662Z",
+  "updatedAt": "2022-10-25T11:02:00.984Z",
+  "__v": 0
+}
