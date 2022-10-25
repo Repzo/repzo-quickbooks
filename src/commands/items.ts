@@ -199,8 +199,9 @@ const get_all_QuickBooks_items = async (
     let query = `select * from Item where Type In`;
     if (Products.pullInventoryItems || Products.pullServiceItems) {
       query += `(`;
+      query += `'NonInventory'`;
       if (Products.pullInventoryItems) {
-        query += `'Inventory'`;
+        query += `,'Inventory'`;
       }
       if (Products.pullServiceItems) {
         query += `,'Service'`;

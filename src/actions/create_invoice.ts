@@ -93,12 +93,11 @@ const prepareInvoiceLines = (
               // ItemAccountRef?: ReferenceType;
               TaxCodeRef: item.tax?.type === "N/A" ? NON : TAX,
               // TaxClassificationRef: {
-              //   value: "2",
-              //   name: "California",
+              //   value: "20",
+              //   name: "Californiaa",
               // },
               // MarkupInfo: MarkupInfo;
               // ServiceDate: Date;
-
               Qty: item.qty,
               UnitPrice: item.discounted_price / 1000,
             },
