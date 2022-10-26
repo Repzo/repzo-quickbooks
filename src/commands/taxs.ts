@@ -36,7 +36,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
 
   try {
     await commandLog.load(command_sync_id);
-    await commandLog.addDetail("Syncing Taxs ....").commit();
+    await commandLog.addDetail("⌛ Syncing Taxs ....").commit();
 
     if (!app.options_formData[bench_time_key]) {
       await commandLog.addDetail("bench_time_taxs undefined").commit();
@@ -77,7 +77,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
       // end async calls
       if (index === array.length - 1) {
         await commandLog
-          .addDetail(`Complete Sync Taxs`)
+          .addDetail(`✅  Complete Sync Taxs`)
           .setStatus("success")
           .setBody(result)
           .commit();

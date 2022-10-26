@@ -1,0 +1,75 @@
+{
+  "Payment": {
+    "SyncToken": "0",
+    "domain": "QBO",
+    "DepositToAccountRef": {
+      "value": "4"
+    },
+    "UnappliedAmt": 10.0,
+    "TxnDate": "2015-01-16",
+    "TotalAmt": 65.0,
+    "ProcessPayment": false,
+    "sparse": false,
+    "Line": [
+      {
+        "Amount": 55.0,
+        "LineEx": {
+          "any": [
+            {
+              "name": "{http://schema.intuit.com/finance/v3}NameValue",
+              "nil": false,
+              "value": {
+                "Name": "txnId",
+                "Value": "70"
+              },
+              "declaredType": "com.intuit.schema.finance.v3.NameValue",
+              "scope": "javax.xml.bind.JAXBElement$GlobalScope",
+              "globalScope": true,
+              "typeSubstituted": false
+            },
+            {
+              "name": "{http://schema.intuit.com/finance/v3}NameValue",
+              "nil": false,
+              "value": {
+                "Name": "txnOpenBalance",
+                "Value": "71.00"
+              },
+              "declaredType": "com.intuit.schema.finance.v3.NameValue",
+              "scope": "javax.xml.bind.JAXBElement$GlobalScope",
+              "globalScope": true,
+              "typeSubstituted": false
+            },
+            {
+              "name": "{http://schema.intuit.com/finance/v3}NameValue",
+              "nil": false,
+              "value": {
+                "Name": "txnReferenceNumber",
+                "Value": "1024"
+              },
+              "declaredType": "com.intuit.schema.finance.v3.NameValue",
+              "scope": "javax.xml.bind.JAXBElement$GlobalScope",
+              "globalScope": true,
+              "typeSubstituted": false
+            }
+          ]
+        },
+        "LinkedTxn": [
+          {
+            "TxnId": "70",
+            "TxnType": "Invoice"
+          }
+        ]
+      }
+    ],
+    "CustomerRef": {
+      "name": "Red Rock Diner",
+      "value": "20"
+    },
+    "Id": "163",
+    "MetaData": {
+      "CreateTime": "2015-01-16T15:08:12-08:00",
+      "LastUpdatedTime": "2015-01-16T15:08:12-08:00"
+    }
+  },
+  "time": "2015-07-28T15:16:15.435-07:00"
+}

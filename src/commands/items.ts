@@ -43,12 +43,10 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   let sync: string[] = [];
   try {
     await commandLog.load(command_sync_id);
-    await commandLog
-      .addDetail("Repzo QuickBooks: Started Syncing Products")
-      .commit();
+    await commandLog.addDetail("⌛ Syncing Products ....").commit();
 
     if (!app.options_formData[bench_time_key]) {
-      await commandLog.addDetail("bench_time_products undefined").commit();
+      await commandLog.addDetail("❌  bench_time_products undefined").commit();
     }
     // return all repzo items
     let qb_items = await get_all_QuickBooks_items(qbo, app);
@@ -97,7 +95,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       // end async calls
       if (index === array.length - 1) {
         await commandLog
-          .addDetail(`Complete Sync Products`, sync)
+          .addDetail(`✅  Complete Sync Products`, sync)
           .setStatus("success")
           .setBody(result)
           .commit();

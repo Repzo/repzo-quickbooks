@@ -46,12 +46,6 @@
             "title": "Pull - Items with Service type from QuickBooks to my products",
             "default": false,
             "enum": [true, false]
-          },
-          "createProductHook": {
-            "type": "boolean",
-            "title": "Push repzo a new products to quickbooks",
-            "default": false,
-            "enum": [true, false]
           }
         }
       },
@@ -65,6 +59,20 @@
             "type": "boolean",
             "title": "push repzo invoice to quickbooks once it be ready",
             "default": true,
+            "enum": [true, false]
+          }
+        }
+      },
+      "Payments": {
+        "type": "object",
+        "title": "Payments",
+        "description": "",
+        "required": [],
+        "properties": {
+          "createPaymentHook": {
+            "type": "boolean",
+            "title": "push repzo payments to quickbooks once it be ready",
+            "default": false,
             "enum": [true, false]
           }
         }
@@ -130,6 +138,11 @@
       "action": "create_invoice",
       "name": "create invoice",
       "description": "create invoice .."
+    },
+    {
+      "action": "create_payment",
+      "name": "create payment",
+      "description": "create payment .."
     }
   ],
   "description": "QuickBooks is an accounting software package developed and marketed by Intuit.",

@@ -19,7 +19,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
   try {
     body = event.body;
     await actionLog.load(action_sync_id);
-    await actionLog.addDetail(`Initializing Quickbooks Invoice`).commit();
+    await actionLog.addDetail(`⌛ Initializing Quickbooks Invoice`).commit();
 
     const qbo = new QuickBooks({
       oauthToken: options.oauth2_data?.access_token || "",
@@ -37,14 +37,14 @@ export const create_invoice = async (event: EVENT, options: Config) => {
         invoice.DueDate = new Date(repzo_invoice.due_date);
       }
     } catch (e) {
-      await actionLog.setStatus("fail", "invalid Client").commit();
+      await actionLog.setStatus("fail", "❌ invalid Client").commit();
       exit;
     }
 
     const Line = await prepareInvoiceLines(repzo, repzo_invoice);
     invoice.Line = Line;
     await actionLog
-      .addDetail(`Preparing Quickbooks invoice items`, invoice.Line)
+      .addDetail(`⌛ Preparing Quickbooks invoice items`, invoice.Line)
       .commit();
     const res = await qbo.invoice.create(invoice);
 
@@ -55,12 +55,13 @@ export const create_invoice = async (event: EVENT, options: Config) => {
         quickBooks_DocNumber: res.Invoice?.DocNumber,
       };
       try {
+        console.log(repzo_invoice._id);
         await repzo.invoice.update(repzo_invoice._id, {
           integration_meta,
         });
       } catch (e) {
         await actionLog
-          .addDetail(`fail to update invoice integration_meta`, {
+          .addDetail(`⛔ Error : fail to update invoice integration_meta `, {
             integration_meta,
             e,
           })
@@ -71,7 +72,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     // commit action log
     await actionLog
       .addDetail(
-        `Complete Repzo Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
+        `✅ Complete Repzo-Quickbooks: Invoice DocNumber: - ${res.Invoice?.DocNumber}`
       )
       .setStatus("success")
       .setBody(res)

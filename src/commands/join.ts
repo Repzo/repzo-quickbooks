@@ -14,7 +14,7 @@ export const join = async (commandEvent: CommandEvent) => {
   );
   try {
     await commandLog.load(commandEvent.sync_id);
-    await commandLog.addDetail("Repzo QuickBooks: Join").commit();
+    await commandLog.addDetail("⌛ Repzo QuickBooks: Join").commit();
 
     const body: Service.JoinActionsWeHook.Data = {
       data: [
@@ -33,6 +33,14 @@ export const join = async (commandEvent: CommandEvent) => {
           event: "client.create",
           join:
             commandEvent?.app?.formData?.Customers?.createClientHook || false,
+        },
+        // payment
+        {
+          app: "repzo-quickbooks",
+          action: "create_payment",
+          event: "payment.create",
+          join:
+            commandEvent?.app?.formData?.Payments?.createPaymentHook || false,
         },
       ],
     };
