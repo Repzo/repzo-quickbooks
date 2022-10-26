@@ -30,9 +30,9 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     const repzo_invoice = body;
     try {
       const repzo_client = await repzo.client.get(repzo_invoice.client_id);
-      if (repzo_client.integration_meta?.QuickBooks_id !== undefined) {
+      if (repzo_client.integration_meta?.quickBooks_id !== undefined) {
         invoice.CustomerRef.value =
-          repzo_client.integration_meta?.QuickBooks_id;
+          repzo_client.integration_meta?.quickBooks_id;
         invoice.CurrencyRef.value = repzo_invoice.currency;
         invoice.DueDate = new Date(repzo_invoice.due_date);
       }
@@ -96,7 +96,7 @@ const prepareInvoiceLines = (
     repzo_invoice.items?.forEach(async (item: any, i: number, arr: []) => {
       try {
         let product = await repzo.product.get(item.variant?.product_id);
-        if (product.integration_meta?.QuickBooks_id !== undefined) {
+        if (product.integration_meta?.quickBooks_id !== undefined) {
           Line.push({
             Id: String(i + 1),
             DetailType: "SalesItemLineDetail",
@@ -106,7 +106,7 @@ const prepareInvoiceLines = (
               DiscountRate: item.discount_value / 1000,
               ItemRef: {
                 name: product.name,
-                value: product.integration_meta?.QuickBooks_id,
+                value: product.integration_meta?.quickBooks_id,
               },
               // ClassRef: ReferenceType;
               // ItemAccountRef?: ReferenceType;

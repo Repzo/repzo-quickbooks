@@ -34,7 +34,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   });
   // init result object
   let result: Result = {
-    QuickBooks_total: 0,
+    quickBooks_total: 0,
     repzo_total: 0,
     created: 0,
     updated: 0,
@@ -54,7 +54,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     let qb_items = await get_all_QuickBooks_items(qbo, app);
     // return all quickbooks products
     let repzo_products = await get_all_repzo_products(repzo);
-    result.QuickBooks_total = qb_items.QueryResponse?.Item?.length;
+    result.quickBooks_total = qb_items.QueryResponse?.Item?.length;
     result.repzo_total = repzo_products?.length;
     repzo_products = repzo_products.filter(
       (i) => i.integration_meta?.quickBooks_id !== undefined

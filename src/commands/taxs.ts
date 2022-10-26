@@ -27,7 +27,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
     sandbox: commandEvent.env === "production" ? false : true,
   });
   let result: Result = {
-    QuickBooks_total: 0,
+    quickBooks_total: 0,
     repzo_total: 0,
     created: 0,
     updated: 0,

@@ -50,9 +50,9 @@ let commandEvent: CommandEvent = {
     __v: 0,
   },
 
-  //command: "sync_clients",
+  command: "sync_clients",
   // command: "sync_taxs",
-  command: "sync_products",
+  //command: "sync_products",
   //command: "oAuth2",
   //command: "sync_invoices",
 
@@ -65,7 +65,7 @@ let commandEvent: CommandEvent = {
 
   oauth2_data: {
     access_token:
-      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..xtPwBWPURFYqL8_kTLlRMA.r--9bh2fGoGopNJjh8UJ1e4uhBcFYMummCiFg6YKluYPHxTjJ4-oTj4aaNc3deuhCWeXvLAqqWxIxUsJNSJgG3_sZ3rHajQV0rxk5US7bXaB6xAVqeKCr7WdSwoKrrRMHy4jn65RoasLlYfP2oKlNUpMYiQboRyi4BEx_CNKRwwnwXebLZ85IgkchZeB6clabb90aZQADo7GbVy_DzXO-NQ14GOvEEvMz2koaRyDfCxdr1DxMyuj2kbqjRsPn-D5Fnci7cEHoUZYWsZU_NOaDjFDc_erUGh3VAi9lVoI0L47VmIbLVgqD5p4VIqP4Opv6yT_mWPATo54KFDMkLzndBp-Y0DNLG3_D_1jqXcVSwt6g-hmhIMfLuWmbTHYSRX62bfeaJOTKXkew--gJ-QSXvnhEqGOs-D1EORd_aAFSjeZD_E3qlfZRVLBsOlo9Mwy9MPKE4ohoo2MGftpLLbcn43G6C0Uuka-mAFR6O-sz1ZEpaYetB7Yp--Ve6Y9k1yyx_Wz8AMJY0OnveK8iBx2DiMF0h7WCRzjZIVU6vv8L14K4JmKGZjnaG_ROZSsIGqxmf176lm_hKFnVLRflDc7F77K-Vu5hewFYlPwBNmogjjFOaXnUf4zCPaB3gr-V1D_YdcM4W3oroyVJxwFsm5THo4GM09P1gRV5c7cTsZILDsHrf53zRH0axi2YuQ2QJGTXLbdmB51Ls4mq5-0j1chj6YIO0qoNuG-bKz4hbkk-rhrAXvCc7Aadc5q3m9U0izZ.giC6Tt8yhI2zNyacZh2P2g",
+      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..0JolhbIpE_6_X22NltA-9A.6lOZRMp9-LatvXKvVuUry7VikONBhEFgytXTiLzSdEQU5OdAMQQpqkNBEre9GwnpqBO0HqbvVSXuSZdNr3Vw8R0o9VyWIA2mgB_r1gpllAPLn6Y4dXDVC1ftWGrjHuQn-U1ehc6D1NUReslAVtEPgoEVsLUWnr_LWR8rnGtFtQjLORsV0CtgPKAi8B_jIrCmTD8F_gWLfI72fxau2l17CUTr7jOfDLtO7Rt8-SX9mJJsWzhVYVvhp3rGlRjfIi4fD6v_PhPdXCyOQke3xOxAeVY2WnV0necF7slsxXj54-qUeSab_RclMvs6tdZlQyWaHMIqIOPImnHW0PZ0AGYpfgRLDW6fWA4glXNG1W2HvAT9TToEFePfnUt80zirr3PuwkPqbhi94OD464LsjLtc6peWt6FDu5VUrp605qL4bZzzAyTMoJ4mV0pkNPovItSBdkDt4ClA-8NEop826v12ep4EBhn6brOmpV1jrqska7HlMqfnkxBc0eLk9kGz9sgMA95HQ1bEUZk7wTjh-gLWCiG-N0iQ4N_-bYC5gBSidWYwxxXBnz7okjD_RjMwQetBRt8BzVi9nXch_kvMeGegUNN1DR176A_0a4Gv1OSyg7_870iS-vRLCgB_Rdx-r5OJNr7UExgZU1yMYR9MLMyXKIYTFhD3C4XmDRNarmOGvnVY6WJzwUMCVeJD3Aujx86JXLhNofMtytFIxB6OJ4sOOWQsB0s7cMteZncHPl2R-6YLgqYK_JrGtzG5zYwoc_4X.6F82SHoEL5Tp-edcjnlrbg",
     realmId: "4620816365241355500",
   },
 };

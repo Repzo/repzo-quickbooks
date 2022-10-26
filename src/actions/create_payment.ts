@@ -35,13 +35,13 @@ export const create_payment = async (event: EVENT, options: Config) => {
         TotalAmt: repzo_payment.amount / 1000,
       };
       const payment = await qbo.payment.create(quickbooks_payment);
-
-      // commit action log
-      await actionLog
-        .addDetail(`Complete Repzo Quickbooks: create a new payment`)
-        .setStatus("success")
-        .setBody(payment)
-        .commit();
+      if (payment) {
+        await actionLog
+          .addDetail(`Complete Repzo Quickbooks: create a new payment`)
+          .setStatus("success")
+          .setBody(payment)
+          .commit();
+      }
     }
     // log status
   } catch (e: any) {
