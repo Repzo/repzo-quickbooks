@@ -17,6 +17,8 @@ export const commands = async (CommandEvent: CommandEvent) => {
     const command = CommandEvent.command;
     console.log("🚀 ~ command", command);
     switch (CommandEvent.command) {
+      case "basic":
+        return await items(CommandEvent);
       case "sync_products":
         return await items(CommandEvent);
 
@@ -45,6 +47,11 @@ export const commandsList: Command[] = [
     command: "join",
     name: "Join",
     description: "this command to sync Join actions  ",
+  },
+  {
+    command: "basic",
+    name: "basic",
+    description: "this command to sync all commands actions  ",
   },
   {
     command: "sync_clients",
