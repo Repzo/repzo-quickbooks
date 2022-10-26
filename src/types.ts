@@ -63,7 +63,7 @@ interface Oauth2_data {
 }
 
 export interface Result {
-  QuickBooks_total: number;
+  quickBooks_total: number;
   repzo_total: number;
   created: number;
   updated: number;

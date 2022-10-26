@@ -1,0 +1,69 @@
+{
+  "_id": "6358f4d7b06d247992c25438",
+  "status": "consumed",
+  "remainder": 0,
+  "amount": 33000,
+  "client_id": "6358ec252bf5766235dd920c",
+  "client_name": "Travis Waldron",
+  "creator": {
+    "_id": "632058ccdee287551a179994",
+    "type": "admin",
+    "name": "Ahmed Khaled"
+  },
+  "time": 1666774230771,
+  "serial_number": {
+    "identifier": "ADM",
+    "formatted": "PAY-ADM-7",
+    "count": 7,
+    "_id": "6358f4d7b06d247992c25439"
+  },
+  "paytime": "2022-10-26",
+  "currency": "JOD",
+  "payment_type": "cash",
+  "LinkedTxn": {
+    "Txn_serial_number": {
+      "identifier": "ADM",
+      "formatted": "INV-ADM-14",
+      "count": 14,
+      "_id": "6358f16d2bf5766235dd99d1"
+    },
+    "Txn_invoice_total": 170000,
+    "TxnType": "invoice",
+    "_id": "6358f4d7b06d247992c2543a"
+  },
+  "company_namespace": ["quickbooksintg"],
+  "sync_id": "cf78ac8a-d6dc-4619-a78d-64ca1eef4608",
+  "custom_status": null,
+  "teams": [],
+  "paymentsData": {
+    "amount": -33000,
+    "paid": -33000,
+    "balance": 0,
+    "payments": [
+      {
+        "invoice_serial_number": {
+          "identifier": "ADM",
+          "formatted": "INV-ADM-14",
+          "count": 14,
+          "_id": "6358f16d2bf5766235dd99d1"
+        },
+        "fullinvoice_id": "6358f16d2bf5766235dd99d0",
+        "view_serial_number": {
+          "identifier": "ADM",
+          "formatted": "INV-ADM-14",
+          "count": 14,
+          "_id": "6358f16d2bf5766235dd99d1"
+        },
+        "type": "invoice",
+        "amount": 33000,
+        "is_linked_txn": true,
+        "is_original": false,
+        "_id": "6358f4d7b06d247992c2544e"
+      }
+    ],
+    "_id": "6358f4d7b06d247992c2543c"
+  },
+  "createdAt": "2022-10-26T08:50:31.552Z",
+  "updatedAt": "2022-10-26T08:50:31.702Z",
+  "__v": 0
+}

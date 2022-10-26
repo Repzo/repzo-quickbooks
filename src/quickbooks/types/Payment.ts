@@ -80,6 +80,7 @@ export namespace Payment {
       TotalAmt: number;
       CustomerRef: ReferenceType;
       CurrencyRef: ReferenceType;
+      PrivateNote?: String;
     }
     export type Result = {
       Payment: PaymentObject;

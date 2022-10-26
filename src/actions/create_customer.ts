@@ -51,15 +51,14 @@ export const create_customer = async (event: EVENT, options: Config) => {
       GivenName: repzo_client.name,
     };
 
+    await qbo.customer.create(QB_customer_body);
     await actionLog
       .addDetail(
-        `Quickbooks Customer - ${QB_customer_body?.DisplayName}`,
-        QB_customer_body
+        `✅ Complete Repzo-Quickbooks: Customer - ${QB_customer_body?.DisplayName}`
       )
+      .setStatus("success")
+      .setBody(QB_customer_body)
       .commit();
-
-    await qbo.customer.create(QB_customer_body);
-    await actionLog.setStatus("success").setBody(body).commit();
   } catch (e: any) {
     await actionLog.setStatus("fail", e).setBody(body).commit();
     throw e;

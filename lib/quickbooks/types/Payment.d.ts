@@ -66,6 +66,7 @@ export declare namespace Payment {
       TotalAmt: number;
       CustomerRef: ReferenceType;
       CurrencyRef: ReferenceType;
+      PrivateNote?: String;
     }
     type Result = {
       Payment: PaymentObject;

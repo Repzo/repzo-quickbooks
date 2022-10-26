@@ -19,7 +19,7 @@ export const customers = async (
     env: commandEvent.env,
   });
   let result: Result = {
-    QuickBooks_total: 0,
+    quickBooks_total: 0,
     repzo_total: 0,
     created: 0,
     updated: 0,
@@ -40,10 +40,10 @@ export const customers = async (
       sandbox: commandEvent.env === "production" ? false : true,
     });
     await commandLog.load(commandEvent.sync_id);
-    await commandLog.addDetail("Syncing Clients ......").commit();
+    await commandLog.addDetail("⌛ Syncing Clients ......").commit();
     if (!commandEvent.app?.options_formData[bench_time_key]) {
       await commandLog
-        .addDetail("Failed in : bench_time_client undefined")
+        .addDetail("❌  Failed in : bench_time_client undefined")
         .commit();
     }
 
@@ -59,7 +59,7 @@ export const customers = async (
       (i) => i.integration_meta?.quickBooks_id !== undefined
     );
     result.repzo_total = repzo_client.length;
-    result.QuickBooks_total = qb_customers.QueryResponse.Customer.length;
+    result.quickBooks_total = qb_customers.QueryResponse.Customer.length;
 
     qb_customers.QueryResponse.Customer.forEach(
       async (cutomer: any, index, array) => {
@@ -96,7 +96,7 @@ export const customers = async (
         // end async calls
         if (index === array.length - 1) {
           await commandLog
-            .addDetail(`Complete Sync Clients`)
+            .addDetail(`✅  Complete Sync Clients`)
             .setStatus("success")
             .setBody(result)
             .commit();
@@ -104,7 +104,7 @@ export const customers = async (
       }
     );
   } catch (e) {
-    console.error(`failed to complete sync due to an exception : ${e}`);
+    console.error(`❌ failed to complete sync due to an exception : ${e}`);
     await commandLog.setStatus("fail", e).setBody(e).commit();
   } finally {
     return result;
