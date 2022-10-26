@@ -10,6 +10,9 @@
   "Invoices": {
     "createInvoiceHook": false
   },
-  "repzoApiKey": "dsdsfg",
-  "errorEmail": "sdgsdg"
+  "Payment": {
+    "createPaymentHook": false
+  },
+  "repzoApiKey": "j9j3bHrGso7VR4hLsSH9n6FevaDf0eQ6EHljaHwkqEQ",
+  "errorEmail": "ahmed.khaled@repzoapp.com"
 }

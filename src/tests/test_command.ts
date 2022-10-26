@@ -24,7 +24,6 @@ let commandEvent: CommandEvent = {
       app_category: "6249fa8466312f76e595634a",
       UISchema: {},
     },
-
     formData: {
       Customers: {
         createClientHook: true,
@@ -36,6 +35,9 @@ let commandEvent: CommandEvent = {
       },
       Invoices: {
         createInvoiceHook: true,
+      },
+      Payment: {
+        createPaymentHook: false,
       },
       repzoApiKey: "j9j3bHrGso7VR4hLsSH9n6FevaDf0eQ6EHljaHwkqEQ",
       errorEmail: "ahmed.khaled@repzoapp.com",
