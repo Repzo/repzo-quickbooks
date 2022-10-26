@@ -109,6 +109,11 @@
       "description": "this command to sync Join actions  "
     },
     {
+      "command": "basic",
+      "name": "basic",
+      "description": "this command to sync all commands [Clients , Products , Tax]  "
+    },
+    {
       "command": "sync_clients",
       "name": "Sync Clients",
       "description": "this command to sync all quickbooks customers with your repzo clients"
