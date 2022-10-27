@@ -55,7 +55,7 @@ export const create_payment = async (event: EVENT, options: Config) => {
         PrivateNote: `invoice ${repzo_invoice.integration_meta?.quickBooks_DocNumber}`,
         TotalAmt: repzo_payment.amount / 1000,
       };
-      // const invoice = await qbo.invoice.query({})
+      // const invoice = await qbo.invoice.query({ query: "" });
       const payment = await qbo.payment.create(quickbooks_payment);
       if (payment) {
         await actionLog

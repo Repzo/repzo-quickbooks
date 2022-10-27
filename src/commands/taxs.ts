@@ -85,7 +85,6 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
     });
   } catch (err) {
     await commandLog.setStatus("fail", err).setBody(result).commit();
-    console.error(err);
   } finally {
     return result;
   }
@@ -111,7 +110,6 @@ const get_all_QuickBooks_taxs = async (
 ): Promise<TaxRate.Find.Result> => {
   try {
     let query = `Select * From TaxRate`;
-
     const qb_taxs = await qb.tax.query({
       query,
     });

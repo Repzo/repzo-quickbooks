@@ -123,7 +123,7 @@ const prepareInvoiceLines = (
             },
             Amount: item.line_total / 1000,
             LineNum: i + 1,
-            // Description: `measureunit  ${item.measureunit?.factor} /  ${item.measureunit?.name}`,
+            Description: `${item.measureunit?.factor} /  ${item.measureunit?.name}`,
           });
         } else {
           reject(`Product Not found .. ${item.variant?.product_name}`);

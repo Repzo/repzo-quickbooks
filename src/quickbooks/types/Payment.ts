@@ -33,7 +33,7 @@ export namespace Payment {
   interface LinkedTxn {
     TxnId: string;
     TxnType: string;
-    TxnLineId: string;
+    TxnLineId?: string;
   }
   interface Line {
     Amount: number;
