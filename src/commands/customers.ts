@@ -104,7 +104,6 @@ export const customers = async (
       }
     );
   } catch (e) {
-    console.error(`❌ failed to complete sync due to an exception : ${e}`);
     await commandLog.setStatus("fail", e).setBody(e).commit();
   } finally {
     return result;
