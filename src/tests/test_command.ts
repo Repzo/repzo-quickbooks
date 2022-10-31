@@ -52,9 +52,9 @@ let commandEvent: CommandEvent = {
     __v: 0,
   },
 
-  //command: "sync_clients",
+  command: "sync_clients",
   // command: "sync_taxs",
-  command: "sync_products",
+  //command: "sync_products",
   //command: "oAuth2",
   //command: "sync_invoices",
 
@@ -67,7 +67,7 @@ let commandEvent: CommandEvent = {
 
   oauth2_data: {
     access_token:
-      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..yAjQNEYaoh7fh1KuKoaAOw.itHSzKq95EhbvvE5rN7tZzTNRhN7iwmGn3cpaxI9NErg7ZnEQ7IOV-m9VLtRimcyvop7Jx5f2hHlW7XJOSU_dIbrFVh4A4rM2V7wPqXFRaL3cvzY59lEupuorQEgLhRfkFEgyFFHguNjNsmMP_xW8ofrsUSsMAFq39gb45d6Q9BhVSpQlq0it7aLDp7Wq6nSxN6qjGfJyhfqrf5DwIe4EiRFPMQJvaX4Aos9ChUseJjlMRiU2mnB14Q4bB7FSCEc-COAcjFq2xlfZo8Kw-sr28dKhsOfS1nCTtH1SblajsQ4ORVfiYBM_XMfV3fnmGrJSbbj6Tn6q88mv4-h4dBsLY9AiwwZSRskhBBMlvtW9g-GrwpaFDcE9TQvS138onzZasOpoUL9WmoRtx3oHZpLpEBgmBENv1ILkppnrRbN1QrfsKjZLvqHfCBcGD5kKQHDvS-nl-nMoRUgh1KVnsVQ-KNm0KV0q_qDhYUPRJ33ni6W5YL3VYxePHmScwB_FPUtaF2U_fd7IFRMcDN7wZ-xn9RQ9G-7BLetDfqlX7k1sLpYx_Dllm65k7E__R8DmSTzNubIuPN0r1us1JhHp_n_2Wbkqbvm0eYFsXDvl2CbWZ7ligwG78OgmpEn6N7CudZfDvc58JvRs-lv-Ut-VTRvl0Ktf_btHqorlz_r-3Kn8V0uMch8zCR_AAA9trcbzMALY0lvVNus8c26ap0_2stlTYQAc5dzi6k4MAvl6DEbvvj--Uf2YJHqJGQ7aBAAoNQw.BzFqPsEkBcUehatIT0H8YQ",
+      "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..DqNufPV7B82JhmB8Uz8sHQ.boj9PFf9k6xuAw9Yzy9US6pgN6P1mnE1nwG3oht9fz_yQvZnvXoeTCYukdN7j24bI5LnJUv0CXxgv_3RgtkcKAcOHC2yL9yp1qb_g-kJuH7helQrNS2xXs-tGSpIYwQFHect0G-k_1-gatQWtsvbufQ_U1FFCBRYNXrAkrLkdGoobz9NfJA-20fngnNvPxJZBNd7_Ndgv5HrFD-CwXAcN2723C_MYivDw5E7zrpVcMrHlmueltPZnxPR3Jw-x6MeAKi_kCOGe2FprUxRmrL13aFvItZopISuUj59y8Uz7E3c36fhg5gT16efMbE3CBJ__YqRrUmUNVUXyqdUr5qNRY9nmieJQABkMj6_WXZoNb8hx825NaehdIU9-crpNlcpoyY5p1z0Fn026hbo3nw-XG6vEk1LqxNdYVPXhd41dAQkHNP7KyodVo6DszDu6Nl8wBPOPfUgrOaYjK9BdFbkGY_0XdSjznTbfjMxsGOKOyQOY2ZSexlptEHFpirMPv0cj_ekO6LoTEEJf1fCTvQcTveyAms5QzpT5Hb_ySn4aW4khyR-h2iR1y-N7iKRMBm1n1-tQVGeIIw-nGOzxZ0GGBteLloKw_aTnRwZ-1ZJ3_FZe7w0KxQi5OhWvuB2iVadn4eSQ5N7R_huUtUJcaIoccTCRPMM91jrcAhVgHumD5tpOlu8NpdJ6oGcq7Vk8GAcMHwB8RFzjMqoDAo6G7ZepBy-ECu4ufanjl4UK8nbpjzvPOdm38ja5hOZeQVKSygd.KQpf9KpatNWJ2CWOBAM73g",
     realmId: "4620816365241355500",
   },
 };

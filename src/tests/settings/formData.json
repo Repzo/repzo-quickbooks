@@ -4,8 +4,7 @@
   },
   "Products": {
     "pullInventoryItems": true,
-    "pullServiceItems": false,
-    "createProductHook": false
+    "pullServiceItems": false
   },
   "Invoices": {
     "createInvoiceHook": false

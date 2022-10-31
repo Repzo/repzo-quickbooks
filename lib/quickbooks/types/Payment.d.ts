@@ -28,15 +28,6 @@ export declare namespace Payment {
     CreditChargeResponse?: CreditChargeResponse;
     CreditChargeInfo?: CreditChargeInfo;
   }
-  interface LinkedTxn {
-    TxnId: string;
-    TxnType: string;
-    TxnLineId?: string;
-  }
-  interface Line {
-    Amount: number;
-    LinkedTxn: LinkedTxn[];
-  }
   export interface PaymentObject {
     Id: string;
     TotalAmt: number;
@@ -76,7 +67,6 @@ export declare namespace Payment {
       CustomerRef: ReferenceType;
       CurrencyRef: ReferenceType;
       PrivateNote?: String;
-      Line?: Line[];
     }
     type Result = {
       Payment: PaymentObject;
