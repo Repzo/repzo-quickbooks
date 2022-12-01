@@ -18,7 +18,7 @@
 
 ### Changed
 
-[commands/create_items] add uniq id to integration_meta to the map_customers function include : company_namespace + item.Id @fouadhijazi
+[commands/create_items] add uniq id to integration_meta to the map_items function include : company_namespace + item.Id @fouadhijazi
 
 ### Fixed
 
