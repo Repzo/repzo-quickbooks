@@ -72,7 +72,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
           new Date(existProduct[0]?.integration_meta?.QuickBooks_last_sync) <
           new Date(item.MetaData?.LastUpdatedTime)
         ) {
-          let repzo_product = map_products(item, repzo_default_category._id);
+          let repzo_product = map_products(item, repzo_default_category._id ,commandEvent.nameSpace);
           try {
             result.updated++;
             sync.push(repzo_product.name);
@@ -83,7 +83,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
         }
       } else {
         //create a new  repzo client
-        let repzo_product = map_products(item, repzo_default_category._id);
+        let repzo_product = map_products(item, repzo_default_category._id , commandEvent.nameSpace);
         try {
           result.created++;
           sync.push(repzo_product.name);
@@ -194,8 +194,9 @@ const get_all_QuickBooks_items = async (
   let bench_time_products = app.options_formData[bench_time_key];
 
   try {
-    let query = `select * from Item where Type In`;
+    let query = `select * from Item`;
     if (Products.pullInventoryItems || Products.pullServiceItems) {
+      query += `where Type In`
       query += `(`;
       query += `'NonInventory'`;
       if (Products.pullInventoryItems) {
@@ -204,11 +205,11 @@ const get_all_QuickBooks_items = async (
       if (Products.pullServiceItems) {
         query += `,'Service'`;
       }
-      query += `)`;
+      query += `) AND`;
     }
     if (bench_time_products) {
       bench_time_products = bench_time_products.slice(0, 10);
-      query += ` AND MetaData.LastUpdatedTime >= '${bench_time_products}'`;
+      query += ` MetaData.LastUpdatedTime >= '${bench_time_products}'`;
     }
     query += ` maxresults 1000`;
 
@@ -229,7 +230,8 @@ const get_all_QuickBooks_items = async (
  */
 const map_products = (
   item: Item.ItemObject,
-  categoryID: string
+  categoryID: string,
+  company_namespace : string[]
 ): Service.Product.Create.Body => {
   return {
     name: item.Name,
@@ -248,6 +250,7 @@ const map_products = (
       },
     ],
     integration_meta: {
+      id: company_namespace + "_" + item.Id ,
       quickBooks_id: item.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },

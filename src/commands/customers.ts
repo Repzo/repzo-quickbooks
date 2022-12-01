@@ -7,7 +7,7 @@ import QuickBooks from "../quickbooks/index.js";
 const bench_time_key = "bench_time_client";
 
 /**
- * Event To Sync Quickbooks Custommers - Repzo Clients
+ * Event To Sync Quickbooks Customers - Repzo Clients
  * @param commandEvent
  * @returns
  */
@@ -73,7 +73,7 @@ export const customers = async (
             new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
             new Date(cutomer.MetaData?.LastUpdatedTime)
           ) {
-            let repzo_client = map_customers(cutomer);
+            let repzo_client = map_customers(cutomer ,commandEvent.nameSpace);
             try {
               result.updated++;
               await repzo.client.update(existClient[0]._id, repzo_client);
@@ -82,7 +82,7 @@ export const customers = async (
             }
           }
         } else {
-          let repzo_client = map_customers(cutomer);
+          let repzo_client = map_customers(cutomer ,commandEvent.nameSpace);
           try {
             result.created++;
             await repzo.client.create({
@@ -162,12 +162,13 @@ const get_all_QuickBooks_customers = async (
 };
 
 /**
- * Map Custommer object with Client
+ * Map Customer object with Client
  * @param cutomer
  * @returns
  */
 const map_customers = (
-  cutomer: Customer.CustomerObject
+  cutomer: Customer.CustomerObject ,
+  company_namespace: string[]
 ): Service.Client.Create.Body => {
   return {
     name: cutomer.DisplayName,
@@ -184,6 +185,7 @@ const map_customers = (
     cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
     email: cutomer.PrimaryEmailAddr?.Address,
     integration_meta: {
+      id: company_namespace + "_" + cutomer.Id ,
       quickBooks_id: cutomer.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },
