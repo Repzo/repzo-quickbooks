@@ -18,7 +18,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   const { app }: any = commandEvent || {};
   // init Repzo object
   const repzo = new Repzo(app.formData?.repzoApiKey, {
-    env: commandEvent.env,
+    env: commandEvent.env
   });
   // init commandLog
   const commandLog = new Repzo.CommandLog(
@@ -30,15 +30,18 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
   const qbo = new QuickBooks({
     oauthToken: commandEvent.oauth2_data?.access_token || "",
     realmId: commandEvent.oauth2_data?.realmId || "",
-    sandbox: commandEvent.env === "production" ? false : true,
+    sandbox: commandEvent.env === "production" ? false : true
   });
+
+  const company_namespace = commandEvent.nameSpace.join("_");
+
   // init result object
   let result: Result = {
     quickBooks_total: 0,
     repzo_total: 0,
     created: 0,
     updated: 0,
-    failed: 0,
+    failed: 0
   };
   let sync: string[] = [];
   try {
@@ -55,7 +58,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     result.quickBooks_total = qb_items.QueryResponse?.Item?.length;
     result.repzo_total = repzo_products?.length;
     repzo_products = repzo_products.filter(
-      (i) => i.integration_meta?.quickBooks_id !== undefined
+      i => i.integration_meta?.quickBooks_id !== undefined
     );
 
     qb_items.QueryResponse.Item.forEach(async (item: any, index, array) => {
@@ -64,15 +67,19 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
         item.ParentRef?.name
       );
 
-      let existProduct = repzo_products.filter(
-        (i) => i.integration_meta?.quickBooks_id === item.Id
-      );
+      let existProduct = repzo_products.filter(i => {
+        return i.integration_meta?.id === `${company_namespace}_${item.Id}`;
+      });
       if (existProduct[0]) {
         if (
           new Date(existProduct[0]?.integration_meta?.QuickBooks_last_sync) <
           new Date(item.MetaData?.LastUpdatedTime)
         ) {
-          let repzo_product = map_products(item, repzo_default_category._id ,commandEvent.nameSpace);
+          let repzo_product = map_products(
+            item,
+            repzo_default_category._id,
+            commandEvent.nameSpace
+          );
           try {
             result.updated++;
             sync.push(repzo_product.name);
@@ -83,7 +90,11 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
         }
       } else {
         //create a new  repzo client
-        let repzo_product = map_products(item, repzo_default_category._id , commandEvent.nameSpace);
+        let repzo_product = map_products(
+          item,
+          repzo_default_category._id,
+          commandEvent.nameSpace
+        );
         try {
           result.created++;
           sync.push(repzo_product.name);
@@ -126,7 +137,7 @@ const get_all_repzo_products = async (
       let repzoObj = await repzo.product.find({
         page: 1,
         per_page,
-        disabled: false,
+        disabled: false
       });
       next_page_url = repzoObj.next_page_url;
       repzo_products = [...repzo_products, ...repzoObj.data];
@@ -151,27 +162,27 @@ const get_repzo_default_category = async (
     if (name) {
       let repzoObj = await repzo.category.find({
         name,
-        disabled: false,
+        disabled: false
       });
       if (repzoObj.data[0]) {
         return repzoObj.data[0];
       } else {
         return await repzo.category.create({
           name: "default",
-          local_name: "Created by Quickbooks",
+          local_name: "Created by Quickbooks"
         });
       }
     } else {
       let repzoObj = await repzo.category.find({
         name: "default",
-        disabled: false,
+        disabled: false
       });
       if (repzoObj.data[0]) {
         return repzoObj.data[0];
       } else {
         return await repzo.category.create({
           name: "default",
-          local_name: "Created by Quickbooks",
+          local_name: "Created by Quickbooks"
         });
       }
     }
@@ -196,7 +207,7 @@ const get_all_QuickBooks_items = async (
   try {
     let query = `select * from Item`;
     if (Products.pullInventoryItems || Products.pullServiceItems) {
-      query += `where Type In`
+      query += `where Type In`;
       query += `(`;
       query += `'NonInventory'`;
       if (Products.pullInventoryItems) {
@@ -214,7 +225,7 @@ const get_all_QuickBooks_items = async (
     query += ` maxresults 1000`;
 
     const qb_items = await qb.item.query({
-      query,
+      query
     });
     return qb_items;
   } catch (err) {
@@ -231,7 +242,7 @@ const get_all_QuickBooks_items = async (
 const map_products = (
   item: Item.ItemObject,
   categoryID: string,
-  company_namespace : string[]
+  company_namespace: string[]
 ): Service.Product.Create.Body => {
   return {
     name: item.Name,
@@ -247,12 +258,17 @@ const map_products = (
         disabled: false,
         name: item.Name,
         price: item.UnitPrice ? Math.round(item.UnitPrice * 1000) : 0,
-      },
+        integration_meta: {
+          id: company_namespace + "_" + item.Id,
+          quickBooks_id: item.Id,
+          QuickBooks_last_sync: new Date().toISOString()
+        }
+      }
     ],
     integration_meta: {
-      id: company_namespace + "_" + item.Id ,
+      id: company_namespace + "_" + item.Id,
       quickBooks_id: item.Id,
-      QuickBooks_last_sync: new Date().toISOString(),
-    },
+      QuickBooks_last_sync: new Date().toISOString()
+    }
   };
 };

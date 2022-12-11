@@ -6,7 +6,7 @@ import QuickBooks from "../quickbooks/index.js";
 import { Invoice } from "../quickbooks/types/Invoice.js";
 import { exit } from "process";
 
-export const create_invoice = async (event: EVENT, options: Config) => {
+export const create_return_invoice = async (event: EVENT, options: Config) => {
   const repzo = new Repzo(options.data?.repzoApiKey, { env: options.env });
   const action_sync_id: string = event?.headers?.action_sync_id || uuid();
   const actionLog = new Repzo.ActionLogs(repzo, action_sync_id);
@@ -36,14 +36,18 @@ export const create_invoice = async (event: EVENT, options: Config) => {
         CustomerRef: { name: "", value: "" },
         Line: []
       }; */
-
       const repzo_client = await repzo.client.get(repzo_invoice.client_id);
+      console.log(repzo_client);
       if (repzo_client.integration_meta?.quickBooks_id !== undefined) {
+        console.log(repzo_client.integration_meta?.quickBooks_id); //  result => 7
+
         invoice.CustomerRef.value =
           repzo_client.integration_meta?.quickBooks_id;
         invoice.CurrencyRef.value = repzo_invoice.currency;
+
         invoice.DueDate = new Date(repzo_invoice.due_date);
       }
+      console.dir(invoice, { depth: null });
     } catch (e) {
       await actionLog.setStatus("fail", "❌ invalid Client").commit();
       exit;
@@ -52,7 +56,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     const Line = await prepareInvoiceLines(repzo, repzo_invoice);
     invoice.Line = Line;
     await actionLog
-      .addDetail(`⌛ Preparing Quickbooks invoice items`, invoice.Line)
+      .addDetail(`⌛ Preparing Quickbooks invoice return items`, invoice.Line)
       .commit();
     const res = await qbo.invoice.create(invoice);
 
@@ -102,44 +106,40 @@ const prepareInvoiceLines = (
 
   let Line: Invoice.Create.XLine = [];
   return new Promise((resolve, reject) => {
-    repzo_invoice.items?.forEach(async (item: any, i: number, arr: []) => {
-      try {
-        let product = await repzo.product.get(item.variant?.product_id);
-        if (product.integration_meta?.quickBooks_id !== undefined) {
-          Line.push({
-            Id: String(i + 1),
-            DetailType: "SalesItemLineDetail",
-            SalesItemLineDetail: {
-              TaxInclusiveAmt: item.tax_amount,
-              DiscountAmt: 1,
-              DiscountRate: item.discount_value / 1000,
-              ItemRef: {
-                name: product.name,
-                value: product.integration_meta?.quickBooks_id
+    repzo_invoice.return_items.forEach(
+      async (item: any, i: number, arr: []) => {
+        try {
+          console.log(repzo_invoice._id); //result => 6390808478db8f08a75f89ce
+          let product = await repzo.product.get(item.variant?.product_id);
+          if (product.integration_meta?.quickBooks_id !== undefined) {
+            Line.push({
+              /*  */
+              Id: String(i + 1),
+              DetailType: "SalesItemLineDetail",
+              SalesItemLineDetail: {
+                TaxInclusiveAmt: item.tax_amount,
+                DiscountAmt: 1,
+                DiscountRate: item.discount_value / 1000,
+                ItemRef: {
+                  name: product.name,
+                  value: product.integration_meta?.quickBooks_id
+                },
+                TaxCodeRef: item.tax?.type === "N/A" ? NON : TAX,
+                Qty: item.qty,
+                UnitPrice: item.discounted_price / 1000
               },
-              // ClassRef: ReferenceType;
-              // ItemAccountRef?: ReferenceType;
-              TaxCodeRef: item.tax?.type === "N/A" ? NON : TAX,
-              // TaxClassificationRef: {
-              //   value: "20",
-              //   name: "Californiaa",
-              // },
-              // MarkupInfo: MarkupInfo;
-              // ServiceDate: Date;
-              Qty: item.qty,
-              UnitPrice: item.discounted_price / 1000
-            },
-            Amount: item.line_total / 1000,
-            LineNum: i + 1,
-            Description: `${item.measureunit?.factor} /  ${item.measureunit?.name}`
-          });
-        } else {
-          reject(`Product Not found .. ${item.variant?.product_name}`);
+              Amount: (item.line_total / 1000) * -1,
+              LineNum: i + 1,
+              Description: `${item.measureunit?.factor} /  ${item.measureunit?.name}`
+            });
+          } else {
+            reject(`Product Not found .. ${item.variant?.product_name}`);
+          }
+        } catch (e) {
+          reject(e);
         }
-      } catch (e) {
-        reject(e);
+        if (i === arr.length - 1) resolve(Line);
       }
-      if (i === arr.length - 1) resolve(Line);
-    });
+    );
   });
 };

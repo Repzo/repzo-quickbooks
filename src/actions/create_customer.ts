@@ -51,7 +51,12 @@ export const create_customer = async (event: EVENT, options: Config) => {
       GivenName: repzo_client.name,
     };
 
-    await qbo.customer.create(QB_customer_body);
+    const QB_new_Client = await qbo.customer.create(QB_customer_body);
+    //Add the Repzo Client Id in QB
+    repzo_client.integration_meta = { id: QB_new_Client.Id };
+    await repzo.client.update(repzo_client._id, repzo_client);
+    console.log(QB_new_Client);
+
     await actionLog
       .addDetail(
         `✅ Complete Repzo-Quickbooks: Customer - ${QB_customer_body?.DisplayName}`

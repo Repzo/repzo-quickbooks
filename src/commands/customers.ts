@@ -16,14 +16,17 @@ export const customers = async (
 ): Promise<Result> => {
   // init Repzo object
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
-    env: commandEvent.env,
+    env: commandEvent.env
   });
+
+  const company_namespace = commandEvent.nameSpace.join("_");
+
   let result: Result = {
     quickBooks_total: 0,
     repzo_total: 0,
     created: 0,
     updated: 0,
-    failed: 0,
+    failed: 0
   };
   const commandLog = new Repzo.CommandLog(
     repzo,
@@ -37,7 +40,7 @@ export const customers = async (
     const qbo = new QuickBooks({
       oauthToken: commandEvent.oauth2_data?.access_token || "",
       realmId: commandEvent.oauth2_data?.realmId || "",
-      sandbox: commandEvent.env === "production" ? false : true,
+      sandbox: commandEvent.env === "production" ? false : true
     });
     await commandLog.load(commandEvent.sync_id);
     await commandLog.addDetail("⌛ Syncing Clients ......").commit();
@@ -56,7 +59,7 @@ export const customers = async (
     );
 
     repzo_client = repzo_client.filter(
-      (i) => i.integration_meta?.quickBooks_id !== undefined
+      i => i.integration_meta?.quickBooks_id !== undefined
     );
     result.repzo_total = repzo_client.length;
     result.quickBooks_total = qb_customers.QueryResponse.Customer.length;
@@ -64,16 +67,14 @@ export const customers = async (
     qb_customers.QueryResponse.Customer.forEach(
       async (cutomer: any, index, array) => {
         let existClient = repzo_client.filter(
-          (i) =>
-            i.integration_meta?.quickBooks_id === cutomer.Id ||
-            i.client_code === `QB_${cutomer.Id}`
+          i => i.integration_meta?.id === `${company_namespace}_${cutomer.Id}`
         );
         if (existClient[0]) {
           if (
             new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
             new Date(cutomer.MetaData?.LastUpdatedTime)
           ) {
-            let repzo_client = map_customers(cutomer ,commandEvent.nameSpace);
+            let repzo_client = map_customers(cutomer, commandEvent.nameSpace);
             try {
               result.updated++;
               await repzo.client.update(existClient[0]._id, repzo_client);
@@ -82,12 +83,12 @@ export const customers = async (
             }
           }
         } else {
-          let repzo_client = map_customers(cutomer ,commandEvent.nameSpace);
+          let repzo_client = map_customers(cutomer, commandEvent.nameSpace);
           try {
             result.created++;
             await repzo.client.create({
               client_code: `QB_${cutomer.Id}`,
-              ...repzo_client,
+              ...repzo_client
             });
           } catch (e) {
             result.failed++;
@@ -127,7 +128,7 @@ const get_all_repzo_clients = async (
       let repzoObj = await repzo.client.find({
         page: 1,
         per_page,
-        disabled: false,
+        disabled: false
       });
       next_page_url = repzoObj.next_page_url;
       repzo_clients = [...repzo_clients, ...repzoObj.data];
@@ -153,7 +154,7 @@ const get_all_QuickBooks_customers = async (
     if (bench_time_client)
       query = `select * from Customer Where Metadata.LastUpdatedTime > '${bench_time_client}'`;
     const qb_Clients = await qb.customer.query({
-      query,
+      query
     });
     return qb_Clients;
   } catch (err) {
@@ -167,7 +168,7 @@ const get_all_QuickBooks_customers = async (
  * @returns
  */
 const map_customers = (
-  cutomer: Customer.CustomerObject ,
+  cutomer: Customer.CustomerObject,
   company_namespace: string[]
 ): Service.Client.Create.Body => {
   return {
@@ -175,6 +176,7 @@ const map_customers = (
     contact_title: cutomer.GivenName,
     country: cutomer.BillAddr?.CountrySubDivisionCode,
     city: cutomer.BillAddr?.City,
+    disabled: !cutomer.Active,
     lat: !isNaN(Number(cutomer.BillAddr?.Lat))
       ? Number(cutomer.BillAddr?.Lat)
       : 0.0,
@@ -185,9 +187,9 @@ const map_customers = (
     cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
     email: cutomer.PrimaryEmailAddr?.Address,
     integration_meta: {
-      id: company_namespace + "_" + cutomer.Id ,
+      id: company_namespace + "_" + cutomer.Id,
       quickBooks_id: cutomer.Id,
-      QuickBooks_last_sync: new Date().toISOString(),
-    },
+      QuickBooks_last_sync: new Date().toISOString()
+    }
   };
 };
