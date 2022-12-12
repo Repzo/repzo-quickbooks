@@ -1,9 +1,8 @@
-business_day: "2022-12-07",
 // invoice;
 import { Actions } from "../index.js";
 
 const body = {
-  _id: "6390808478db8f08a75f89ce",
+  _id: "6396d26a76a399e2b13252ce",
   processable: true,
   client_id: "6385fc0b1bad3249473da472",
   client_name: "Freeman Sporting Goods",
@@ -16,57 +15,78 @@ const body = {
   },
   latest: true,
   version: 0,
-  business_day: "2022-12-07",
-  issue_date: "2022-12-07",
+  business_day: "2022-12-12",
+  issue_date: "2022-12-12",
   currency: "JOD",
   serial_number: {
     identifier: "ADM",
-    formatted: "INV-ADM-6",
-    count: 6,
-    _id: "6390808478db8f08a75f89cf"
+    formatted: "INV-ADM-8",
+    count: 8,
+    _id: "6396d26a76a399e2b13252cf"
   },
-  sync_id: "911e8929-95ad-4201-be2c-68f3b7cddff3",
+  sync_id: "ca39bdb9-9f61-48d2-ba50-56d4e1f6e7f0",
   company_namespace: ["fouad"],
   promotions: [],
   priceLists: [],
   teams: [],
   is_void: false,
-  due_date: "2022-12-07",
+  due_date: "2022-12-12",
   return_serial_number: {
     identifier: "ADM",
-    formatted: "RTN-ADM-2",
-    count: 2,
-    _id: "6390808478db8f08a75f89d0"
+    formatted: "RTN-ADM-4",
+    count: 4,
+    _id: "6396d26a76a399e2b13252d0"
   },
   origin_warehouse: "6385fd058ba36afb8966d785",
   paymentsData: {
-    invoice_value: 131000,
-    paid: 0,
-    balance: 131000,
-    payments: [],
-    _id: "6390808478db8f08a75f89d1"
+    invoice_value: -15000,
+    paid: -15000,
+    balance: 0,
+    payments: [
+      {
+        invoice_serial_number: {
+          identifier: "ADM",
+          formatted: "INV-ADM-5",
+          count: 5,
+          _id: "63904d2a0a54198ca9060907"
+        },
+        fullinvoice_id: "63904d2a0a54198ca9060906",
+        view_serial_number: {
+          identifier: "ADM",
+          formatted: "INV-ADM-5",
+          count: 5,
+          _id: "63904d2a0a54198ca9060907"
+        },
+        type: "invoice",
+        amount: 15000,
+        is_linked_txn: false,
+        is_original: false,
+        _id: "6396d27676a399e2b13252fa"
+      }
+    ],
+    _id: "6396d27876a399e2b1325307"
   },
   consumption: {
     status: "consumed",
     remainder: 0,
-    _id: "6390808478db8f08a75f89d2"
+    _id: "6396d26a76a399e2b13252d2"
   },
-  status: "unpaid",
-  subtotal: 131000,
+  status: "paid",
+  subtotal: -15000,
   discount_amount: 0,
-  taxable_subtotal: 131000,
-  tax_amount: -78,
-  total: 131000,
-  pre_subtotal: 135000,
+  taxable_subtotal: -15000,
+  tax_amount: 0,
+  total: -15000,
+  pre_subtotal: 0,
   pre_discount_amount: 0,
-  pre_taxable_subtotal: 135000,
+  pre_taxable_subtotal: 0,
   pre_tax_amount: 0,
-  pre_total: 135000,
-  return_subtotal: 4000,
+  pre_total: 0,
+  return_subtotal: 15000,
   return_discount_amount: 0,
-  return_taxable_subtotal: 4000,
-  return_tax_amount: 78,
-  return_total: 4000,
+  return_taxable_subtotal: 15000,
+  return_tax_amount: 0,
+  return_total: 15000,
   deductionRatio: 0,
   deductionFixed: 0,
   totalDeductedTax: 0,
@@ -78,12 +98,6 @@ const body = {
       rate: 0,
       total: 0,
       type: "N/A"
-    },
-    "Tucson City": {
-      name: "Tucson City",
-      rate: 0.02,
-      total: -78,
-      type: "inclusive"
     }
   },
   overwriteTaxExempt: false,
@@ -92,9 +106,10 @@ const body = {
   shipping_tax: 0,
   shipping_charge: 0,
   payment_charge: 0,
-  total_with_charges: 131000,
+  total_with_charges: -15000,
   transaction_processed: true,
-  items: [
+  items: [],
+  return_items: [
     {
       isAdditional: false,
       variant: {
@@ -107,9 +122,9 @@ const body = {
         },
         variant_name: "Pump",
         listed_price: 15000,
-        _id: "6390808478db8f08a75f89d4"
+        _id: "6396d26a76a399e2b13252d4"
       },
-      qty: 9,
+      qty: -1,
       measureunit: {
         parent: null,
         name: "piece",
@@ -123,106 +138,39 @@ const body = {
         rate: 0,
         type: "N/A",
         disabled: false,
-        _id: "6390808478db8f08a75f89d6"
+        _id: "6396d26a76a399e2b13252d6"
       },
-      base_unit_qty: 9,
+      base_unit_qty: -1,
       price: 15000,
       discounted_price: 15000,
       tax_amount: 0,
       tax_total: 0,
       discount_value: 0,
       gross_value: 15000,
-      line_total: 135000,
-      total_before_tax: 135000,
+      line_total: -15000,
+      total_before_tax: -15000,
       modifiers_total: 0,
       modifiers_total_before_tax: 0,
       modifiers_tax_total: 0,
       tax_total_without_modifiers: 0,
-      line_total_without_modifiers: 135000,
-      total_before_tax_without_modifiers: 135000,
-      deductionRatio: 0,
-      deductedTax: 0,
-      deduction: 0,
-      deductionBeforeTax: 0,
-      lineTotalAfterDeduction: 135000,
-      promotions: {
-        isGet: false,
-        taken: 0,
-        free: 9,
-        bookings: [],
-        highlight: false
-      },
-      used_promotions: [],
-      general_promotions: [],
-      applicable_promotions: [],
-      company_namespace: [],
-      class: "invoice",
-      _id: "6390808478db8f08a75f89d3",
-      modifiers_groups: []
-    }
-  ],
-  return_items: [
-    {
-      isAdditional: false,
-      variant: {
-        product_id: "638f35fe5590febb1f593c06",
-        product_name: "Sprinkler Heads",
-        variant_id: {
-          _id: "638f35fe5590febb1f593c0e",
-          sku: "",
-          barcode: ""
-        },
-        variant_name: "Sprinkler Heads",
-        listed_price: 2000,
-        _id: "6390808478db8f08a75f89d8"
-      },
-      qty: -2,
-      measureunit: {
-        parent: null,
-        name: "piece",
-        factor: 1,
-        disabled: false,
-        company_namespace: ["fouad"],
-        _id: "63845353383c975fee108c1d"
-      },
-      tax: {
-        name: "Tucson City",
-        rate: 0.02,
-        type: "inclusive",
-        disabled: false,
-        _id: "638f38facf150cdcdc6dd569"
-      },
-      base_unit_qty: -2,
-      price: 2000,
-      discounted_price: 2000,
-      tax_amount: 39,
-      tax_total: -78,
-      discount_value: 0,
-      gross_value: 2000,
-      line_total: -4000,
-      total_before_tax: -3922,
-      modifiers_total: 0,
-      modifiers_total_before_tax: 0,
-      modifiers_tax_total: 0,
-      tax_total_without_modifiers: -78,
-      line_total_without_modifiers: -4000,
-      total_before_tax_without_modifiers: -3922,
+      line_total_without_modifiers: -15000,
+      total_before_tax_without_modifiers: -15000,
       used_promotions: [],
       general_promotions: [],
       applicable_promotions: [],
       company_namespace: [],
       class: "return",
-      _id: "6390808478db8f08a75f89d7",
+      _id: "6396d26a76a399e2b13252d3",
       modifiers_groups: []
     }
   ],
-  time: 1670414468130,
-  createdAt: "2022-12-07T12:01:08.137Z",
-  updatedAt: "2022-12-07T12:01:08.549Z",
+  time: 1670828650802,
+  createdAt: "2022-12-12T07:04:10.807Z",
+  updatedAt: "2022-12-12T07:04:24.245Z",
   __v: 0
 };
 const action = "create_return_invoice";
-const action_sync_id = "e94d4f67-def3-446d-ade5-07d97bfe540c";
+const action_sync_id = "092f872e-bc0e-4eae-9faf-4f3e5381b155";
 Actions(
   {
     version: "2.0",
@@ -274,7 +222,7 @@ Actions(
     env: "staging",
     oauth2_data: {
       access_token:
-        "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..QOyXGlty0utPyUfmU9hpjw.EQdhijQrRmzgAAa_BuA-AmtDKv5AtuMRHpOJVEUJzrf1pGCEUliS2s4CoXaKRowrDi-iaOO8kUorNHmh-GFwAQp5wF8m88ZTvjyIdyHlJpTXpuk8q1WeItsz3VMM7mriTv8mbnob57WKjnbj7oYXPPkLcf1bkJ-CnAqYaTmSftwu5SKPMjDkJc0B4Ov5GoaTRJQ_xHM7BJP_TfyHi9AvSg5MG4Vyourj7BH5wWXU3geUrD9ST-KIQ9V8apWrC8bRkhohQAWjlhl-SlriLPyHaYK9umBI_acWIi9fmuSE6IZjSPV_ebACX0O92LgMmhoMQPY0GTaGx3hHio2cyIXbwU5MHpXQagnkIvAox8FJBjOW4ynJGGhAG4bb6fXZSP5FcJWo09ndiRRpdiAEuieEVajkpS5kSL-r-AF-FpteBzpJvwFsMfkZDN8-mfPjzsoglTq81MWpHCTm8-16Kcha82HFnG_Ud7_8Xy_gVrNeDo7iG1z6sBAKJAmWx14QF26Py5vTrKb-LlJflj9eiQG94iohOgaZp8bjIHYqOTHv4wfQl9qXK3NRpYX2f020YI_j2pExVgVt5i7YgqpHPpKzaf450b0kYNLMzwhdGnWPvoAi7zPSLP7wYX11Gmvy1YyvlmenQlDWL8TlmhfAyVCrPNm3EDbqq1etDyF3wCBk2b3jGrUEZmSFAyeicFsDDhp7wdbiZP3SRC7hfXXyC8P4Ez3orMUspP6oRAYwl_B7JkJDlE-3vjDpdN7rYBqqu-oy.UPJeZ6ShRh263ExtUidSIw",
+        "eyJlbmMiOiJBMTI4Q0JDLUhTMjU2IiwiYWxnIjoiZGlyIn0..YDX24Y2oAA3QTmIv4vBe9g.mLnZJEro-Xg9EcOKrR0iP6qvKxL_X2cpbZYQtw-HbxiiTeHYrz5J1NwU3gYYjMbZJe0mhS-gu7pqi87hqJWb1qluhPesbwhYJXwciSRic1j1oDX0YUks7wcmXREcpY0l2ZO-6jk7_wiab_N6rBqzWyVGAg1dT0GjJaoa8rJyaCXm08eo2ukDzOZaB2fTEBIRC7_u3iUaxApwNJS6ljyneZVwwiDtBROU8pYoFpprqNRspousc9kOkUoFlgW-ot9V8zD15OsQ9lsZH91rSw-7yDntN_qW9BFGpaiS4SIT-ko4GqtH5qhYVf2OGfKDeu1ivG103MWuLHTUesExnaW9O71OYKQpWJ5-thAdyBHgYz2kLnxmx6mo1TVdi4YyTwm2ydsHcQsB9X0l4gEl6zMLqVCNe0eN21A0nLz38tr5n8e8SrDKdgkRw79hZfKxQYbpDVPIEg9DW0-H7Se2Wlcj3h8QqtSGcc5Vok1XXUpT4wiUF3j2JLhp61UjVJZ5osm0c_xgDB3vhnr2X3cU2_mq-ZhKBJBJleemSCWWSLecaaMXrsFErZs9a1W0T5YcjMKc2IUxZDwqLXU_148zp0GIK_1Gk4YLe56AfaMahicg4SxAX0s7C-ypO8yb8wzs_5Hd1tgNgdf_V2cLCVdm2XId35MmP6M9Gls_q26FJI5Fll0OJrblbgY_wXPnyX-gDcGRXmdvLa_pMHsA9CU4KX6y9X09NMdcMMk3mK5GY1t23EPg3dgboZWIiZ7DWibIRCBm.QcZprpWdBKeozB16KWzFcQ",
       realmId: "4620816365258829620"
     },
     data: {

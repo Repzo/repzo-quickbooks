@@ -44,7 +44,6 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
         invoice.CustomerRef.value =
           repzo_client.integration_meta?.quickBooks_id;
         invoice.CurrencyRef.value = repzo_invoice.currency;
-
         invoice.DueDate = new Date(repzo_invoice.due_date);
       }
       console.dir(invoice, { depth: null });

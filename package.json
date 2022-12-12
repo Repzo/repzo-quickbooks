@@ -20,8 +20,12 @@
   "scripts": {
     "lint": "npx prettier --write .",
     "build": "tsc && npm run lint",
-    "test_command": "tsc && npm run lint && node ./lib/tests/test_command.js",
-    "test_action": "tsc && npm run lint && node ./lib/tests/test_action.js"
+    "test_command": "tsc && node ./lib/tests/test_command.js",
+    "test_action": "tsc && npm run lint && node ./lib/tests/test_action.js",
+    "go": "tsc && node ./lib/tests/test_action_client.js",
+    "go2": "tsc && node ./lib/tests/test_action_invoice.js",
+    "go3": "tsc && node ./lib/tests/test_action_return_invoice.js",
+    "go4": "tsc && node ./lib/tests/test_action_payment.js"
   },
   "repository": {
     "type": "git",
