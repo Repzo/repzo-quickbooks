@@ -31,7 +31,7 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
     if (body) body = JSON.parse(body);
     const repzo_invoice = body;
     try {
-    /*   let invoice: Invoice.Create.Body = {
+      /*   let invoice: Invoice.Create.Body = {
         CurrencyRef: { name: "", value: "" },
         CustomerRef: { name: "", value: "" },
         Line: []
@@ -58,7 +58,7 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
     await actionLog
       .addDetail(`⌛ Preparing Quickbooks invoice return items`, invoice.Line)
       .commit();
-    const res = await qbo.invoice.create(invoice);
+    const res = await qbo.return_invoice.create(invoice);
 
     if (res) {
       // update integration_meta object with repzo_invoice
