@@ -34,7 +34,7 @@ export default class QuickBooks implements IQuickBooks {
     this.config = config;
     this.endpoint = {
       sandbox,
-      production,
+      production
     };
     config.minorversion === undefined ? 65 : config.minorversion;
     this.headers = {
@@ -42,13 +42,13 @@ export default class QuickBooks implements IQuickBooks {
       "User-Agent": "repzo-quickbooks: version 0.0.1",
       "Content-Type": "application/json",
       Accept: "application/json",
-      "Request-Id": uuid(),
+      "Request-Id": uuid()
     };
     this.axiosInstance = axios.create({
       baseURL:
         this.config.sandbox === true
           ? this.endpoint.sandbox
-          : this.endpoint.production,
+          : this.endpoint.production
     });
   }
 
@@ -56,7 +56,7 @@ export default class QuickBooks implements IQuickBooks {
     try {
       let res = await this.axiosInstance.get(this.config.realmId + `/query`, {
         params: { ...params, minorversion: this.config.minorversion },
-        headers: this.headers,
+        headers: this.headers
       });
       return res.data;
     } catch (e) {
@@ -71,7 +71,7 @@ export default class QuickBooks implements IQuickBooks {
         body,
         {
           params: { minorversion: this.config.minorversion, ...params },
-          headers: this.headers,
+          headers: this.headers
         }
       );
       return res.data;
@@ -84,7 +84,7 @@ export default class QuickBooks implements IQuickBooks {
     try {
       let res = await this.axiosInstance.put(path, body, {
         params: { minorversion: this.config.minorversion, ...params },
-        headers: this.headers,
+        headers: this.headers
       });
       return res.data;
     } catch (e) {
@@ -113,7 +113,7 @@ export default class QuickBooks implements IQuickBooks {
     ): Promise<Customer.Update.Result> => {
       let res = await this._update(this.customer._path, body);
       return res;
-    },
+    }
   };
 
   item = {
@@ -131,7 +131,7 @@ export default class QuickBooks implements IQuickBooks {
     update: async (body: Item.Update.Body): Promise<Item.Update.Result> => {
       let res = await this._update(this.customer._path, body);
       return res;
-    },
+    }
   };
 
   tax = {
@@ -141,7 +141,7 @@ export default class QuickBooks implements IQuickBooks {
     ): Promise<TaxRate.Find.Result> => {
       let res: TaxRate.Find.Result = await this._fetch(params);
       return res;
-    },
+    }
   };
 
   invoice = {
@@ -161,7 +161,27 @@ export default class QuickBooks implements IQuickBooks {
         params
       );
       return res;
+    }
+  };
+
+  return_invoice = {
+    _path: `/creditmemo`,
+    query: async (
+      params: Invoice.Find.Params
+    ): Promise<Invoice.Find.Result> => {
+      let res: Invoice.Find.Result = await this._fetch(params);
+      return res;
     },
+
+    create: async (
+      params: Invoice.Create.Body
+    ): Promise<Invoice.Create.Result> => {
+      let res: Invoice.Create.Result = await this._create(
+        this.return_invoice._path,
+        params
+      );
+      return res;
+    }
   };
 
   payment = {
@@ -174,6 +194,6 @@ export default class QuickBooks implements IQuickBooks {
         params
       );
       return res;
-    },
+    }
   };
 }

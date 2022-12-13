@@ -11,7 +11,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
   const { app }: any = commandEvent || {};
   // init Repzo object
   const repzo = new Repzo(app.formData?.repzoApiKey, {
-    env: commandEvent.env,
+    env: commandEvent.env
   });
   // init commandLog
   const commandLog = new Repzo.CommandLog(
@@ -24,14 +24,17 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
   const qbo = new QuickBooks({
     oauthToken: commandEvent.oauth2_data?.access_token || "",
     realmId: commandEvent.oauth2_data?.realmId || "",
-    sandbox: commandEvent.env === "production" ? false : true,
+    sandbox: commandEvent.env === "production" ? false : true
   });
+
+  const company_namespace = commandEvent.nameSpace.join("_");
+
   let result: Result = {
     quickBooks_total: 0,
     repzo_total: 0,
     created: 0,
     updated: 0,
-    failed: 0,
+    failed: 0
   };
 
   try {
@@ -47,16 +50,16 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
     // return all quickbooks taxs
     let repzo_taxs = await get_all_repzo_taxs(repzo);
     qb_taxs.QueryResponse.TaxRate.forEach(async (tax: any, index, array) => {
-      let existTax = repzo_taxs.filter(
-        (i) => i.integration_meta?.quickBooks_id === tax.Id
-      );
+      let existTax = repzo_taxs.filter(i => {
+        return i.integration_meta?.id === `${company_namespace}_${tax.Id}`;
+      });
       if (existTax[0]) {
         if (
           new Date(existTax[0]?.integration_meta?.QuickBooks_last_sync) <
             new Date(tax.MetaData?.LastUpdatedTime) ||
           existTax[0]?.rate !== Number(tax.RateValue) / 100
         ) {
-          let repzo_tax = map_taxs(tax);
+          let repzo_tax = map_taxs(tax, commandEvent.nameSpace);
           try {
             result.updated++;
             await repzo.tax.update(existTax[0]._id, repzo_tax);
@@ -66,7 +69,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
         }
       } else {
         //create a new  repzo client
-        let repzo_tax = map_taxs(tax);
+        let repzo_tax = map_taxs(tax, commandEvent.nameSpace);
         try {
           result.created++;
           await repzo.tax.create(repzo_tax);
@@ -96,7 +99,7 @@ const get_all_repzo_taxs = async (
   try {
     const repzo_taxes = await repzo.tax.find({
       per_page: 50000,
-      disabled: false,
+      disabled: false
     });
     return repzo_taxes.data;
   } catch (err) {
@@ -111,7 +114,7 @@ const get_all_QuickBooks_taxs = async (
   try {
     let query = `Select * From TaxRate`;
     const qb_taxs = await qb.tax.query({
-      query,
+      query
     });
     return qb_taxs;
   } catch (err) {
@@ -119,14 +122,19 @@ const get_all_QuickBooks_taxs = async (
   }
 };
 
-const map_taxs = (tax: TaxRate.TaxRateObject): Service.Tax.Create.Body => {
+const map_taxs = (
+  tax: TaxRate.TaxRateObject,
+  company_namespace: string[]
+): Service.Tax.Create.Body => {
   return {
     name: tax.Name,
     rate: Number(tax.RateValue) / 100,
     type: "inclusive",
+    disabled: !tax.Active,
     integration_meta: {
+      id: company_namespace + "_" + tax.Id,
       quickBooks_id: tax.Id,
-      QuickBooks_last_sync: new Date().toISOString(),
-    },
+      QuickBooks_last_sync: new Date().toISOString()
+    }
   };
 };

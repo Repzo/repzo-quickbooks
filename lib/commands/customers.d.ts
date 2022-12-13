@@ -1,6 +1,6 @@
 import { CommandEvent, Result } from "../types";
 /**
- * Event To Sync Quickbooks Custommers - Repzo Clients
+ * Event To Sync Quickbooks Customers - Repzo Clients
  * @param commandEvent
  * @returns
  */
