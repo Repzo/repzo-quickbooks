@@ -31,12 +31,6 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     if (body) body = JSON.parse(body);
     const repzo_invoice = body;
     try {
-    /*   let invoice: Invoice.Create.Body = {
-        CurrencyRef: { name: "", value: "" },
-        CustomerRef: { name: "", value: "" },
-        Line: []
-      }; */
-
       const repzo_client = await repzo.client.get(repzo_invoice.client_id);
       if (repzo_client.integration_meta?.quickBooks_id !== undefined) {
         invoice.CustomerRef.value =

@@ -31,16 +31,8 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
     if (body) body = JSON.parse(body);
     const repzo_invoice = body;
     try {
-      /*   let invoice: Invoice.Create.Body = {
-        CurrencyRef: { name: "", value: "" },
-        CustomerRef: { name: "", value: "" },
-        Line: []
-      }; */
       const repzo_client = await repzo.client.get(repzo_invoice.client_id);
-      console.log(repzo_client);
       if (repzo_client.integration_meta?.quickBooks_id !== undefined) {
-        console.log(repzo_client.integration_meta?.quickBooks_id); //  result => 7
-
         invoice.CustomerRef.value =
           repzo_client.integration_meta?.quickBooks_id;
         invoice.CurrencyRef.value = repzo_invoice.currency;
@@ -90,7 +82,6 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
       .commit();
   } catch (e: any) {
     //@ts-ignore
-    // console.dir(e, { depth: null });
     await actionLog.setStatus("fail", e).setBody(e).commit();
     throw e;
   }
@@ -108,11 +99,9 @@ const prepareInvoiceLines = (
     repzo_invoice.return_items.forEach(
       async (item: any, i: number, arr: []) => {
         try {
-          console.log(repzo_invoice._id); //result => 6390808478db8f08a75f89ce
           let product = await repzo.product.get(item.variant?.product_id);
           if (product.integration_meta?.quickBooks_id !== undefined) {
             Line.push({
-              /*  */
               Id: String(i + 1),
               DetailType: "SalesItemLineDetail",
               SalesItemLineDetail: {

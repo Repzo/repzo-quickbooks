@@ -15,7 +15,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
     const qbo = new QuickBooks({
       oauthToken: options.oauth2_data?.access_token || "",
       realmId: options.oauth2_data?.realmId || "",
-      sandbox: options.env === "production" ? false : true,
+      sandbox: options.env === "production" ? false : true
     });
     await actionLog.load(action_sync_id);
     body = event.body;
@@ -33,7 +33,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
     const QB_customer_body: Customer.Create.Body = {
       FullyQualifiedName: repzo_client.name,
       PrimaryEmailAddr: {
-        Address: repzo_client.email ? repzo_client.email : "",
+        Address: repzo_client.email ? repzo_client.email : ""
       },
       DisplayName: repzo_client.name,
       Suffix: "Jr",
@@ -41,21 +41,21 @@ export const create_customer = async (event: EVENT, options: Config) => {
       MiddleName: repzo_client.name,
       FamilyName: repzo_client.name,
       PrimaryPhone: {
-        FreeFormNumber: repzo_client.phone ? repzo_client.phone : "",
+        FreeFormNumber: repzo_client.phone ? repzo_client.phone : ""
       },
       CompanyName: repzo_client.company_namespace[0],
       BillAddr: {
         City: repzo_client.city ? repzo_client.city : "",
-        Country: repzo_client.country ? repzo_client.country : "",
+        Country: repzo_client.country ? repzo_client.country : ""
       },
-      GivenName: repzo_client.name,
+      GivenName: repzo_client.name
     };
 
     const QB_new_Client = await qbo.customer.create(QB_customer_body);
+
     //Add the Repzo Client Id in QB
     repzo_client.integration_meta = { id: QB_new_Client.Id };
     await repzo.client.update(repzo_client._id, repzo_client);
-    console.log(QB_new_Client);
 
     await actionLog
       .addDetail(
