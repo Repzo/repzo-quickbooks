@@ -24,9 +24,7 @@ export const create_customer = async (event: EVENT, options: Config) => {
       if (body) body = JSON.parse(body);
     } catch (e) {}
 
-    await actionLog
-      .addDetail(`Start Creating Client - ${body?.serial_number?.formatted}`)
-      .commit();
+    await actionLog.addDetail(`Start Creating Client - ${body?.name}`).commit();
 
     const repzo_client: Service.Client.ClientSchema = body;
 
