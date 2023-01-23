@@ -12,7 +12,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
   const actionLog = new Repzo.ActionLogs(repzo, action_sync_id);
   let body: Service.FullInvoice.InvoiceSchema | any;
   const invoice: Invoice.Create.Body = {
-    DocNumber: body.serial_number.formatted,
+    DocNumber: "",
     CurrencyRef: { name: "", value: "" },
     CustomerRef: { name: "", value: "" },
     Line: [],
@@ -22,6 +22,8 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     if (body) body = JSON.parse(body);
     const repzo_invoice = body;
     const repzo_serial_number = body?.serial_number?.formatted;
+
+    invoice.DocNumber = repzo_serial_number;
 
     await actionLog.load(action_sync_id);
     await actionLog

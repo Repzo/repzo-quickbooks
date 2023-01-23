@@ -27,6 +27,16 @@ export const join = async (commandEvent: CommandEvent) => {
           join:
             commandEvent?.app?.formData?.Invoices?.createInvoiceHook || false,
         },
+        // return_invoice
+        {
+          app: "repzo-quickbooks",
+          app_id: commandEvent?.app?._id,
+          action: "create_return_invoice",
+          event: "returnItems.create",
+          join:
+            commandEvent?.app?.formData?.ReturnInvoices
+              ?.createReturnInvoiceHook || false,
+        },
         // client
         {
           app: "repzo-quickbooks",
