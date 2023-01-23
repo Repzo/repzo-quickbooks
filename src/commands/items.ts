@@ -1,11 +1,11 @@
-import { CommandEvent, Result } from "../types";
+import { CommandEvent, Result, FailedDocsReport } from "../types";
 import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Item } from "../quickbooks/types/Item";
 import QuickBooks from "../quickbooks/index.js";
 import { v4 as uuid } from "uuid";
+import { set_error, update_bench_time } from "../util.js";
 
-// const new_bench_time = new Date().toISOString();
 const bench_time_key = "bench_time_products";
 
 /**
@@ -14,12 +14,14 @@ const bench_time_key = "bench_time_products";
  * @returns
  */
 export const items = async (commandEvent: CommandEvent): Promise<Result> => {
+  // const new_bench_time = new Date().toISOString();
   const command_sync_id: string = commandEvent.sync_id || uuid();
   const { app }: any = commandEvent || {};
   // init Repzo object
   const repzo = new Repzo(app.formData?.repzoApiKey, {
     env: commandEvent.env,
   });
+  const company_namespace = commandEvent.nameSpace.join("_");
   // init commandLog
   const commandLog = new Repzo.CommandLog(
     repzo,
@@ -40,70 +42,122 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
     updated: 0,
     failed: 0,
   };
+  const failed_docs_report: FailedDocsReport = [];
   let sync: string[] = [];
   try {
+    const new_bench_time = new Date().toISOString();
     await commandLog.load(command_sync_id);
-    await commandLog.addDetail("⌛ Syncing Products ....").commit();
 
-    if (!app.options_formData[bench_time_key]) {
-      await commandLog.addDetail("❌  bench_time_products undefined").commit();
-    }
+    await commandLog.addDetail("⌛ Syncing Products ......").commit();
+
+    // await commandLog
+    //   .addDetail(
+    //     `Syncing Products since ${
+    //       commandEvent.app?.options_formData?.[bench_time_key] || "ever"
+    //     }`,
+    //   )
+    //   .commit();
+    // if (!app.options_formData[bench_time_key]) {
+    //   await commandLog.addDetail("❌  bench_time_products undefined").commit();
+    // }
     // return all repzo items
     let qb_items = await get_all_QuickBooks_items(qbo, app);
     // return all quickbooks products
+
     let repzo_products = await get_all_repzo_products(repzo);
+
     result.quickBooks_total = qb_items.QueryResponse?.Item?.length;
     result.repzo_total = repzo_products?.length;
     repzo_products = repzo_products.filter(
-      (i) => i.integration_meta?.quickBooks_id !== undefined
+      (i) => i.integration_meta?.id !== undefined // i.integration_meta?.quickBooks_id !== undefined,
     );
 
-    qb_items.QueryResponse.Item.forEach(async (item: any, index, array) => {
+    for (let i = 0; i < qb_items.QueryResponse?.Item?.length; i++) {
+      const item = qb_items.QueryResponse.Item[i];
+
       const repzo_default_category = await get_repzo_default_category(
         repzo,
         item.ParentRef?.name
       );
 
-      let existProduct = repzo_products.filter(
-        (i) => i.integration_meta?.quickBooks_id === item.Id
+      let existProduct = repzo_products.find(
+        (i) => i.integration_meta?.id === `${company_namespace}_${item.Id}` // i.integration_meta?.quickBooks_id === item.Id,
       );
-      if (existProduct[0]) {
+      if (existProduct) {
         if (
-          new Date(existProduct[0]?.integration_meta?.QuickBooks_last_sync) <
+          new Date(existProduct?.integration_meta?.QuickBooks_last_sync) <
           new Date(item.MetaData?.LastUpdatedTime)
         ) {
-          let repzo_product = map_products(item, repzo_default_category._id);
+          let repzo_product = map_products(
+            item,
+            repzo_default_category._id,
+            company_namespace
+          );
+          repzo_product.variants?.forEach((variant) => {
+            // variant._id =
+            const matched_variant = existProduct?.variants?.find(
+              (repzo_variant) =>
+                repzo_variant.integration_meta?.id ==
+                variant?.integration_meta?.id
+            );
+            if (matched_variant) {
+              variant._id = matched_variant._id;
+            }
+          });
           try {
-            result.updated++;
             sync.push(repzo_product.name);
-            await repzo.product.update(existProduct[0]._id, repzo_product);
+            await repzo.product.update(existProduct._id, repzo_product);
+            result.updated++;
           } catch (e) {
             result.failed++;
+            failed_docs_report.push({
+              method: "update",
+              doc_id: existProduct._id,
+              doc: repzo_product,
+              error_message: set_error(e),
+            });
           }
         }
       } else {
-        //create a new  repzo client
-        let repzo_product = map_products(item, repzo_default_category._id);
+        //create a new  repzo product
+        let repzo_product = map_products(
+          item,
+          repzo_default_category._id,
+          company_namespace
+        );
         try {
-          result.created++;
           sync.push(repzo_product.name);
           await repzo.product.create(repzo_product);
+          result.created++;
         } catch (e) {
           result.failed++;
+          failed_docs_report.push({
+            method: "create",
+            doc: repzo_product,
+            error_message: set_error(e),
+          });
         }
       }
-      // end async calls
-      if (index === array.length - 1) {
-        await commandLog
-          .addDetail(`✅  Complete Sync Products`, sync)
-          .setStatus("success")
-          .setBody(result)
-          .commit();
-      }
-    });
+    }
+
+    await update_bench_time(
+      repzo,
+      commandEvent.app._id,
+      bench_time_key,
+      new_bench_time
+    );
+
+    await commandLog
+      .addDetail(`✅  Complete Sync Products`, sync)
+      .setStatus(
+        "success",
+        failed_docs_report.length ? failed_docs_report : null
+      )
+      .setBody(result)
+      .commit();
   } catch (err) {
-    await commandLog.setStatus("fail", err).setBody(err).commit();
     console.error(err);
+    await commandLog.setStatus("fail", err).setBody(err).commit();
   } finally {
     return result;
   }
@@ -127,6 +181,7 @@ const get_all_repzo_products = async (
         page: 1,
         per_page,
         disabled: false,
+        withVariants: true,
       });
       next_page_url = repzoObj.next_page_url;
       repzo_products = [...repzo_products, ...repzoObj.data];
@@ -194,8 +249,9 @@ const get_all_QuickBooks_items = async (
   let bench_time_products = app.options_formData[bench_time_key];
 
   try {
-    let query = `select * from Item where Type In`;
+    let query = `select * from Item`;
     if (Products.pullInventoryItems || Products.pullServiceItems) {
+      query += ` where Type In`;
       query += `(`;
       query += `'NonInventory'`;
       if (Products.pullInventoryItems) {
@@ -206,9 +262,16 @@ const get_all_QuickBooks_items = async (
       }
       query += `)`;
     }
+    if (
+      (Products.pullInventoryItems || Products.pullServiceItems) &&
+      bench_time_products
+    ) {
+      query += ` AND `;
+    }
     if (bench_time_products) {
-      bench_time_products = bench_time_products.slice(0, 10);
-      query += ` AND MetaData.LastUpdatedTime >= '${bench_time_products}'`;
+      // bench_time_products = bench_time_products.slice(0, 10);
+
+      query += `MetaData.LastUpdatedTime >= '${bench_time_products}'`;
     }
     query += ` maxresults 1000`;
 
@@ -229,7 +292,8 @@ const get_all_QuickBooks_items = async (
  */
 const map_products = (
   item: Item.ItemObject,
-  categoryID: string
+  categoryID: string,
+  company_namespace: string
 ): Service.Product.Create.Body => {
   return {
     name: item.Name,
@@ -245,9 +309,15 @@ const map_products = (
         disabled: false,
         name: item.Name,
         price: item.UnitPrice ? Math.round(item.UnitPrice * 1000) : 0,
+        integration_meta: {
+          id: company_namespace + "_" + item.Id,
+          quickBooks_id: item.Id,
+          QuickBooks_last_sync: new Date().toISOString(),
+        },
       },
     ],
     integration_meta: {
+      id: company_namespace + "_" + item.Id,
       quickBooks_id: item.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },

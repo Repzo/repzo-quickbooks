@@ -82,3 +82,10 @@ export interface CommandEvent {
   env: ENV;
   oauth2_data?: Oauth2_data;
 }
+
+export type FailedDocsReport = {
+  method: "create" | "update" | "delete" | "fetchingData";
+  doc_id?: string;
+  doc?: any;
+  error_message: any;
+}[];

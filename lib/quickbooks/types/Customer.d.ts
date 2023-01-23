@@ -104,7 +104,10 @@ export declare namespace Customer {
   }
   export namespace Create {
     interface Body extends ClientBody {}
-    type Result = CustomerObject;
+    type Result = {
+      Customer: CustomerObject;
+      time: Date;
+    };
   }
   export namespace Update {
     type ID = string;

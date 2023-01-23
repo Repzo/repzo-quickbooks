@@ -63,6 +63,7 @@ export declare namespace Payment {
   }
   export namespace Create {
     interface Body {
+      DocNumber?: string;
       TotalAmt: number;
       CustomerRef: ReferenceType;
       CurrencyRef: ReferenceType;

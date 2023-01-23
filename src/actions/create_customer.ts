@@ -51,7 +51,26 @@ export const create_customer = async (event: EVENT, options: Config) => {
       GivenName: repzo_client.name,
     };
 
-    await qbo.customer.create(QB_customer_body);
+    const qb_client = await qbo.customer.create(QB_customer_body);
+
+    if (qb_client) {
+      // update integration_meta object with repzo_invoice
+      const integration_meta = {
+        id: `${repzo_client.company_namespace[0]}_${qb_client.Customer?.Id}`,
+        quickBooks_id: qb_client.Customer?.Id,
+      };
+      try {
+        await repzo.client.update(repzo_client._id, { integration_meta });
+      } catch (e) {
+        await actionLog
+          .addDetail(`⛔ Error : fail to update client integration_meta `, {
+            integration_meta,
+            e,
+          })
+          .commit();
+      }
+    }
+
     await actionLog
       .addDetail(
         `✅ Complete Repzo-Quickbooks: Customer - ${QB_customer_body?.DisplayName}`

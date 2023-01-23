@@ -16,5 +16,5 @@ export interface Authorization {
   Authorization: string;
   [key: string]: string;
 }
-export declare type StringId = string;
-export declare type NameSpaces = string[];
+export type StringId = string;
+export type NameSpaces = string[];

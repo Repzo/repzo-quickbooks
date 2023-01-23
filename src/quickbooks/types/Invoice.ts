@@ -177,7 +177,11 @@ export namespace Invoice {
     };
     export interface Result {
       QueryResponse: {
-        Item: InvoiceBody[];
+        Item?: InvoiceBody[];
+        Invoice?: InvoiceBody[];
+        startPosition: number;
+        maxResults: number;
+        totalCount: number;
       };
       time: Date;
     }
@@ -186,6 +190,7 @@ export namespace Invoice {
   export namespace Create {
     export type XLine = Line[];
     export interface Body {
+      DocNumber: string;
       Line: Line[];
       DueDate?: Date;
       CustomerRef: ReferenceType;

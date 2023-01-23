@@ -21,6 +21,7 @@ export const join = async (commandEvent: CommandEvent) => {
         // invoice
         {
           app: "repzo-quickbooks",
+          app_id: commandEvent?.app?._id,
           action: "create_invoice",
           event: "invoiceItems.create",
           join:
@@ -29,6 +30,7 @@ export const join = async (commandEvent: CommandEvent) => {
         // client
         {
           app: "repzo-quickbooks",
+          app_id: commandEvent?.app?._id,
           action: "create_customer",
           event: "client.create",
           join:
@@ -37,6 +39,7 @@ export const join = async (commandEvent: CommandEvent) => {
         // payment
         {
           app: "repzo-quickbooks",
+          app_id: commandEvent?.app?._id,
           action: "create_payment",
           event: "payment.create",
           join:
