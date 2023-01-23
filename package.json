@@ -23,6 +23,7 @@
     "test_command": "tsc && npm run lint && node ./lib/tests/test_command.js",
     "test_action": "tsc && npm run lint && node ./lib/tests/test_action.js",
     "test_invoice": "tsc && npm run lint && node ./lib/tests/test_invoice.js",
+    "test_return": "tsc && npm run lint && node ./lib/tests/test_return.js",
     "test_payment": "tsc && npm run lint && node ./lib/tests/test_payment.js"
   },
   "repository": {
