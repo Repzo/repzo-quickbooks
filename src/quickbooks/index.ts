@@ -8,6 +8,7 @@ import { Item } from "./types/Item";
 import { Invoice } from "./types/Invoice";
 import { Payment } from "./types/Payment";
 import { TaxRate } from "./types/TaxRate";
+import { Preferences } from "./types/Preferences";
 
 const sandbox = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
 const production = "https://quickbooks.api.intuit.com/v3/company/";
@@ -21,6 +22,7 @@ interface IQuickBooks {
   tax: {};
   invoice: {};
   payment: {};
+  preferences: {};
 }
 
 export default class QuickBooks implements IQuickBooks {
@@ -162,6 +164,14 @@ export default class QuickBooks implements IQuickBooks {
       );
       return res;
     },
+
+    find: async (params: Invoice.Find.Params): Promise<Invoice.Find.Result> => {
+      let res: Invoice.Find.Result = await this._create(
+        this.invoice._path,
+        params
+      );
+      return res;
+    },
   };
 
   payment = {
@@ -171,6 +181,45 @@ export default class QuickBooks implements IQuickBooks {
     ): Promise<Payment.Create.Result> => {
       let res: Payment.Create.Result = await this._create(
         this.payment._path,
+        params
+      );
+      return res;
+    },
+  };
+
+  preferences = {
+    _path: `/preferences`,
+    query: async (
+      params: Preferences.Find.Params
+    ): Promise<Preferences.Find.Result> => {
+      let res: Preferences.Find.Result = await this._fetch(params);
+      return res;
+    },
+    update: async (
+      params: Preferences.Create.Body
+    ): Promise<Preferences.Create.Result> => {
+      let res: Preferences.Create.Result = await this._create(
+        this.preferences._path,
+        params
+      );
+      return res;
+    },
+  };
+
+  return_invoice = {
+    _path: `/creditmemo`,
+    query: async (
+      params: Invoice.Find.Params
+    ): Promise<Invoice.Find.Result> => {
+      let res: Invoice.Find.Result = await this._fetch(params);
+      return res;
+    },
+
+    create: async (
+      params: Invoice.Create.Body
+    ): Promise<Invoice.Create.Result> => {
+      let res: Invoice.Create.Result = await this._create(
+        this.return_invoice._path,
         params
       );
       return res;

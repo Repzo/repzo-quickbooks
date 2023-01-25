@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import { Service } from "repzo/src/types";
-declare type ENV = "staging" | "production" | "local";
-declare type DecodedScope = "admin" | "client" | "rep";
-declare type StringId = string;
-declare type Email = string;
-declare type NameSpaces = string[];
-export declare type Endpoint = {
+type ENV = "staging" | "production" | "local";
+type DecodedScope = "admin" | "client" | "rep";
+type StringId = string;
+type Email = string;
+type NameSpaces = string[];
+export type Endpoint = {
   sandbox: string;
   production: string;
 };
@@ -14,7 +14,7 @@ export interface Config {
   env: ENV;
   oauth2_data?: Oauth2_data;
 }
-export declare type Decoded = jwt.JwtPayload & {
+export type Decoded = jwt.JwtPayload & {
   id?: StringId;
   email?: Email;
   name?: string;
@@ -28,7 +28,7 @@ interface Params {
   nameSpace: NameSpaces;
   decoded: Decoded;
 }
-export declare type EVENT = AWSLambda.APIGatewayEvent & {
+export type EVENT = AWSLambda.APIGatewayEvent & {
   params: Params;
 };
 export interface Action {
@@ -77,4 +77,10 @@ export interface CommandEvent {
   env: ENV;
   oauth2_data?: Oauth2_data;
 }
+export type FailedDocsReport = {
+  method: "create" | "update" | "delete" | "fetchingData";
+  doc_id?: string;
+  doc?: any;
+  error_message: any;
+}[];
 export {};

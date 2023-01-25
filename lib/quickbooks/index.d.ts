@@ -6,6 +6,7 @@ import { Item } from "./types/Item";
 import { Invoice } from "./types/Invoice";
 import { Payment } from "./types/Payment";
 import { TaxRate } from "./types/TaxRate";
+import { Preferences } from "./types/Preferences";
 interface IQuickBooks {
   config: QuickBooksConfig;
   endpoint: Endpoint;
@@ -15,6 +16,7 @@ interface IQuickBooks {
   tax: {};
   invoice: {};
   payment: {};
+  preferences: {};
 }
 export default class QuickBooks implements IQuickBooks {
   config: QuickBooksConfig;
@@ -45,10 +47,25 @@ export default class QuickBooks implements IQuickBooks {
     _path: string;
     query: (params: Invoice.Find.Params) => Promise<Invoice.Find.Result>;
     create: (params: Invoice.Create.Body) => Promise<Invoice.Create.Result>;
+    find: (params: Invoice.Find.Params) => Promise<Invoice.Find.Result>;
   };
   payment: {
     _path: string;
     create: (params: Payment.Create.Body) => Promise<Payment.Create.Result>;
+  };
+  preferences: {
+    _path: string;
+    query: (
+      params: Preferences.Find.Params
+    ) => Promise<Preferences.Find.Result>;
+    update: (
+      params: Preferences.Create.Body
+    ) => Promise<Preferences.Create.Result>;
+  };
+  return_invoice: {
+    _path: string;
+    query: (params: Invoice.Find.Params) => Promise<Invoice.Find.Result>;
+    create: (params: Invoice.Create.Body) => Promise<Invoice.Create.Result>;
   };
 }
 export {};

@@ -8,9 +8,9 @@
     "noImplicitThis": false,
     "esModuleInterop": true,
     "moduleResolution": "Node",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
-
   "ts-node": { "esm": true },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "**/__tests__/*", "*test*"]

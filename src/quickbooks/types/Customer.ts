@@ -109,7 +109,7 @@ export namespace Customer {
 
   export namespace Create {
     export interface Body extends ClientBody {}
-    export type Result = CustomerObject;
+    export type Result = { Customer: CustomerObject; time: Date };
   }
 
   export namespace Update {

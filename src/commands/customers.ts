@@ -1,13 +1,14 @@
-import { CommandEvent, Result } from "../types";
+import { CommandEvent, Result, FailedDocsReport } from "../types";
 import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Customer } from "../quickbooks/types/Customer";
 import QuickBooks from "../quickbooks/index.js";
+import { set_error, update_bench_time } from "../util.js";
 
 const bench_time_key = "bench_time_client";
 
 /**
- * Event To Sync Quickbooks Custommers - Repzo Clients
+ * Event To Sync Quickbooks Customers - Repzo Clients
  * @param commandEvent
  * @returns
  */
@@ -18,6 +19,9 @@ export const customers = async (
   const repzo = new Repzo(commandEvent.app.formData?.repzoApiKey, {
     env: commandEvent.env,
   });
+
+  const company_namespace = commandEvent.nameSpace.join("_");
+
   let result: Result = {
     quickBooks_total: 0,
     repzo_total: 0,
@@ -25,12 +29,14 @@ export const customers = async (
     updated: 0,
     failed: 0,
   };
+  const failed_docs_report: FailedDocsReport = [];
   const commandLog = new Repzo.CommandLog(
     repzo,
     commandEvent.app,
     commandEvent.command
   );
   try {
+    const new_bench_time = new Date().toISOString();
     // init commandLog
 
     // init QuickBooks object
@@ -41,14 +47,23 @@ export const customers = async (
     });
     await commandLog.load(commandEvent.sync_id);
     await commandLog.addDetail("⌛ Syncing Clients ......").commit();
-    if (!commandEvent.app?.options_formData[bench_time_key]) {
-      await commandLog
-        .addDetail("❌  Failed in : bench_time_client undefined")
-        .commit();
-    }
+    // if (!commandEvent.app?.options_formData[bench_time_key]) {
+    //   await commandLog
+    //     .addDetail("❌  Failed in : bench_time_client undefined")
+    //     .commit();
+    // }
+
+    await commandLog
+      .addDetail(
+        `Syncing Clients since ${
+          commandEvent.app?.options_formData?.[bench_time_key] || "ever"
+        }`
+      )
+      .commit();
 
     // return all repzo clients
     let repzo_client = await get_all_repzo_clients(repzo);
+
     // return all quickbooks clients
     const qb_customers = await get_all_QuickBooks_customers(
       qbo,
@@ -56,53 +71,77 @@ export const customers = async (
     );
 
     repzo_client = repzo_client.filter(
-      (i) => i.integration_meta?.quickBooks_id !== undefined
+      (i) => i.integration_meta?.id !== undefined // i.integration_meta?.quickBooks_id !== undefined,
     );
+
     result.repzo_total = repzo_client.length;
     result.quickBooks_total = qb_customers.QueryResponse.Customer.length;
 
-    qb_customers.QueryResponse.Customer.forEach(
-      async (cutomer: any, index, array) => {
-        let existClient = repzo_client.filter(
-          (i) =>
-            i.integration_meta?.quickBooks_id === cutomer.Id ||
-            i.client_code === `QB_${cutomer.Id}`
+    for (let i = 0; i < qb_customers.QueryResponse.Customer.length; i++) {
+      const cutomer = qb_customers.QueryResponse.Customer[i];
+      try {
+        let existClient = repzo_client.find(
+          (i) => i.integration_meta?.id === `${company_namespace}_${cutomer.Id}`
+          // i.integration_meta?.quickBooks_id === cutomer.Id || i.client_code === `QB_${cutomer.Id}`,
         );
-        if (existClient[0]) {
+        if (existClient) {
           if (
-            new Date(existClient[0]?.integration_meta?.QuickBooks_last_sync) <
+            new Date(existClient?.integration_meta?.QuickBooks_last_sync) <
             new Date(cutomer.MetaData?.LastUpdatedTime)
           ) {
-            let repzo_client = map_customers(cutomer);
+            let repzo_client = map_customers(cutomer, company_namespace);
             try {
               result.updated++;
-              await repzo.client.update(existClient[0]._id, repzo_client);
+              await repzo.client.update(existClient._id, repzo_client);
             } catch (e) {
               result.failed++;
+              failed_docs_report.push({
+                method: "update",
+                doc_id: existClient._id,
+                doc: repzo_client,
+                error_message: set_error(e),
+              });
             }
           }
         } else {
-          let repzo_client = map_customers(cutomer);
+          let repzo_client = map_customers(cutomer, company_namespace);
           try {
             result.created++;
-            await repzo.client.create({
-              client_code: `QB_${cutomer.Id}`,
-              ...repzo_client,
-            });
+            repzo_client.client_code = `QB_${cutomer.Id}`;
+            await repzo.client.create(repzo_client);
           } catch (e) {
             result.failed++;
+            failed_docs_report.push({
+              method: "create",
+              doc: repzo_client,
+              error_message: set_error(e),
+            });
           }
         }
-        // end async calls
-        if (index === array.length - 1) {
-          await commandLog
-            .addDetail(`✅  Complete Sync Clients`)
-            .setStatus("success")
-            .setBody(result)
-            .commit();
-        }
+      } catch (e) {
+        result.failed++;
+        failed_docs_report.push({
+          method: "fetchingData",
+          error_message: set_error(e),
+        });
       }
+    }
+
+    await update_bench_time(
+      repzo,
+      commandEvent.app._id,
+      bench_time_key,
+      new_bench_time
     );
+
+    await commandLog
+      .addDetail(`✅  Complete Sync Clients`)
+      .setStatus(
+        "success",
+        failed_docs_report.length ? failed_docs_report : null
+      )
+      .setBody(result)
+      .commit();
   } catch (e) {
     await commandLog.setStatus("fail", e).setBody(e).commit();
   } finally {
@@ -167,10 +206,12 @@ const get_all_QuickBooks_customers = async (
  * @returns
  */
 const map_customers = (
-  cutomer: Customer.CustomerObject
+  cutomer: Customer.CustomerObject,
+  company_namespace: string
 ): Service.Client.Create.Body => {
   return {
     name: cutomer.DisplayName,
+    disabled: !cutomer.Active,
     contact_title: cutomer.GivenName,
     country: cutomer.BillAddr?.CountrySubDivisionCode,
     city: cutomer.BillAddr?.City,
@@ -184,6 +225,7 @@ const map_customers = (
     cell_phone: cutomer.PrimaryPhone?.FreeFormNumber,
     email: cutomer.PrimaryEmailAddr?.Address,
     integration_meta: {
+      id: company_namespace + "_" + cutomer.Id,
       quickBooks_id: cutomer.Id,
       QuickBooks_last_sync: new Date().toISOString(),
     },
