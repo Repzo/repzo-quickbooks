@@ -15,7 +15,6 @@ export type Endpoint = {
 export interface Config {
   data?: any;
   env: ENV;
-  oauth2_data?: Oauth2_data;
 }
 
 export type Decoded = jwt.JwtPayload & {
