@@ -41,7 +41,7 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
         invoice.CurrencyRef.value = repzo_invoice.currency;
         invoice.DueDate = new Date(repzo_invoice.due_date);
       }
-      console.dir(invoice, { depth: null });
+      // console.dir(invoice, { depth: null });
     } catch (e) {
       await actionLog.setStatus("fail", "❌ invalid Client").commit();
       exit;
@@ -62,7 +62,7 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
         quickBooks_DocNumber: res.Invoice?.DocNumber,
       };
       try {
-        console.log(repzo_invoice._id);
+        // console.log(repzo_invoice._id);
         await repzo.invoice.update(repzo_invoice._id, {
           integration_meta,
         });

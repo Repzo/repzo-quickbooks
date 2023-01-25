@@ -37,7 +37,7 @@ axiosInstance.interceptors.response.use(
         originalRequest.headers.refreshKey
       )
         .then((token) => {
-          console.log(token.data.access_token);
+          // console.log(token.data.access_token);
           originalRequest.headers.Authorization = `Bearer ${token.data.access_token}`;
           return axios.request(originalRequest);
         })
@@ -48,7 +48,7 @@ axiosInstance.interceptors.response.use(
 );
 
 const refreshToken = async (intg_app: string, apikey: string): Promise<any> => {
-  console.log("refresh token ...");
+  // console.log("refresh token ...");
   return axios.put("https://staging.sv.api.repzo.me/oauth2", null, {
     headers: {
       "api-key": apikey,

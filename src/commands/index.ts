@@ -17,7 +17,7 @@ import { preferences } from "./preferences.js";
 export const commands = async (CommandEvent: CommandEvent) => {
   try {
     const command = CommandEvent.command;
-    console.log("🚀 ~ command", command);
+    // console.log("🚀 ~ command", command);
     switch (CommandEvent.command) {
       case "basic":
         return await basic(CommandEvent);

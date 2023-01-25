@@ -7,7 +7,7 @@ import { create_return_invoice } from "./create_return_invoice.js";
 export const actions = async (event: any, options: Config) => {
   try {
     const action = event.queryStringParameters?.action;
-    console.log("🚀 ~ action", action);
+    // console.log("🚀 ~ action", action);
     switch (event.queryStringParameters?.action) {
       case "create_customer":
         return await create_customer(event, options);

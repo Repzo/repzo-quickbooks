@@ -64,7 +64,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
         quickBooks_DocNumber: res.Invoice?.DocNumber,
       };
       try {
-        console.log(repzo_invoice._id);
+        // console.log(repzo_invoice._id);
         await repzo.invoice.update(repzo_invoice._id, {
           integration_meta,
         });
