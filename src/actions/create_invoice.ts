@@ -32,8 +32,8 @@ export const create_invoice = async (event: EVENT, options: Config) => {
       .commit();
 
     const qbo = new QuickBooks({
-      oauthToken: options.oauth2_data?.access_token || "",
-      realmId: options.oauth2_data?.realmId || "",
+      oauthToken: event.oauth2_data?.access_token || "",
+      realmId: event.oauth2_data?.realmId || "",
       sandbox: options.env === "production" ? false : true,
     });
     try {
@@ -88,7 +88,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
       .commit();
   } catch (e: any) {
     //@ts-ignore
-    // console.dir(e, { depth: null });
+    console.dir(e, { depth: null });
     await actionLog.setStatus("fail", e).setBody(e).commit();
     throw e;
   }

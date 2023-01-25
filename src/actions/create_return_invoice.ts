@@ -25,8 +25,8 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
     await actionLog.addDetail(`⌛ Initializing Quickbooks Invoice`).commit();
 
     const qbo = new QuickBooks({
-      oauthToken: options.oauth2_data?.access_token || "",
-      realmId: options.oauth2_data?.realmId || "",
+      oauthToken: event.oauth2_data?.access_token || "",
+      realmId: event.oauth2_data?.realmId || "",
       sandbox: options.env === "production" ? false : true,
     });
     if (body) body = JSON.parse(body);

@@ -30,6 +30,7 @@ interface Params {
 }
 export type EVENT = AWSLambda.APIGatewayEvent & {
   params: Params;
+  oauth2_data?: Oauth2_data;
 };
 export interface Action {
   name: string;
