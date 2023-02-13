@@ -65,9 +65,7 @@ export const create_invoice = async (event: EVENT, options: Config) => {
       };
       try {
         // console.log(repzo_invoice._id);
-        await repzo.invoice.update(repzo_invoice._id, {
-          integration_meta,
-        });
+        await repzo.invoice.update(repzo_invoice._id, { integration_meta });
       } catch (e) {
         await actionLog
           .addDetail(`⛔ Error : fail to update invoice integration_meta `, {
@@ -98,29 +96,34 @@ const prepareInvoiceLines = (
   repzo: Repzo,
   repzo_invoice: any
 ): Promise<Invoice.Create.XLine> => {
-  const TAX = { value: "TAX", name: "TAX" }; // taxable invoice ()
-  const NON = { value: "NON", name: "NON" }; // N/A  No Tax
+  // const TAX = { value: "TAX", name: "TAX" }; // taxable invoice ()
+  // const NON = { value: "NON", name: "NON" }; // N/A  No Tax
 
   let Line: Invoice.Create.XLine = [];
   return new Promise((resolve, reject) => {
     repzo_invoice.items?.forEach(async (item: any, i: number, arr: []) => {
       try {
         let product = await repzo.product.get(item.variant?.product_id);
+        let tax;
+        if (item.tax._id) tax = await repzo.tax.get(item.tax._id);
         if (product.integration_meta?.quickBooks_id !== undefined) {
           Line.push({
             Id: String(i + 1),
             DetailType: "SalesItemLineDetail",
             SalesItemLineDetail: {
-              TaxInclusiveAmt: item.tax_amount,
-              DiscountAmt: 1,
-              DiscountRate: item.discount_value / 1000,
+              // TaxInclusiveAmt: item.tax_amount,
+              // DiscountAmt: 1,
+              // DiscountRate: item.discount_value / 1000,
               ItemRef: {
                 name: product.name,
                 value: product.integration_meta?.quickBooks_id,
               },
               // ClassRef: ReferenceType;
               // ItemAccountRef?: ReferenceType;
-              TaxCodeRef: item.tax?.type === "N/A" ? NON : TAX,
+              TaxCodeRef: {
+                value: tax?.integration_meta?.quickBooks_id || "",
+                name: tax?.name || "",
+              },
               // TaxClassificationRef: {
               //   value: "20",
               //   name: "Californiaa",
