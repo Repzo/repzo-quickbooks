@@ -72,6 +72,8 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
       (i) => i.integration_meta?.id !== undefined // i.integration_meta?.quickBooks_id !== undefined,
     );
 
+    const repzo_taxes = await repzo.tax.find({ per_page: 5000 });
+
     for (let i = 0; i < qb_items.QueryResponse?.Item?.length; i++) {
       const item = qb_items.QueryResponse.Item[i];
 
@@ -79,6 +81,28 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
         repzo,
         item.ParentRef?.name
       );
+
+      let repzo_tax;
+      if (item.SalesTaxCodeRef?.value) {
+        const tax_type = item.SalesTaxIncluded ? "inclusive" : "additive";
+        repzo_tax = repzo_taxes?.data.find(
+          (tax) =>
+            tax.integration_meta?.id ==
+            `${company_namespace}_${item.SalesTaxCodeRef?.value}_${tax_type}`
+        );
+        if (!repzo_tax) {
+          result.failed++;
+          failed_docs_report.push({
+            method: "update",
+            doc_id: item.Id,
+            doc: item,
+            error_message: set_error(
+              `Tax with QB Id: ${item.SalesTaxCodeRef?.value} was not found on Repzo`
+            ),
+          });
+          continue;
+        }
+      }
 
       let existProduct = repzo_products.find(
         (i) => i.integration_meta?.id === `${company_namespace}_${item.Id}` // i.integration_meta?.quickBooks_id === item.Id,
@@ -91,6 +115,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
           let repzo_product = map_products(
             item,
             repzo_default_category._id,
+            repzo_tax?._id,
             company_namespace
           );
           repzo_product.variants?.forEach((variant) => {
@@ -123,6 +148,7 @@ export const items = async (commandEvent: CommandEvent): Promise<Result> => {
         let repzo_product = map_products(
           item,
           repzo_default_category._id,
+          repzo_tax?._id,
           company_namespace
         );
         try {
@@ -212,13 +238,13 @@ const get_repzo_default_category = async (
         return repzoObj.data[0];
       } else {
         return await repzo.category.create({
-          name: "default",
+          name: name,
           local_name: "Created by Quickbooks",
         });
       }
     } else {
       let repzoObj = await repzo.category.find({
-        name: "default",
+        name: "Default",
         disabled: false,
       });
       if (repzoObj.data[0]) {
@@ -247,7 +273,6 @@ const get_all_QuickBooks_items = async (
 ): Promise<Item.Find.Result> => {
   const { Products } = app.formData;
   let bench_time_products = app.options_formData[bench_time_key];
-
   try {
     let query = `select * from Item`;
     if (Products.pullInventoryItems || Products.pullServiceItems) {
@@ -275,9 +300,8 @@ const get_all_QuickBooks_items = async (
     }
     query += ` maxresults 1000`;
 
-    const qb_items = await qb.item.query({
-      query,
-    });
+    const qb_items = await qb.item.query({ query });
+
     return qb_items;
   } catch (err) {
     throw err;
@@ -293,6 +317,7 @@ const get_all_QuickBooks_items = async (
 const map_products = (
   item: Item.ItemObject,
   categoryID: string,
+  taxId: string | undefined,
   company_namespace: string
 ): Service.Product.Create.Body => {
   return {
@@ -303,10 +328,12 @@ const map_products = (
     local_name: item.FullyQualifiedName,
     base_price: item.UnitPrice ? String(Math.round(item.UnitPrice * 1000)) : "",
     category: categoryID,
+    sv_tax: taxId,
     variants: [
       {
         default: true,
         disabled: false,
+        sku: item.Sku,
         name: item.Name,
         price: item.UnitPrice ? Math.round(item.UnitPrice * 1000) : 0,
         integration_meta: {

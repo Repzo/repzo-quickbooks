@@ -7,7 +7,7 @@ import { Customer } from "./types/Customer";
 import { Item } from "./types/Item";
 import { Invoice } from "./types/Invoice";
 import { Payment } from "./types/Payment";
-import { TaxRate } from "./types/TaxRate";
+import { TaxRate, TaxCode } from "./types/TaxRate";
 import { Preferences } from "./types/Preferences";
 
 const sandbox = "https://sandbox-quickbooks.api.intuit.com/v3/company/";
@@ -38,7 +38,8 @@ export default class QuickBooks implements IQuickBooks {
       sandbox,
       production,
     };
-    config.minorversion === undefined ? 65 : config.minorversion;
+    config.minorversion =
+      config.minorversion === undefined ? 65 : config.minorversion;
     this.headers = {
       Authorization: `Bearer ${this.config.oauthToken}`,
       "User-Agent": "repzo-quickbooks: version 0.0.1",
@@ -142,6 +143,16 @@ export default class QuickBooks implements IQuickBooks {
       params: TaxRate.Find.Params
     ): Promise<TaxRate.Find.Result> => {
       let res: TaxRate.Find.Result = await this._fetch(params);
+      return res;
+    },
+  };
+
+  taxCode = {
+    _path: `/TaxCode`,
+    query: async (
+      params: TaxCode.Find.Params
+    ): Promise<TaxCode.Find.Result> => {
+      let res: TaxCode.Find.Result = await this._fetch(params);
       return res;
     },
   };
