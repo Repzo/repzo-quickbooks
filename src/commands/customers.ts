@@ -215,6 +215,7 @@ const map_customers = (
     contact_title: cutomer.GivenName,
     country: cutomer.BillAddr?.CountrySubDivisionCode,
     city: cutomer.BillAddr?.City,
+    formatted_address: cutomer.BillAddr?.Line1,
     lat: !isNaN(Number(cutomer.BillAddr?.Lat))
       ? Number(cutomer.BillAddr?.Lat)
       : 0.0,

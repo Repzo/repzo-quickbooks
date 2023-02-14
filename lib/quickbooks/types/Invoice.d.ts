@@ -52,8 +52,8 @@ export declare namespace Invoice {
     DiscountPercent?: boolean;
   }
   interface SalesItemLineDetail {
-    TaxInclusiveAmt: number;
-    DiscountAmt: number;
+    TaxInclusiveAmt?: number;
+    DiscountAmt?: number;
     ItemRef?: ReferenceType;
     ClassRef?: ReferenceType;
     ItemAccountRef?: ReferenceType;

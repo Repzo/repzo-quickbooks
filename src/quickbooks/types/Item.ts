@@ -5,18 +5,19 @@ export namespace Item {
   }
 
   interface ModificationMetaData {
-    CreateTime: Date;
-    LastUpdatedTime: Date;
+    CreateTime: Date | string;
+    LastUpdatedTime: Date | string;
   }
+
   export interface ItemObject {
     Id: string;
-    ItemCategoryType: string;
+    ItemCategoryType?: string;
     Name: string;
     SyncToken: string;
-    InvStartDate: Date;
+    InvStartDate?: Date | string;
     Type: string;
-    QtyOnHand: number;
-    AssetAccountRef: ReferenceType;
+    QtyOnHand?: number;
+    AssetAccountRef?: ReferenceType;
     SalesTaxCodeRef?: ReferenceType;
     PrefVendorRef?: ReferenceType;
     PurchaseTaxCodeRef?: ReferenceType;
@@ -29,7 +30,7 @@ export namespace Item {
     UQCId?: string;
     Source?: string;
     PurchaseTaxIncluded?: boolean;
-    SalesTaxIncluded: boolean;
+    SalesTaxIncluded?: boolean;
     TrackQtyOnHand?: boolean;
     SubItem?: boolean;
     Taxable?: boolean;
@@ -43,8 +44,10 @@ export namespace Item {
     FullyQualifiedName?: string;
     Description?: string;
     ServiceType?: ServiceType;
-    PurchaseCost?: string;
+    PurchaseCost?: string | number;
     MetaData: ModificationMetaData;
+    domain?: string;
+    sparse?: boolean;
   }
 
   export type ServiceType =
@@ -90,7 +93,7 @@ export namespace Item {
       QueryResponse: {
         Item: ItemObject[];
       };
-      time: Date;
+      time: Date | string;
     }
   }
 

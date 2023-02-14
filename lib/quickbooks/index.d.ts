@@ -5,7 +5,7 @@ import { Customer } from "./types/Customer";
 import { Item } from "./types/Item";
 import { Invoice } from "./types/Invoice";
 import { Payment } from "./types/Payment";
-import { TaxRate } from "./types/TaxRate";
+import { TaxRate, TaxCode } from "./types/TaxRate";
 import { Preferences } from "./types/Preferences";
 interface IQuickBooks {
   config: QuickBooksConfig;
@@ -42,6 +42,10 @@ export default class QuickBooks implements IQuickBooks {
   tax: {
     _path: string;
     query: (params: TaxRate.Find.Params) => Promise<TaxRate.Find.Result>;
+  };
+  taxCode: {
+    _path: string;
+    query: (params: TaxCode.Find.Params) => Promise<TaxCode.Find.Result>;
   };
   invoice: {
     _path: string;

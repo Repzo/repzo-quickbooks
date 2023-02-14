@@ -4,18 +4,18 @@ export declare namespace Item {
     name: string;
   }
   interface ModificationMetaData {
-    CreateTime: Date;
-    LastUpdatedTime: Date;
+    CreateTime: Date | string;
+    LastUpdatedTime: Date | string;
   }
   export interface ItemObject {
     Id: string;
-    ItemCategoryType: string;
+    ItemCategoryType?: string;
     Name: string;
     SyncToken: string;
-    InvStartDate: Date;
+    InvStartDate?: Date | string;
     Type: string;
-    QtyOnHand: number;
-    AssetAccountRef: ReferenceType;
+    QtyOnHand?: number;
+    AssetAccountRef?: ReferenceType;
     SalesTaxCodeRef?: ReferenceType;
     PrefVendorRef?: ReferenceType;
     PurchaseTaxCodeRef?: ReferenceType;
@@ -28,7 +28,7 @@ export declare namespace Item {
     UQCId?: string;
     Source?: string;
     PurchaseTaxIncluded?: boolean;
-    SalesTaxIncluded: boolean;
+    SalesTaxIncluded?: boolean;
     TrackQtyOnHand?: boolean;
     SubItem?: boolean;
     Taxable?: boolean;
@@ -42,8 +42,10 @@ export declare namespace Item {
     FullyQualifiedName?: string;
     Description?: string;
     ServiceType?: ServiceType;
-    PurchaseCost?: string;
+    PurchaseCost?: string | number;
     MetaData: ModificationMetaData;
+    domain?: string;
+    sparse?: boolean;
   }
   export type ServiceType =
     | "ADVT"
@@ -86,7 +88,7 @@ export declare namespace Item {
       QueryResponse: {
         Item: ItemObject[];
       };
-      time: Date;
+      time: Date | string;
     }
   }
   export namespace Create {
