@@ -98,6 +98,8 @@ export namespace Customer {
     export interface Result {
       QueryResponse: {
         Customer: CustomerObject[];
+        startPosition: number;
+        maxResults: number;
       };
       time: Date;
     }

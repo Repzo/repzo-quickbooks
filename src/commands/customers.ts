@@ -3,7 +3,7 @@ import Repzo from "repzo";
 import { Service } from "repzo/src/types";
 import { Customer } from "../quickbooks/types/Customer";
 import QuickBooks from "../quickbooks/index.js";
-import { set_error, update_bench_time } from "../util.js";
+import { set_error, update_bench_time, paginate_max_result } from "../util.js";
 
 const bench_time_key = "bench_time_client";
 
@@ -75,10 +75,10 @@ export const customers = async (
     );
 
     result.repzo_total = repzo_client.length;
-    result.quickBooks_total = qb_customers.QueryResponse.Customer.length;
+    result.quickBooks_total = qb_customers.length;
 
-    for (let i = 0; i < qb_customers.QueryResponse.Customer.length; i++) {
-      const cutomer = qb_customers.QueryResponse.Customer[i];
+    for (let i = 0; i < qb_customers.length; i++) {
+      const cutomer = qb_customers[i];
       try {
         let existClient = repzo_client.find(
           (i) => i.integration_meta?.id === `${company_namespace}_${cutomer.Id}`
@@ -186,14 +186,30 @@ const get_all_repzo_clients = async (
 const get_all_QuickBooks_customers = async (
   qb: QuickBooks,
   bench_time_client: string
-): Promise<Customer.Find.Result> => {
+): Promise<Customer.CustomerObject[]> => {
   try {
-    let query = "select * from Customer";
+    let query = "select * from Customer ORDER BY Id";
     if (bench_time_client)
-      query = `select * from Customer Where Metadata.LastUpdatedTime > '${bench_time_client}'`;
-    const qb_Clients = await qb.customer.query({
-      query,
-    });
+      query = `select * from Customer Where Metadata.LastUpdatedTime > '${bench_time_client}' ORDER BY Id`;
+
+    const qb_Clients: Customer.CustomerObject[] = [];
+
+    for (let i = 0; true; i++) {
+      const result = await qb.customer.query({
+        query:
+          query +
+          ` STARTPOSITION ${
+            i * paginate_max_result
+          } MAXRESULTS ${paginate_max_result}`,
+      });
+      qb_Clients.push(...result.QueryResponse.Customer);
+      if (
+        !result?.QueryResponse?.Customer?.length ||
+        result?.QueryResponse?.Customer?.length < paginate_max_result
+      )
+        break;
+    }
+
     return qb_Clients;
   } catch (err) {
     throw err;
@@ -201,7 +217,7 @@ const get_all_QuickBooks_customers = async (
 };
 
 /**
- * Map Custommer object with Client
+ * Map Customer object with Client
  * @param cutomer
  * @returns
  */
