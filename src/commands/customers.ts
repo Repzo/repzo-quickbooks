@@ -194,7 +194,7 @@ const get_all_QuickBooks_customers = async (
 
     const qb_Clients: Customer.CustomerObject[] = [];
 
-    for (let i = 0; true; i++) {
+    for (let i = 0; i < 30; i++) {
       const result = await qb.customer.query({
         query:
           query +
