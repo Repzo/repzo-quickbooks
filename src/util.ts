@@ -1,6 +1,8 @@
 import Repzo from "repzo";
 import moment from "moment-timezone";
 
+export const paginate_max_result: number = 1000;
+
 export const set_error = (error_res: any): any => {
   try {
     if (error_res) {

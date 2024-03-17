@@ -95,6 +95,8 @@ export declare namespace Customer {
     interface Result {
       QueryResponse: {
         Customer: CustomerObject[];
+        startPosition: number;
+        maxResults: number;
       };
       time: Date;
     }

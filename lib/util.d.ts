@@ -1,4 +1,5 @@
 import Repzo from "repzo";
+export declare const paginate_max_result: number;
 export declare const set_error: (error_res: any) => any;
 export declare const update_bench_time: (
   repzo: Repzo,
