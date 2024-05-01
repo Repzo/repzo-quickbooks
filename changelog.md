@@ -10,6 +10,7 @@
 - [action/invoice] handle TaxCodeRef in the invoice & return_invoice @maramalshen
 - [command/basic] fix bug: sync taxes before sync products @maramalshen
 - [command/inventory-adjustment] add new Command: adjust inventory from Repzo to QuickBooks @maramalshen
+- [command/inactive_items] add new Command: sync inactive items from QuickBooks to QuickBooks @maramalshen
 
 ### Changed
 
