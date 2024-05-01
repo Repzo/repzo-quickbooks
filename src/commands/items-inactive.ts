@@ -51,6 +51,13 @@ export const inactive_items = async (
     await commandLog.load(command_sync_id);
 
     await commandLog.addDetail("⌛ Syncing InActive Products ......").commit();
+    await commandLog
+      .addDetail(
+        `Syncing Inactive Products since ${
+          commandEvent.app?.options_formData?.[bench_time_key] || "ever"
+        }`,
+      )
+      .commit();
 
     const qb_items = await get_inactive_QuickBooks_items(qbo, app);
     result.quickBooks_total = qb_items?.length;

@@ -10,6 +10,7 @@ import { oAuth2 } from "./oAuth2.js";
 import { preferences } from "./preferences.js";
 import { inventory_adjustment } from "./inventory-adjustment.js";
 import { inactive_items } from "./items-inactive.js";
+import { inactive_customers } from "./customers-inactive.js";
 
 /**
  * Route Command Event - Function
@@ -39,6 +40,8 @@ export const commands = async (CommandEvent: CommandEvent) => {
         return await inventory_adjustment(CommandEvent);
       case "inactive_items":
         return await inactive_items(CommandEvent);
+      case "inactive_customers":
+        return await inactive_customers(CommandEvent);
       default:
         throw `Route: ${CommandEvent.command} not found`;
     }
@@ -68,6 +71,12 @@ export const commandsList: Command[] = [
     name: "Sync Clients",
     description:
       "this command to sync all quickbooks customers with your repzo clients",
+  },
+  {
+    command: "inactive_customers",
+    name: "Sync Inactive Clients",
+    description:
+      "this command to sync all inactive quickbooks customers with your repzo clients",
   },
   {
     command: "sync_taxs",
