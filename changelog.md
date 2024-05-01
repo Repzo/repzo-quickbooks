@@ -17,5 +17,6 @@
 ### Fixed
 
 - [commands/customers] fix bug, get customers paginated from qp @maramalshen
+- [command/items] fix bug in update disabled products @maramalshen
 
 ### Removed
