@@ -127,12 +127,12 @@ export default class QuickBooks implements IQuickBooks {
     },
 
     create: async (body: Item.Create.Body): Promise<Item.Create.Result> => {
-      let res = await this._create(this.customer._path, body);
+      let res = await this._create(this.item._path, body);
       return res;
     },
 
     update: async (body: Item.Update.Body): Promise<Item.Update.Result> => {
-      let res = await this._update(this.customer._path, body);
+      let res = await this._create(this.item._path, body);
       return res;
     },
   };

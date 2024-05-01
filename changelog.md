@@ -9,6 +9,7 @@
 - [command/tax] handle taxCode & taxRate AND add for each tax 2 types additive & inclusive @maramalshen
 - [action/invoice] handle TaxCodeRef in the invoice & return_invoice @maramalshen
 - [command/basic] fix bug: sync taxes before sync products @maramalshen
+- [command/inventory-adjustment] add new Command: adjust inventory from Repzo to QuickBooks @maramalshen
 
 ### Changed
 
