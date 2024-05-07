@@ -206,7 +206,7 @@ const get_all_repzo_products = async (
       let repzoObj = await repzo.product.find({
         page: 1,
         per_page,
-        disabled: false,
+        // disabled: false,
         withVariants: true,
       });
       next_page_url = repzoObj.next_page_url;

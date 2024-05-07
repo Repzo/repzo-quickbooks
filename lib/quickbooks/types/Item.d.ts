@@ -73,11 +73,11 @@ export declare namespace Item {
   interface itemBody {
     Name: string;
     Type: string;
-    QtyOnHand: number;
-    IncomeAccountRef: ReferenceType;
-    AssetAccountRef: ReferenceType;
-    ExpenseAccountRef: ReferenceType;
-    InvStartDate: Date;
+    QtyOnHand?: number;
+    IncomeAccountRef?: ReferenceType;
+    AssetAccountRef?: ReferenceType;
+    ExpenseAccountRef?: ReferenceType;
+    InvStartDate?: Date | string;
   }
   export namespace Find {
     type Params = {
