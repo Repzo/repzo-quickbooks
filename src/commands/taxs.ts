@@ -47,26 +47,27 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
     const qb_taxRates = await get_all_QuickBooks_taxRates(qbo);
     const qb_taxCodes = await get_all_QuickBooks_taxCodes(qbo);
 
-    const qb_taxes: Tax[] = qb_taxCodes.QueryResponse.TaxCode.map((taxCode) => {
-      const tax = {
-        Id: taxCode.Id,
-        Name: taxCode.Name,
-        Active: taxCode.Active,
-        MetaData: taxCode.MetaData,
-        RateValue: 0,
-      };
-      if (taxCode.SalesTaxRateList?.TaxRateDetail?.length) {
-        const taxRate = qb_taxRates.QueryResponse?.TaxRate?.find(
-          (taxRate) =>
-            taxRate.Id ==
-            taxCode.SalesTaxRateList?.TaxRateDetail[0].TaxRateRef.value
-        );
-        if (taxRate) {
-          tax.RateValue = Number(taxRate.RateValue);
+    const qb_taxes: Tax[] =
+      qb_taxCodes.QueryResponse.TaxCode?.map((taxCode) => {
+        const tax = {
+          Id: taxCode.Id,
+          Name: taxCode.Name,
+          Active: taxCode.Active,
+          MetaData: taxCode.MetaData,
+          RateValue: 0,
+        };
+        if (taxCode.SalesTaxRateList?.TaxRateDetail?.length) {
+          const taxRate = qb_taxRates.QueryResponse?.TaxRate?.find(
+            (taxRate) =>
+              taxRate.Id ===
+              taxCode.SalesTaxRateList?.TaxRateDetail[0].TaxRateRef.value
+          );
+          if (taxRate) {
+            tax.RateValue = Number(taxRate.RateValue);
+          }
         }
-      }
-      return tax;
-    });
+        return tax;
+      }) || [];
 
     // return all quickbooks taxes
     let repzo_taxs = await get_all_repzo_taxs(repzo);
@@ -121,7 +122,7 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
             result.failed++;
             failed_docs_report.push({
               method: "create",
-              doc: repzo_tax,
+              doc: repzo_tax.inclusive,
               error_message: set_error(e),
             });
           }
@@ -168,27 +169,36 @@ export const taxs = async (commandEvent: CommandEvent): Promise<Result> => {
         try {
           result.created++;
           await repzo.tax.create(repzo_tax.inclusive);
+        } catch (e) {
+          result.failed++;
+          failed_docs_report.push({
+            method: "create",
+            doc: repzo_tax.inclusive,
+            error_message: set_error(e),
+          });
+        }
+        try {
+          result.created++;
           await repzo.tax.create(repzo_tax.additive);
         } catch (e) {
           result.failed++;
           failed_docs_report.push({
             method: "create",
-            doc: repzo_tax,
+            doc: repzo_tax.additive,
             error_message: set_error(e),
           });
         }
       }
-      // end async calls
-
-      await commandLog
-        .addDetail(`✅  Complete Sync Taxes`)
-        .setStatus(
-          "success",
-          failed_docs_report.length ? failed_docs_report : null
-        )
-        .setBody(result)
-        .commit();
     }
+
+    await commandLog
+      .addDetail(`✅  Complete Sync Taxes`)
+      .setStatus(
+        "success",
+        failed_docs_report.length ? failed_docs_report : null
+      )
+      .setBody(result)
+      .commit();
   } catch (err) {
     await commandLog.setStatus("fail", err).setBody(result).commit();
   } finally {

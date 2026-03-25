@@ -105,7 +105,7 @@ export namespace TaxCode {
     };
     export interface Result {
       QueryResponse: {
-        TaxCode: TaxCodeObject[];
+        TaxCode?: TaxCodeObject[];
         startPosition?: number;
         maxResults?: number;
         totalCount?: number;

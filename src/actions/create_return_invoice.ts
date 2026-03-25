@@ -30,7 +30,7 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
       sandbox: options.env === "production" ? false : true,
     });
     if (body) body = JSON.parse(body);
-    const repzo_invoice = body;
+    const repzo_invoice: Service.FullInvoice.InvoiceSchema = body;
     const repzo_serial_number = body?.serial_number?.formatted;
     invoice.DocNumber = repzo_serial_number;
     try {
@@ -44,7 +44,7 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
       // console.dir(invoice, { depth: null });
     } catch (e) {
       await actionLog.setStatus("fail", "❌ invalid Client").commit();
-      exit;
+      exit();
     }
 
     const Line = await prepareInvoiceLines(repzo, repzo_invoice);
@@ -89,52 +89,85 @@ export const create_return_invoice = async (event: EVENT, options: Config) => {
   }
 };
 
-const prepareInvoiceLines = (
+const prepareInvoiceLines = async (
   repzo: Repzo,
-  repzo_invoice: any
+  repzo_invoice: Service.FullInvoice.InvoiceSchema
 ): Promise<Invoice.Create.XLine> => {
-  // const TAX = { value: "TAX", name: "TAX" }; // taxable invoice ()
-  // const NON = { value: "NON", name: "NON" }; // N/A  No Tax
+  const items = repzo_invoice.return_items || [];
 
-  let Line: Invoice.Create.XLine = [];
-  return new Promise((resolve, reject) => {
-    repzo_invoice.return_items.forEach(
-      async (item: any, i: number, arr: []) => {
-        try {
-          let product = await repzo.product.get(item.variant?.product_id);
-          let tax;
-          if (item.tax._id) tax = await repzo.tax.get(item.tax._id);
-          if (product.integration_meta?.quickBooks_id !== undefined) {
-            Line.push({
-              Id: String(i + 1),
-              DetailType: "SalesItemLineDetail",
-              SalesItemLineDetail: {
-                // TaxInclusiveAmt: item.tax_amount,
-                // DiscountAmt: 1,
-                // DiscountRate: item.discount_value / 1000,
-                ItemRef: {
-                  name: product.name,
-                  value: product.integration_meta?.quickBooks_id,
-                },
-                TaxCodeRef: {
-                  value: tax?.integration_meta?.quickBooks_id || "",
-                  name: tax?.name || "",
-                },
-                Qty: item.qty,
-                UnitPrice: item.discounted_price / 1000,
-              },
-              Amount: (item.line_total / 1000) * -1,
-              LineNum: i + 1,
-              Description: `${item.measureunit?.factor} /  ${item.measureunit?.name}`,
-            });
-          } else {
-            reject(`Product Not found .. ${item.variant?.product_name}`);
-          }
-        } catch (e) {
-          reject(e);
-        }
-        if (i === arr.length - 1) resolve(Line);
-      }
-    );
+  const taxes_map: { [key: string]: boolean } = {};
+  const product_map: { [key: string]: boolean } = {};
+  items.forEach((item) => {
+    if (item.tax?._id && item.tax?.type !== "N/A") {
+      taxes_map[item.tax._id] = true;
+    }
+    if (item.variant?.product_id) {
+      product_map[item.variant.product_id as string] = true;
+    }
   });
+
+  let taxes: Service.Tax.Find.Result["data"] = [];
+  if (Object.keys(taxes_map).length) {
+    const repzo_taxes = await repzo.tax.find({
+      _id: Object.keys(taxes_map),
+      per_page: Object.keys(taxes_map).length,
+    });
+    if (repzo_taxes.data) taxes = repzo_taxes.data;
+  }
+
+  let products: Service.Product.Find.Result["data"] = [];
+  if (Object.keys(product_map).length) {
+    const repzo_products = await repzo.product.find({
+      _id: Object.keys(product_map),
+      per_page: Object.keys(product_map).length,
+    });
+    products = repzo_products.data;
+  }
+
+  const Line: Invoice.Create.XLine = items.map((item, i: number) => {
+    const product = products.find((p) => p._id === item.variant?.product_id);
+    if (!product) {
+      throw new Error(
+        `Product Not found, _id: ${item.variant?.product_id}, name: ${item.variant?.product_name}`
+      );
+    }
+    let tax: Service.Tax.TaxSchema | undefined;
+    if (item.tax?._id && item.tax?.type !== "N/A") {
+      tax = taxes.find((t) => t._id === item.tax._id);
+      if (!tax) {
+        throw new Error(
+          `Tax Not found, _id: ${item.tax._id}, name: ${item.tax?.name}`
+        );
+      }
+    }
+    if (!product.integration_meta?.quickBooks_id) {
+      throw new Error(
+        `Product ${product.name} (_id: ${product._id}) does not have quickBooks_id in integration_meta: ${product.integration_meta?.quickBooks_id}`
+      );
+    }
+
+    return {
+      Id: String(i + 1),
+      DetailType: "SalesItemLineDetail",
+      SalesItemLineDetail: {
+        // TaxInclusiveAmt: item.tax_amount,
+        // DiscountAmt: 1,
+        // DiscountRate: item.discount_value / 1000,
+        ItemRef: {
+          name: product.name,
+          value: product.integration_meta?.quickBooks_id,
+        },
+        TaxCodeRef: {
+          value: tax?.integration_meta?.quickBooks_id || "",
+          name: tax?.name || "",
+        },
+        Qty: item.qty,
+        UnitPrice: item.discounted_price / 1000,
+      },
+      Amount: ((item.line_total || 0) / 1000) * -1,
+      LineNum: i + 1,
+      Description: `${item.measureunit?.factor} /  ${item.measureunit?.name}`,
+    };
+  });
+  return Line;
 };

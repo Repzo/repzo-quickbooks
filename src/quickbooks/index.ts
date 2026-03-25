@@ -1,7 +1,6 @@
 import { v4 as uuid } from "uuid";
-import axios from "axios";
+import axios, { Axios } from "axios";
 import { Params, Data, Authorization, QuickBooksConfig } from "./types/Index";
-import { Axios } from "axios";
 import { Endpoint } from "../types";
 import { Customer } from "./types/Customer";
 import { Item } from "./types/Item";

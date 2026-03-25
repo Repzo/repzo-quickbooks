@@ -92,7 +92,10 @@ export const customers = async (
             let repzo_client = map_customers(cutomer, company_namespace);
             try {
               result.updated++;
-              await repzo.client.update(existClient._id, repzo_client);
+              await repzo.client.update(
+                existClient._id,
+                repzo_client as Service.Client.Update.Body
+              );
             } catch (e) {
               result.failed++;
               failed_docs_report.push({
@@ -104,7 +107,10 @@ export const customers = async (
             }
           }
         } else {
-          let repzo_client = map_customers(cutomer, company_namespace);
+          let repzo_client = map_customers(
+            cutomer,
+            company_namespace
+          ) as Service.Client.Create.Body;
           try {
             result.created++;
             repzo_client.client_code = `QB_${cutomer.Id}`;
@@ -159,17 +165,21 @@ const get_all_repzo_clients = async (
 ): Promise<Service.Client.Get.Result[]> => {
   try {
     const per_page = 5000;
-    let next_page_url = undefined;
-    let repzo_clients: any[];
-    repzo_clients = [];
-    while (next_page_url !== null) {
-      let repzoObj = await repzo.client.find({
-        page: 1,
-        per_page,
-        // disabled: false,
+    let page = 1;
+    const repzo_clients: Service.Client.Get.Result[] = [];
+    while (true) {
+      const repzoObj = await repzo.client.find({ page, per_page }); // disabled: false,
+      repzoObj.data?.forEach((client) => {
+        repzo_clients.push(client);
       });
-      next_page_url = repzoObj.next_page_url;
-      repzo_clients = [...repzo_clients, ...repzoObj.data];
+      if (
+        !repzoObj.next_page_url ||
+        !repzoObj.data?.length ||
+        repzoObj.data.length < per_page
+      ) {
+        break;
+      }
+      page++;
     }
     return repzo_clients;
   } catch (err) {
@@ -224,7 +234,7 @@ const get_all_QuickBooks_customers = async (
 const map_customers = (
   cutomer: Customer.CustomerObject,
   company_namespace: string
-): Service.Client.Create.Body => {
+): Service.Client.Create.Body | Service.Client.Update.Body => {
   return {
     name: cutomer.DisplayName,
     disabled: !cutomer.Active,
