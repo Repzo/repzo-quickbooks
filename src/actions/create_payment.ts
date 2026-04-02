@@ -43,7 +43,7 @@ export const create_payment = async (event: EVENT, options: Config) => {
           repzo_invoices.data[0].integration_meta?.quickBooks_id;
       }
       if (!quickBooks_invoice_id) {
-        const query = `select * from invoice where DocNumber = '${invoice_serial_number}'`;
+        const query = `SELECT * FROM Invoice WHERE DocNumber = '${invoice_serial_number}'`;
         const qb_invoices = await qbo.invoice.find({ query });
         if (qb_invoices.QueryResponse.Invoice?.length) {
           quickBooks_invoice_id = qb_invoices.QueryResponse.Invoice[0].Id;

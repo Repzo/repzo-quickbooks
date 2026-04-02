@@ -234,5 +234,13 @@ export default class QuickBooks implements IQuickBooks {
       );
       return res;
     },
+
+    find: async (params: Invoice.Find.Params): Promise<Invoice.Find.Result> => {
+      let res: Invoice.Find.Result = await this._create(
+        this.return_invoice._path,
+        params
+      );
+      return res;
+    },
   };
 }

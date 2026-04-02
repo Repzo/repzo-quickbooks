@@ -179,6 +179,7 @@ export namespace Invoice {
       QueryResponse: {
         Item?: InvoiceBody[];
         Invoice?: InvoiceBody[];
+        CreditMemo?: InvoiceBody[];
         startPosition: number;
         maxResults: number;
         totalCount: number;

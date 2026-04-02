@@ -52,9 +52,31 @@ export const create_invoice = async (event: EVENT, options: Config) => {
     const Line = await prepareInvoiceLines(repzo, repzo_invoice);
     invoice.Line = Line;
     await actionLog
-      .addDetail(`⌛ Preparing Quickbooks invoice items`, invoice.Line)
+      .addDetail(`⌛ Preparing Quickbooks Invoice`, invoice)
       .commit();
-    const res = await qbo.invoice.create(invoice);
+
+    let res: Invoice.Create.Result;
+    try {
+      res = await qbo.invoice.create(invoice);
+    } catch (createErr: any) {
+      const fault = createErr?.response?.data?.Fault;
+      const isDuplicate = fault?.Error?.some((e: any) => e.code === "6140");
+      if (!isDuplicate) throw createErr;
+
+      await actionLog
+        .addDetail(
+          `⚠️ Duplicate DocNumber: ${repzo_serial_number} already exists in QuickBooks, linking existing invoice`
+        )
+        .commit();
+
+      const queryRes = await qbo.invoice.find({
+        query: `SELECT * FROM Invoice WHERE DocNumber = '${repzo_serial_number}'`,
+      });
+      const existingInvoice = queryRes?.QueryResponse?.Invoice?.[0];
+      if (!existingInvoice) throw createErr;
+
+      res = { Invoice: existingInvoice, time: new Date() };
+    }
 
     if (res) {
       // update integration_meta object with repzo_invoice
